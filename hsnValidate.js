@@ -83,15 +83,15 @@
 			basla();
 		});
 	};	
-	///Elemanlar
+	/* Fonksiyonlar */
 	$.hsnValidate = function() {
 		//ilerde kullanırız
 	};
 	$.hsnValidate.reset = function(_inp) {
 		handler = false;
 		_inp.each(function(index, name) {
-           $(name).parent().children('.'+ayarlar.hataClass+'').remove(); 
-    	});	
+			$(name).parent().children('.'+ayarlar.hataClass+'').remove();
+		});	
 	};
 
 	$.hsnValidate.baslangic = function() {
