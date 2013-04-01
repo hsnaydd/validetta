@@ -3,14 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Form Validator</title>
+<link rel="stylesheet" type="text/css" href="hsnValidate.css">
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="hsnValidate.js"></script>
 <script type="text/javascript">
 $(function(){
-	$('#kayit').hsnValidate({
-		'hataClass'		:	'firma-kayit-error',
-		'hataKapa'		: 	'frm-error-kapa'
-	});
+	$('#kayit').hsnValidate();
 });
 </script>
 <style type="text/css">
@@ -20,9 +18,6 @@ ul{list-style:none;}
 li{padding:5px 10px; position:relative;}
 input{}
 label{width:300px; display:block;}
-.firma-kayit-error{display:block; font:12px/14px Arial, Helvetica, sans-serif; position:absolute; background-color:#CD2E26; max-width:325px; border-radius:5px; color:white; padding:5px 12px;}
-.firma-kayit-error:before{content:''; display:block; position:absolute; top:7px; left:-5px; width:0px; height:0px; border-right:5px solid #CD2E26; border-bottom: 5px solid transparent; border-top:5px solid transparent; }
-.frm-error-kapa{display:block; cursor:pointer; position:absolute; top:-1px; right:3px; color:white; font-weight:bold;}
 </style>
 </head>
 <body>
@@ -31,6 +26,8 @@ label{width:300px; display:block;}
 		<li><label>İsim</label><input type="text" name="isim" class="required" /></li>
 	    <li><label>Soyisim</label><input type="text" name="soyisim" class="number required" /></li>
 	    <li><label>Email</label><input type="text" name="email" class="email" /></li>
+	    <li><label>Checkbox</label><input type="checkbox" name="chekcbox" class="required"/></li>
+	    <li><label>Text Area</label><textarea name="textarea" class="required"></textarea></li>
 	    <li><input type="submit" value="Kaydet" /><input type="reset"/></li>
 	</ul>
 

@@ -1,4 +1,17 @@
-/* jQuery 1.7+ */
+/*!
+ * hsnLightBox - jQuery Eklentisi
+ * version: 1.0 (30 Mart 2013, Cumartesi)
+ * @jQuery v1.7 ve üstü ile çalışmaktadır.
+ *
+ * Örneklere http://... adresinden  ulaşabilirsiniz.
+ * Projeye Adresi : https://github.com/hsnayd/hsnValidate 
+ * Lisans: MIT ve GPL
+ * 	* http://www.opensource.org/licenses/mit-license.php
+ *  * http://www.gnu.org/licenses/gpl.txt
+ *
+ * Copyright 2012 Hasan Aydoğdu - http://www.hasanaydogdu.com
+ *
+ */
 
 (function($){
 	var handler = false,obje,
@@ -8,6 +21,7 @@
 		'hataMesajBos' 		:	'Bu alanı doldurmanız gerekli. Lütfen kontrol ediniz.',
 		'hataMesajEmail'	:	'Eposta adresiniz geçersiz görünüyor. Lütfen kontrol ediniz.',
 		'hataMesajNumara'	:	'Bu alana sadece rakam girişi yapabilirsiniz.',
+		'hataMesajCheckbox'	: 	'Bu alanı işaretmeleniz gerekli. Lütfen kontrol ediniz.',
 		'fonksiyon'			: 	null	
 	},
 	temizle = function(value){
@@ -32,6 +46,12 @@
 			var reg = new RegExp(/^[\+][0-9]+?$|^[0-9]+?$/);
 			if((reg.test($(_input).val()) == false) && ($(_input).val()!='')){return pencere.ac(_input,ayarlar.hataMesajNumara);}
 			else{return;}
+		},
+		//Checkbox Kontrolu
+		checkbox : function(_inp){
+			if (!$(_inp).is(':checked')){
+				return pencere.ac(_inp,ayarlar.hataMesajCheckbox);
+			}else{return;}
 		}
 	},
 	pencere = {
@@ -42,7 +62,7 @@
 			_top= pos.top,
 			hsnHataObje = $('<span>').addClass(ayarlar.hataClass),
 			hsnHataKapatObje = $('<span class="hsnHataKapat">x</span>');
-			hsnHataKapatObje.addClass(ayarlar.hataKapa);
+			hsnHataKapatObje.addClass(ayarlar.hataKapaClass);
 			hsnHataObje.empty().css({
 				'left':pos.left+gen+30+'px',
 				'top' :_top+'px'
@@ -59,7 +79,8 @@
 	basla = function(){
 			$.hsnValidate.reset($(obje).find('input[type="text"],textarea'));
 			$(obje).find('.required').each(function(i,name) {
-				kontrol.bosluk(name);
+				if($(name).attr('type')=='checkbox'){kontrol.checkbox(name);}
+				else{kontrol.bosluk(name);}
 			});
 			$(obje).find('.email').each(function(i,name) {;
 				kontrol.mail(name);
@@ -93,11 +114,10 @@
 			$(name).parent().children('.'+ayarlar.hataClass+'').remove();
 		});	
 	};
-
 	$.hsnValidate.baslangic = function() {
 		//Reset Butonuna Tıklanınca Sıfırlama
 		$('input[type="reset"]').click(function(e) {
-    		$.hsnValidate.reset($(this).parents('form').find('input[type="text"],textarea'));
+    		$.hsnValidate.reset($(this).parents('form').find('input[type="text"],textarea,input[type="checkbox"]'));
     	});
     	//Manuel Hata Kapatma
 		$(document).on('click','.hsnHataKapat', function(){
@@ -107,7 +127,6 @@
 	};
     $(document).ready(function() {
     	$.hsnValidate.baslangic();
-    	
     });
 	
 	
