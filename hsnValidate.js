@@ -16,13 +16,14 @@
 (function($){
 	var handler = false,obje,
 	ayarlar = {
-		'hataClass' 		:	'formHata',
-		'hataKapaClass' 	:	'formHataKapa',
-		'hataMesajBos' 		:	'Bu alanı doldurmanız gerekli. Lütfen kontrol ediniz.',
-		'hataMesajEmail'	:	'Eposta adresiniz geçersiz görünüyor. Lütfen kontrol ediniz.',
-		'hataMesajNumara'	:	'Bu alana sadece rakam girişi yapabilirsiniz.',
-		'hataMesajCheckbox'	: 	'Bu alanı işaretmeleniz gerekli. Lütfen kontrol ediniz.',
-		'fonksiyon'			: 	null	
+		hataClass 			:	'formHata',
+		hataKapaClass 		:	'formHataKapa',
+		hataMesajBos 		:	'Bu alanı doldurmanız gerekli. Lütfen kontrol ediniz.',
+		hataMesajEmail		:	'Eposta adresiniz geçersiz görünüyor. Lütfen kontrol ediniz.',
+		hataMesajNumara		:	'Bu alana sadece rakam girişi yapabilirsiniz.',
+		hataMesajCheckbox	: 	'Bu alanı işaretmeleniz gerekli. Lütfen kontrol ediniz.',
+		blurTetikleme		: 	true,
+		fonksiyon			: 	null	
 	},
 	temizle = function(value){
 		return value = value.replace(/^\s+|\s+$/g, '');
@@ -77,32 +78,53 @@
 		}
 	},
 	basla = function(){
-			$.hsnValidate.reset($(obje).find('input[type="text"],textarea'));
-			$(obje).find('.required').each(function(i,name) {
-				if($(name).attr('type')=='checkbox'){kontrol.checkbox(name);}
-				else{kontrol.bosluk(name);}
-			});
-			$(obje).find('.email').each(function(i,name) {;
-				kontrol.mail(name);
-			});
-			$(obje).find('.number').each(function(i,name) {
-				kontrol.numara(name);
-			});
-			if(handler){return false;}
-			else{
-				if(ayarlar.fonksiyon){
-					ayarlar.fonksiyon()
-					return false;
-				}else{return;}
+			//console.log(obje.nodeType == 1)
+			if(obje.tagName =='FORM'){
+				$.hsnValidate.reset($(obje).find('input[type="text"],textarea,input[type="checkbox"]'));
+				$(obje).find('.required').each(function(i,name) {
+					if($(name).attr('type')=='checkbox'){kontrol.checkbox(name);}
+					else{kontrol.bosluk(name);}
+				});
+				$(obje).find('.email').each(function(i,name) {;
+					kontrol.mail(name);
+				});
+				$(obje).find('.number').each(function(i,name) {
+					kontrol.numara(name);
+				});
+			}else{
+				$.hsnValidate.reset($(obje));
+				if($(obje).hasClass('required')){
+					if($(obje).attr('type')=='checkbox'){kontrol.checkbox(obje);}
+					else{kontrol.bosluk(obje);}
+				}
+				if ($(obje).hasClass('email')){
+					kontrol.mail(obje);
+				}
+				if($(obje).hasClass('number')){
+					kontrol.numara(obje);
+				}
 			}
+			if(handler){return false;}
+				else{
+					if(ayarlar.fonksiyon){
+						ayarlar.fonksiyon()
+						return false;
+					}else{return;}
+				}
 	};
 	$.fn.hsnValidate = function(ayar){
+		ayarlar = $.extend({},ayarlar,ayar);
 		$(this).submit(function(e){
 			e.preventDefault();
-			ayarlar = $.extend({},ayarlar,ayar);
 			obje = this;
 			basla();
 		});
+		if(ayarlar.blurTetikleme){
+			$(this).find('input[type="text"],input[type="checkbox"],textarea').bind('blur',function(){
+				obje = this;
+				basla();
+			});
+		};
 	};	
 	/* Fonksiyonlar */
 	$.hsnValidate = function() {
