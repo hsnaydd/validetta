@@ -8,7 +8,13 @@
 <script type="text/javascript" src="hsnValidate.js"></script>
 <script type="text/javascript">
 $(function(){
-	$('#kayit').hsnValidate();
+	$('#kayit').hsnValidate({
+		checkbox : {
+			name : 'deneme',
+			max	 : 2,
+			min	 : 1	
+		}	
+	});
 });
 </script>
 <style type="text/css">
@@ -18,6 +24,8 @@ ul{list-style:none;}
 li{padding:5px 10px; position:relative;}
 input{}
 label{width:300px; display:block;}
+label[for=deneme]{width:100px}
+.ilblock{display:inline-block;}
 </style>
 </head>
 <body>
@@ -26,7 +34,9 @@ label{width:300px; display:block;}
 		<li><label>İsim</label><input type="text" name="isim" class="required" /></li>
 	    <li><label>Soyisim</label><input type="text" name="soyisim" class="number required" /></li>
 	    <li><label>Email</label><input type="text" name="email" class="email" /></li>
-	    <li><label>Checkbox</label><input type="checkbox" name="chekcbox" class="required"/></li>
+	    <li><label for="deneme" class="ilblock">Checkbox 1</label><input type="CheckBox" name="deneme" class="ilblock"/></li>
+        <li><label for="deneme" class="ilblock">Checkbox 2</label><input type="Checkbox" name="deneme" class="ilblock"/></li>
+        <li><label for="deneme" class="ilblock">Checkbox 3</label><input type="Checkbox" name="deneme" class="ilblock"/></li>
 	    <li><label>Text Area</label><textarea name="textarea" class="required"></textarea></li>
 	    <li><input type="submit" value="Kaydet" /><input type="reset"/></li>
 	</ul>
