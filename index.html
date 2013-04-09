@@ -13,7 +13,21 @@ $(function(){
 			name : 'deneme',
 			max	 : 2,
 			min	 : 1	
-		}	
+		},
+		ajax : {
+			call 		: true,
+			type 		: 'POST',
+			dataType	: 'json',
+			success		: function(veri){
+				console.log(veri)
+			},
+			beforeSend : function(){
+				console.log('start')	
+			},
+			complate : function(){
+				console.log('Finish him')	
+			}
+		}
 	});
 });
 </script>
@@ -29,7 +43,7 @@ label[for=deneme]{width:100px}
 </style>
 </head>
 <body>
-<form id="kayit" action="" method="post">
+<form id="kayit" action="dosyalar/ajax.php" method="post">
 	<ul>
 		<li><label>İsim</label><input type="text" name="isim" class="required" /></li>
 	    <li><label>Soyisim</label><input type="text" name="soyisim" class="number required" /></li>

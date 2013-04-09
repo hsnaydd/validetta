@@ -1,0 +1,20 @@
+{
+    "ogrenciler":[//ogrenciler adinde array nesnesi var
+       {//0. arrayin içeriği
+           "no":"5",//burada isim:deger ikilisi var
+           "adi":"ahmet",
+           "yasi":"20"
+       },
+       {//1. arrayin içeriği
+           "no":"7",
+           "adi":"veli",
+           "yasi":"21"
+       },
+       {//2. arrayin içeriği
+           "no":"8",
+           "adi":"can",
+           "yasi":"19"
+       }
+ 
+    ]
+}
