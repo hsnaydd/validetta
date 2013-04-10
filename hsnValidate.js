@@ -4,7 +4,7 @@
  * @jQuery v1.7 ve üstü ile çalışmaktadır.
  *
  * Örneklere http://... adresinden  ulaşabilirsiniz.
- * Projeye Adresi : https://github.com/hsnayd/hsnValidate 
+ * Proje Adresi : https://github.com/hsnayd/hsnValidate 
  * Lisans: MIT ve GPL
  * 	* http://www.opensource.org/licenses/mit-license.php
  *  * http://www.gnu.org/licenses/gpl.txt
@@ -24,7 +24,8 @@
 			number		: 'Bu alana sadece rakam girişi yapabilirsiniz.',
 			checkbox	: 'Bu alanı işaretmeleniz gerekli. Lütfen kontrol ediniz.',
 			maxChecked	: 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
-			minChecked	: 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.'
+			minChecked	: 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
+			selectbox	: 'Bu alanda seçim yapmanız gerekli. Lütfen kontrol ediniz.'
 		},
 		checkbox : {
 			name	: null,
@@ -83,6 +84,21 @@
 							return _window.open(_inp.eq(0),options.errorMessage.minChecked.replace('{count}',min));
 						}else{return;}
 					}
+		},
+		//Selectbox Kontrolü
+		selectbox : {
+			selected : function(_inp){
+				var val = $(_inp).val();
+				if(val == '' || val == null){
+					return _window.open(_inp, options.errorMessage.selectbox);
+				}else{return;}
+			},
+			limit : function(_inp){
+				var max,min,
+					count = _inp.lenght;
+					console.log(count);		
+			}
+			
 		}
 	},
 	_window = {
@@ -92,7 +108,7 @@
 			H = $(_input).height(),
 			T= pos.top,
 			errorObject = $('<span>').addClass(options.errorClass),
-			errorCloseObject = $('<span class="hsnHataKapat">x</span>');
+			errorCloseObject = $('<span class="hsnErrClose">x</span>');
 			errorCloseObject.addClass(options.errorCloseClass);
 			errorObject.empty().css({
 				'left':pos.left+W+30+'px',
@@ -122,16 +138,17 @@
 				return options.ajax.beforeSend();
 			}
 		})
-		.done(function(result){ options.ajax.success(result);})
+		.done(function(result){options.ajax.success(result);})
 		.fail(function(jqXHR, textStatus){ options.ajax.fail(jqXHR, textStatus);})
 		.always(function(result){options.ajax.complete(result);});	
 	},
 	init = function(){
 			//console.log(obje.nodeType == 1)
 			if(obje.tagName =='FORM'){
-				$.hsnValidate.reset($(obje).find('input[type="text"],textarea,input[type="checkbox"]'));
-				$(obje).find('.required').each(function(i,name) {
+				$.hsnValidate.reset($(obje).find('.'+options.errorClass));
+				$(obje).find('.required').each(function(i,name){
 					if($(name).attr('type')=='checkbox'){check.checkbox.checked(name);}
+					else if(name.tagName =='SELECT'){check.selectbox.selected(name);}
 					else{check.space(name);}
 				});
 				$(obje).find('.email').each(function(i,name) {;
@@ -149,6 +166,7 @@
 				var name;
 				if($(obje).hasClass('required')){
 					if($(obje).attr('type')=='checkbox'){check.checkbox.checked(obje);}
+					else if(obje.tagName =='SELECT'){check.selectbox.selected(obje);}
 					else{check.space(obje);}
 				}
 				if ($(obje).hasClass('email')){
@@ -184,7 +202,7 @@
 			init();
 		});
 		if(options.blurTrigger){
-			$(this).find('input[type="text"],input[type="checkbox"],textarea').on('blur',function(){
+			$(this).find('input[type="text"],input[type="checkbox"],textarea,select').on('blur',function(){
 				obje = this;
 				init();
 			});
@@ -204,10 +222,10 @@
 	$.hsnValidate.init = function() {
 		//Reset Butonuna Tıklanınca Sıfırlama
 		$('input[type="reset"]').click(function(e) {
-    		$.hsnValidate.reset($(this).parents('form').find('input[type="text"],textarea,input[type="checkbox"]'));
+    		$.hsnValidate.reset($(this).parents('form').find('.'+options.errorClass));
     	});
     	//Manuel Hata Kapatma
-		$(document).on('click','.hsnHataKapat', function(){
+		$(document).on('click','.hsnErrClose', function(){
 			$(this).parent().remove();
 				return false;
 		});
