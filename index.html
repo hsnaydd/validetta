@@ -13,7 +13,7 @@ $(function(){
 			name : 'deneme',
 			max	 : 2,
 			min	 : 1	
-		},
+		}/*,
 		ajax : {
 			call 		: true,
 			type 		: 'POST',
@@ -27,7 +27,7 @@ $(function(){
 			complate : function(){
 				console.log('Finish him')	
 			}
-		}
+		}*/
 	});
 });
 </script>
@@ -46,19 +46,19 @@ label[for=deneme]{width:100px}
 <form id="kayit" action="dosyalar/ajax.php" method="post">
 	<ul>
 		<li><label>İsim</label><input type="text" name="isim" data-hsnvalidate="required" class="required" /></li>
-	    <li><label>Numara</label><input type="text" name="soyisim" class="number required" /></li>
-	    <li><label>Email</label><input type="text" name="email" class="email" /></li>
-	    <li><label for="deneme" class="ilblock">Checkbox 1</label><input type="CheckBox" name="deneme" class="ilblock"/></li>
+	    <li><label>Numara</label><input type="text" name="soyisim" data-hsnvalidate="number,required" /></li>
+	    <li><label>Email</label><input type="text" name="email" data-hsnvalidate="email" /></li>
+	    <li><label for="deneme" class="ilblock">Checkbox 1</label><input type="CheckBox" data-hsnvalidate="maxChecked[5]" name="deneme" class="ilblock"/></li>
         <li><label for="deneme" class="ilblock">Checkbox 2</label><input type="Checkbox" name="deneme" class="ilblock"/></li>
         <li><label for="deneme" class="ilblock">Checkbox 3</label><input type="Checkbox" name="deneme" class="ilblock"/></li>
         <li><label for="deneme" class="ilblock">Seçim Kutusu</label>
-        	<select name="select" class="required">
+        	<select name="select" data-hsnvalidate="required">
             	<option value="">seçiniz</option>
                 <option value="1">eleman1</option>
             </select>
         </li>
         <li><label for="deneme" class="ilblock">Seçim Kutusu Multiple</label>
-        	<select name="select1" multiple="multiple" class="required">
+        	<select name="select1" multiple="multiple" data-hsnvalidate="required,minSelected[2]">
             	<option value="">seçiniz</option>
                 <option value="1">seçenek 1</option>
                 <option value="2">seçenek 2</option>
@@ -66,7 +66,7 @@ label[for=deneme]{width:100px}
                 
             </select>
         </li>
-	    <li><label>Text Area</label><textarea name="textarea" class="required"></textarea></li>
+	    <li><label>Text Area</label><textarea name="textarea" data-hsnvalidate="required"></textarea></li>
 	    <li><input type="submit" value="Kaydet" /><input type="reset"/></li>
 	</ul>
 

@@ -12,9 +12,16 @@
  * Copyright 2012 Hasan Aydoğdu - http://www.hasanaydogdu.com
  *
  */
+ /*
+ 	* required
+	* number
+	* email
+	* minlength
+	* maxlength
+ */
 
 (function($){
-	var handler = false,obje,
+	var handler = false,form,object,
 	defaults = {
 		errorClass 		: 'formHata',
 		errorCloseClass : 'formHataKapa',
@@ -143,8 +150,34 @@
 		.always(function(result){options.ajax.complete(result);});	
 	},
 	init = function(){
+			$.hsnValidate.reset($(object));
+			var reg = RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength)\[([0-9])\]/i);
+			$(object).each(function(i, element){
+				var el = element,
+				methods = $(el).data('hsnvalidate').split(',');
+				$(methods).each(function(i, element) {
+					if(element == 'required'){
+						if($(el).attr('type')=='checkbox'){check.checkbox.checked(el);}
+						else if(el.tagName =='SELECT'){check.selectbox.selected(el);}
+						else{check.space(el);}
+					}
+					if(element == 'number'){
+						check.number(el);
+					}
+					if(element == 'email'){
+						check.mail(el);
+					}
+					if(reg.test(element)){
+						var rules = element.split(/\[|,|\]/)
+						console.log(rules[1])
+					}
+                });
+                
+            });
+			
+			
 			//console.log(obje.nodeType == 1)
-			if(obje.tagName =='FORM'){
+			/*if(obje.tagName =='FORM'){
 				$.hsnValidate.reset($(obje).find('.'+options.errorClass));
 				$(obje).find('.required').each(function(i,name){
 					if($(name).attr('type')=='checkbox'){check.checkbox.checked(name);}
@@ -183,27 +216,28 @@
 				handler = true;
 			}
 			if(handler){return false;}
-			else{
+			else{*/
 				/*if(options.onCompleteFunc){
 					options.onCompleteFunc()
 					return false;
 				}else{return;}*/
-				if(options.ajax.call){
+				/*if(options.ajax.call){
 					ajax();
 					return false;	
 				}
-			}
+			}*/
 	};
 	$.fn.hsnValidate = function(ayar){
 		options = $.extend(true,{},defaults,ayar);
-		$(this).submit(function(e){
+		form = this;
+		$(form).submit(function(e){
 			e.preventDefault();
-			obje = this;
+			object = $(form).find('[data-hsnValidate]');
 			init();
 		});
 		if(options.blurTrigger){
-			$(this).find('input[type="text"],input[type="checkbox"],textarea,select').on('blur',function(){
-				obje = this;
+			$(form).find('[data-hsnValidate]').on('blur',function(){
+				object = this;
 				init();
 			});
 		};
