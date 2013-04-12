@@ -29,6 +29,8 @@
 			empty		: 'Bu alanı doldurmanız gerekli. Lütfen kontrol ediniz.',
 			email		: 'Eposta adresiniz geçersiz görünüyor. Lütfen kontrol ediniz.',
 			number		: 'Bu alana sadece rakam girişi yapabilirsiniz.',
+			maxLength	: 'Max {count} karakter girebilirsiniz !',
+			minLength	: 'Minimum {count} karakter girmelisiniz! ',
 			checkbox	: 'Bu alanı işaretmeleniz gerekli. Lütfen kontrol ediniz.',
 			maxChecked	: 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
 			minChecked	: 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
@@ -59,37 +61,59 @@
 		//Bosluk Kontrolu
 		space : function(_input){
 				if(clear($(_input).val()) == ''){
-				return _window.open(_input,options.errorMessage.empty);
-				}else{return;}
+				return false/*_window.open(_input,options.errorMessage.empty)*/;
+				}else{return true;}
 		},
 		//Mail Kontrolu
 		mail : function(_input){
 			//var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/; 
 			var reg = new RegExp(/^[a-z]{1}[\d\w\.-]+@[\d\w-]{3,}\.[\w]{2,3}(\.\w{2})?$/);
-			if((reg.test($(_input).val()) == false) && ($(_input).val()!='')){return _window.open(_input,options.errorMessage.email);}
-			else{return;}
+			if((reg.test($(_input).val()) == false) && $(_input).val()!=''){return false;/*_window.open(_input,options.errorMessage.email);*/}
+			else{return true;}
 		},
 		//Numara Kontrolu
 		number : function(_input){
 			var reg = new RegExp(/^[\+][0-9]+?$|^[0-9]+?$/);
-			if((reg.test($(_input).val()) == false) && ($(_input).val()!='')){return _window.open(_input,options.errorMessage.number);}
-			else{return;}
+			if((reg.test($(_input).val()) == false) && $(_input).val()!=''){return false/*_window.open(_input,options.errorMessage.number)*/;}
+			else{return true;}
+		},
+		//Minimum uzunluk kontrol
+		minLength : function(_input,val){
+			var _length = $(_input).val().length;
+			if( _length < val && _length != 0){return false;}
+			else{return true;}
+		},
+		//Max uzunluk kontrol
+		maxLength : function(_input,val){
+			if($(_input).val().length > val){return false;}
+			else{return true;}
 		},
 		//Checkbox Kontrolu
 		checkbox : {
 			checked : function(_inp){
 						if (!$(_inp).is(':checked')){
-							return _window.open(_inp,options.errorMessage.checkbox);
-						}else{return;}
+							return false/*_window.open(_inp,options.errorMessage.checkbox)*/;
+						}else{return true;}
 					},
+			maxChecked : function(_inp,val){	
+				var name = $(_inp).attr('name'),
+				    count = $(form).find('input[type="checkbox"][name="'+name+'"]').filter(':checked').length;
+				if(count > val){return false;}
+				else{return true;}
+			},
+			minChecked : function(){
+				var count = $(_inp).filter(':checked').length;
+				if(count < val){return false;}
+				else{return true;}
+			},
 			limit  : function(_inp){
 						var max,min,
 						count = _inp.filter(':checked').length;
 						if((max = options.checkbox.max) && count > max){
-							return _window.open(_inp.eq(0),options.errorMessage.maxChecked.replace('{count}',max));
+							return false/*_window.open(_inp.eq(0),options.errorMessage.maxChecked.replace('{count}',max))*/;
 						}else if((min = options.checkbox.min) && count < min){
-							return _window.open(_inp.eq(0),options.errorMessage.minChecked.replace('{count}',min));
-						}else{return;}
+							return false/*_window.open(_inp.eq(0),options.errorMessage.minChecked.replace('{count}',min))*/;
+						}else{return true;}
 					}
 		},
 		//Selectbox Kontrolü
@@ -97,15 +121,14 @@
 			selected : function(_inp){
 				var val = $(_inp).val();
 				if(val == '' || val == null){
-					return _window.open(_inp, options.errorMessage.selectbox);
-				}else{return;}
+					return false/*_window.open(_inp, options.errorMessage.selectbox)*/;
+				}else{return true;}
 			},
 			limit : function(_inp){
 				var max,min,
 					count = _inp.lenght;
 					console.log(count);		
 			}
-			
 		}
 	},
 	_window = {
@@ -153,26 +176,32 @@
 			$.hsnValidate.reset($(object));
 			var reg = RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength)\[([0-9])\]/i);
 			$(object).each(function(i, element){
-				var el = element,
+				var el = element, errors ='',
 				methods = $(el).data('hsnvalidate').split(',');
 				$(methods).each(function(i, element) {
 					if(element == 'required'){
-						if($(el).attr('type')=='checkbox'){check.checkbox.checked(el);}
-						else if(el.tagName =='SELECT'){check.selectbox.selected(el);}
-						else{check.space(el);}
+						if($(el).attr('type')=='checkbox' && !check.checkbox.checked(el)){errors += options.errorMessage.checkbox+'<br>';}
+						else if(el.tagName =='SELECT' && !check.selectbox.selected(el)){errors += options.errorMessage.selectbox+'<br>';}
+						else if(!check.space(el)){errors += options.errorMessage.empty+'<br>';}
 					}
-					if(element == 'number'){
-						check.number(el);
+					if(element == 'number' && !check.number(el)){
+						errors += options.errorMessage.number+'<br>';
 					}
-					if(element == 'email'){
-						check.mail(el);
-					}
+					if(element == 'email' && !check.mail(el)){
+						errors += options.errorMessage.email+'<br>';
+					}		
 					if(reg.test(element)){
-						var rules = element.split(/\[|,|\]/)
-						console.log(rules[1])
+						var rules = element.split(/\[|,|\]/);
+						if(rules[0] == 'maxLength' && !check.maxLength(el,rules[1])){
+							errors += options.errorMessage.maxLength.replace('{count}',rules[1])+'<br>';
+						}else if(rules[0] == 'minLength' && !check.minLength(el,rules[1])){
+							errors += options.errorMessage.minLength.replace('{count}',rules[1])+'<br>';
+						}else if(rules[0] == 'maxChecked' && !check.checkbox.maxChecked(el,rules[1])){
+							errors += options.errorMessage.maxChecked.replace('{count}',rules[1])+'<br>';
+						}
 					}
                 });
-                
+				if(errors != '') _window.open(el,errors);
             });
 			
 			
