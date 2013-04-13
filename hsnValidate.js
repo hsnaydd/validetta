@@ -101,20 +101,12 @@
 				if(count > val){return false;}
 				else{return true;}
 			},
-			minChecked : function(){
-				var count = $(_inp).filter(':checked').length;
+			minChecked : function(_inp,val){
+				var name = $(_inp).attr('name'),
+				    count = $(form).find('input[type="checkbox"][name="'+name+'"]').filter(':checked').length;
 				if(count < val){return false;}
 				else{return true;}
-			},
-			limit  : function(_inp){
-						var max,min,
-						count = _inp.filter(':checked').length;
-						if((max = options.checkbox.max) && count > max){
-							return false/*_window.open(_inp.eq(0),options.errorMessage.maxChecked.replace('{count}',max))*/;
-						}else if((min = options.checkbox.min) && count < min){
-							return false/*_window.open(_inp.eq(0),options.errorMessage.minChecked.replace('{count}',min))*/;
-						}else{return true;}
-					}
+			}
 		},
 		//Selectbox Kontrolü
 		selectbox : {
@@ -133,6 +125,7 @@
 	},
 	_window = {
 		open : function(_input,error){
+			if($(_input).parent().find('.'+options.errorClass).length > 0 ) return;
 			var pos= $(_input).position(),
 			W = $(_input).width(),
 			H = $(_input).height(),
@@ -197,7 +190,13 @@
 						}else if(rules[0] == 'minLength' && !check.minLength(el,rules[1])){
 							errors += options.errorMessage.minLength.replace('{count}',rules[1])+'<br>';
 						}else if(rules[0] == 'maxChecked' && !check.checkbox.maxChecked(el,rules[1])){
+							var name = $(el).attr('name');
+							el = $(object).filter('[type=checkbox][name='+name+']').eq(0);
 							errors += options.errorMessage.maxChecked.replace('{count}',rules[1])+'<br>';
+						}else if(rules[0] == 'minChecked' && !check.checkbox.minChecked(el,rules[1]) ){
+							var name = $(el).attr('name');
+							el = $(object).filter('[type=checkbox][name='+name+']').eq(0);
+							errors += options.errorMessage.minChecked.replace('{count}',rules[1])+'<br>';
 						}
 					}
                 });
@@ -265,8 +264,13 @@
 			init();
 		});
 		if(options.blurTrigger){
-			$(form).find('[data-hsnValidate]').on('blur',function(){
+			$(form).find('[data-hsnValidate]').not('[type=checkbox]').on('blur',function(){
 				object = this;
+				init();
+			});
+			$(form).find('[data-hsnValidate][type=checkbox]').on('click',function(){
+				var name = $(this).attr('name');
+				object = $(form).find('[data-hsnValidate][type=checkbox][name='+name+']').get(0);
 				init();
 			});
 		};
