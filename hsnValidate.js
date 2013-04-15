@@ -34,7 +34,10 @@
 			checkbox	: 'Bu alanı işaretmeleniz gerekli. Lütfen kontrol ediniz.',
 			maxChecked	: 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
 			minChecked	: 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
-			selectbox	: 'Bu alanda seçim yapmanız gerekli. Lütfen kontrol ediniz.'
+			selectbox	: 'Bu alanda seçim yapmanız gerekli. Lütfen kontrol ediniz.',
+			maxSelected : 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
+			minSelected : 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
+			notEqual	: 'Alanlar birbiriyle oyuşmuyor. Lütfen kontrol ediniz'
 		},
 		checkbox : {
 			name	: null,
@@ -59,76 +62,94 @@
 	},
 	check = {
 		//Bosluk Kontrolu
-		space : function(_input){
-				if(clear($(_input).val()) == ''){
-				return false/*_window.open(_input,options.errorMessage.empty)*/;
-				}else{return true;}
+		space : function(_inp){
+				return (clear($(_inp).val()) == '') ? false : true;
 		},
 		//Mail Kontrolu
-		mail : function(_input){
+		mail : function(_inp){
 			//var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/; 
 			var reg = new RegExp(/^[a-z]{1}[\d\w\.-]+@[\d\w-]{3,}\.[\w]{2,3}(\.\w{2})?$/);
-			if((reg.test($(_input).val()) == false) && $(_input).val()!=''){return false;/*_window.open(_input,options.errorMessage.email);*/}
-			else{return true;}
+			return ((reg.test($(_inp).val()) == false) && $(_inp).val()!='') ? false : true ;
 		},
 		//Numara Kontrolu
-		number : function(_input){
+		number : function(_inp){
 			var reg = new RegExp(/^[\+][0-9]+?$|^[0-9]+?$/);
-			if((reg.test($(_input).val()) == false) && $(_input).val()!=''){return false/*_window.open(_input,options.errorMessage.number)*/;}
-			else{return true;}
+			return ((reg.test($(_inp).val()) == false) && $(_inp).val()!='') ?  false : true;
 		},
 		//Minimum uzunluk kontrol
-		minLength : function(_input,val){
-			var _length = $(_input).val().length;
-			if( _length < val && _length != 0){return false;}
-			else{return true;}
+		minLength : function(_inp,val){
+			var _length = $(_inp).val().length;
+			return ( _length < val && _length != 0) ? false : true;
 		},
 		//Max uzunluk kontrol
-		maxLength : function(_input,val){
-			if($(_input).val().length > val){return false;}
-			else{return true;}
+		maxLength : function(_inp,val){
+			return ($(_inp).val().length > val) ? false : true;
 		},
+		equal : function(_inp,val){
+			return ($(form).find('input[type=text][name='+val+']').val() != $(_inp).val()) ? false : true;
+		},
+		/*creditCard : function(_inp){
+			var reg = new RegExp(/[^0-9]+/g),
+			cardNumber = $(_inp).val().replace(reg,''),
+			pos, digit, i, sub_total, sum = 0,
+			strlen = cardNumber.length;
+			if(strlen < 13){return false;}
+			for(i=0;i<strlen;i++){
+				pos = strlen - i;
+				digit = parseInt(cardNumber.substring(pos - 1, pos));
+				if(i % 2 == 1){
+					sub_total = digit * 2;
+					if(sub_total > 9){
+						sub_total = 1 + (sub_total - 10);
+					}
+				} else {
+					sub_total = digit;
+				}
+				sum += sub_total;
+			}
+			if(sum > 0 && sum % 10 == 0){
+				return true;
+			}
+			return false;
+		},*/
 		//Checkbox Kontrolu
 		checkbox : {
 			checked : function(_inp){
-						if (!$(_inp).is(':checked')){
-							return false/*_window.open(_inp,options.errorMessage.checkbox)*/;
-						}else{return true;}
+						return (!$(_inp).is(':checked')) ? false : true;
 					},
 			maxChecked : function(_inp,val){	
 				var name = $(_inp).attr('name'),
 				    count = $(form).find('input[type="checkbox"][name="'+name+'"]').filter(':checked').length;
-				if(count > val){return false;}
-				else{return true;}
+				return (count > val) ? false : true;
 			},
 			minChecked : function(_inp,val){
 				var name = $(_inp).attr('name'),
 				    count = $(form).find('input[type="checkbox"][name="'+name+'"]').filter(':checked').length;
-				if(count < val){return false;}
-				else{return true;}
+				return (count < val) ? false : true;
 			}
 		},
 		//Selectbox Kontrolü
 		selectbox : {
 			selected : function(_inp){
 				var val = $(_inp).val();
-				if(val == '' || val == null){
-					return false/*_window.open(_inp, options.errorMessage.selectbox)*/;
-				}else{return true;}
+				return (val == '' || val == null) ? false : true;
 			},
-			limit : function(_inp){
-				var max,min,
-					count = _inp.lenght;
-					console.log(count);		
+			maxSelected : function(_inp,val){
+				var count = $(_inp).val();
+				return (count != null && count != '' && count.length > val) ? false : true;	
+			},
+			minSelected : function(_inp,val){
+				var count = $(_inp).val();
+				return (count != null && count != '' && count.length < val) ? false : true;
 			}
 		}
 	},
 	_window = {
-		open : function(_input,error){
-			if($(_input).parent().find('.'+options.errorClass).length > 0 ) return;
-			var pos= $(_input).position(),
-			W = $(_input).width(),
-			H = $(_input).height(),
+		open : function(_inp,error){
+			if($(_inp).parent().find('.'+options.errorClass).length > 0 ) return;
+			var pos= $(_inp).position(),
+			W = $(_inp).width(),
+			H = $(_inp).height(),
 			T= pos.top,
 			errorObject = $('<span>').addClass(options.errorClass),
 			errorCloseObject = $('<span class="hsnErrClose">x</span>');
@@ -137,12 +158,12 @@
 				'left':pos.left+W+30+'px',
 				'top' :T+'px'
 			});
-			$(_input).parent().append(errorObject);
+			$(_inp).parent().append(errorObject);
 			errorObject.append(error,errorCloseObject);
 			handler = true; 
 		},
-		close : function(_input){
-			$(_input).parent().children('.'+options.errorClass+'').remove();
+		close : function(_inp){
+			$(_inp).parent().children('.'+options.errorClass+'').remove();
 			 handler = false;
 		}
 	},
@@ -167,7 +188,7 @@
 	},
 	init = function(){
 			$.hsnValidate.reset($(object));
-			var reg = RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength)\[([0-9])\]/i);
+			var reg = RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal)\[(\w){1,10}\]/i);
 			$(object).each(function(i, element){
 				var el = element, errors ='',
 				methods = $(el).data('hsnvalidate').split(',');
@@ -175,7 +196,7 @@
 					if(element == 'required'){
 						if($(el).attr('type')=='checkbox' && !check.checkbox.checked(el)){errors += options.errorMessage.checkbox+'<br>';}
 						else if(el.tagName =='SELECT' && !check.selectbox.selected(el)){errors += options.errorMessage.selectbox+'<br>';}
-						else if(!check.space(el)){errors += options.errorMessage.empty+'<br>';}
+						else if(($(el).attr('type') =='text' || el.tagName =='TEXTAREA') && !check.space(el)){errors += options.errorMessage.empty+'<br>';}	
 					}
 					if(element == 'number' && !check.number(el)){
 						errors += options.errorMessage.number+'<br>';
@@ -185,6 +206,7 @@
 					}		
 					if(reg.test(element)){
 						var rules = element.split(/\[|,|\]/);
+						console.log(rules[1])
 						if(rules[0] == 'maxLength' && !check.maxLength(el,rules[1])){
 							errors += options.errorMessage.maxLength.replace('{count}',rules[1])+'<br>';
 						}else if(rules[0] == 'minLength' && !check.minLength(el,rules[1])){
@@ -197,6 +219,12 @@
 							var name = $(el).attr('name');
 							el = $(object).filter('[type=checkbox][name='+name+']').eq(0);
 							errors += options.errorMessage.minChecked.replace('{count}',rules[1])+'<br>';
+						}else if(rules[0] == 'maxSelected' && !check.selectbox.maxSelected(el,rules[1])){
+							errors += options.errorMessage.maxSelected.replace('{count}',rules[1])+'<br>';
+						}else if(rules[0] == 'minSelected' && !check.selectbox.minSelected(el,rules[1])){
+							errors += options.errorMessage.minSelected.replace('{count}',rules[1])+'<br>';
+						}else if(rules[0] == 'equal' && !check.equal(el,rules[1])){
+							errors += options.errorMessage.notEqual+'<br>'
 						}
 					}
                 });
