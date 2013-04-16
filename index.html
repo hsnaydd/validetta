@@ -13,7 +13,7 @@ $(function(){
 			name : 'deneme',
 			max	 : 2,
 			min	 : 1	
-		}/*,
+		},
 		ajax : {
 			call 		: true,
 			type 		: 'POST',
@@ -24,10 +24,10 @@ $(function(){
 			beforeSend : function(){
 				console.log('start')	
 			},
-			complate : function(){
+			complete : function(){
 				console.log('Finish him')	
 			}
-		}*/
+		}
 	});
 });
 </script>
@@ -49,6 +49,7 @@ label[for=deneme]{width:100px}
 	    <li><label>Numara</label><input type="text" name="soyisim" data-hsnvalidate="number,required" /></li>
 		<li><label>Numaraya Eşit</label><input type="text" name="soyisim2" data-hsnvalidate="equal[soyisim]" /></li>
 	    <li><label>Email</label><input type="text" name="email" data-hsnvalidate="email" /></li>
+        <li><label>Kredi Kartı</label><input type="text" name="creditCard" data-hsnvalidate="creditCard" /></li>
 	    <li><label for="deneme" class="ilblock">Checkbox 1</label><input type="checkbox" data-hsnvalidate="minChecked[1],maxChecked[2]" name="deneme" class="ilblock"/></li>
         <li><label for="deneme" class="ilblock">Checkbox 2</label><input type="checkbox" data-hsnvalidate="minChecked[1],maxChecked[2]" name="deneme" class="ilblock"/></li>
         <li><label for="deneme" class="ilblock">Checkbox 3</label><input type="checkbox" data-hsnvalidate="minChecked[1],maxChecked[2]" name="deneme" class="ilblock"/></li>
@@ -68,6 +69,7 @@ label[for=deneme]{width:100px}
             </select>
         </li>
 	    <li><label>Text Area</label><textarea name="textarea" data-hsnvalidate="required"></textarea></li>
+         <li><label for="deneme" class="ilblock">Checkbox 1</label><input type="checkbox" data-hsnvalidate="required" name="deneme1" class="ilblock"/></li>
 	    <li><input type="submit" value="Kaydet" /><input type="reset"/></li>
 	</ul>
 

@@ -12,13 +12,6 @@
  * Copyright 2012 Hasan Aydoğdu - http://www.hasanaydogdu.com
  *
  */
- /*
- 	* required
-	* number
-	* email
-	* minlength
-	* maxlength
- */
 
 (function($){
 	var handler = false,form,object,
@@ -37,12 +30,8 @@
 			selectbox	: 'Bu alanda seçim yapmanız gerekli. Lütfen kontrol ediniz.',
 			maxSelected : 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
 			minSelected : 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
-			notEqual	: 'Alanlar birbiriyle oyuşmuyor. Lütfen kontrol ediniz'
-		},
-		checkbox : {
-			name	: null,
-			max		: null,
-			min		: null		
+			notEqual	: 'Alanlar birbiriyle oyuşmuyor. Lütfen kontrol ediniz',
+			creditCard	: 'Kredi kartı numarası geçersiz. Lütfen kontrol ediniz.'
 		},
 		ajax : {
 			call 		: false,
@@ -67,7 +56,6 @@
 		},
 		//Mail Kontrolu
 		mail : function(_inp){
-			//var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/; 
 			var reg = new RegExp(/^[a-z]{1}[\d\w\.-]+@[\d\w-]{3,}\.[\w]{2,3}(\.\w{2})?$/);
 			return ((reg.test($(_inp).val()) == false) && $(_inp).val()!='') ? false : true ;
 		},
@@ -85,15 +73,17 @@
 		maxLength : function(_inp,val){
 			return ($(_inp).val().length > val) ? false : true;
 		},
+		//Eşitlik kontrolü
 		equal : function(_inp,val){
 			return ($(form).find('input[type=text][name='+val+']').val() != $(_inp).val()) ? false : true;
 		},
-		/*creditCard : function(_inp){
+		//Kredi kartı kontrolü
+		creditCard : function(_inp){
 			var reg = new RegExp(/[^0-9]+/g),
 			cardNumber = $(_inp).val().replace(reg,''),
 			pos, digit, i, sub_total, sum = 0,
 			strlen = cardNumber.length;
-			if(strlen < 13){return false;}
+			if(strlen < 16){return false;}
 			for(i=0;i<strlen;i++){
 				pos = strlen - i;
 				digit = parseInt(cardNumber.substring(pos - 1, pos));
@@ -111,12 +101,12 @@
 				return true;
 			}
 			return false;
-		},*/
+		},
 		//Checkbox Kontrolu
 		checkbox : {
 			checked : function(_inp){
 						return (!$(_inp).is(':checked')) ? false : true;
-					},
+			},
 			maxChecked : function(_inp,val){	
 				var name = $(_inp).attr('name'),
 				    count = $(form).find('input[type="checkbox"][name="'+name+'"]').filter(':checked').length;
@@ -168,10 +158,10 @@
 		}
 	},
 	ajax = function(){
-		var data = $(obje).serialize(),request,
-			url = (options.ajax.url) ? options.ajax.url : $(obje).attr('action');
+		var data = $(form).serialize(),request,
+			url = (options.ajax.url) ? options.ajax.url : $(form).attr('action');
 		/* Debug */
-		if((!options.ajax.url && $(obje).attr('action')=='')) console.log('Form action not valid !');
+		if((!options.ajax.url && $(form).attr('action')=='')) console.log('Form action not valid !');
 		$.ajax({
 			type 	: options.ajax.type,
 			url		: url,
@@ -186,7 +176,7 @@
 		.fail(function(jqXHR, textStatus){ options.ajax.fail(jqXHR, textStatus);})
 		.always(function(result){options.ajax.complete(result);});	
 	},
-	init = function(){
+	init = function(e){
 			$.hsnValidate.reset($(object));
 			var reg = RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal)\[(\w){1,10}\]/i);
 			$(object).each(function(i, element){
@@ -203,10 +193,12 @@
 					}
 					if(element == 'email' && !check.mail(el)){
 						errors += options.errorMessage.email+'<br>';
-					}		
+					}
+					if(element == 'creditCard' && $(el).val()!='' && !check.creditCard(el)){
+						errors += options.errorMessage.creditCard+'<br>';
+					}	
 					if(reg.test(element)){
 						var rules = element.split(/\[|,|\]/);
-						console.log(rules[1])
 						if(rules[0] == 'maxLength' && !check.maxLength(el,rules[1])){
 							errors += options.errorMessage.maxLength.replace('{count}',rules[1])+'<br>';
 						}else if(rules[0] == 'minLength' && !check.minLength(el,rules[1])){
@@ -228,60 +220,19 @@
 						}
 					}
                 });
-				if(errors != '') _window.open(el,errors);
+				(errors != '') && _window.open(el,errors);
             });
-			
-			
-			//console.log(obje.nodeType == 1)
-			/*if(obje.tagName =='FORM'){
-				$.hsnValidate.reset($(obje).find('.'+options.errorClass));
-				$(obje).find('.required').each(function(i,name){
-					if($(name).attr('type')=='checkbox'){check.checkbox.checked(name);}
-					else if(name.tagName =='SELECT'){check.selectbox.selected(name);}
-					else{check.space(name);}
-				});
-				$(obje).find('.email').each(function(i,name) {;
-					check.mail(name);
-				});
-				$(obje).find('.number').each(function(i,name) {
-					check.number(name);
-				});
-				if(name = options.checkbox.name){
-					var cbs = $(obje).find('input[type="checkbox"][name="'+name+'"]');
-					check.checkbox.limit(cbs);
-				};
-			}else{
-				$.hsnValidate.reset($(obje));
-				var name;
-				if($(obje).hasClass('required')){
-					if($(obje).attr('type')=='checkbox'){check.checkbox.checked(obje);}
-					else if(obje.tagName =='SELECT'){check.selectbox.selected(obje);}
-					else{check.space(obje);}
-				}
-				if ($(obje).hasClass('email')){
-					check.mail(obje);
-				}
-				if($(obje).hasClass('number')){
-					check.number(obje);
-				}
-				if((name = options.checkbox.name) && obje.type == 'checkbox'){
-					var cbs = $(obje).parents('form').find('input[type="checkbox"][name="'+name+'"]');
-					$.hsnValidate.reset(cbs);
-					check.checkbox.limit(cbs);
-				};
-				handler = true;
-			}
-			if(handler){return false;}
-			else{*/
+			if(handler || e.type != 'submit'){return false;}
+			else{
 				/*if(options.onCompleteFunc){
 					options.onCompleteFunc()
 					return false;
 				}else{return;}*/
-				/*if(options.ajax.call){
+				if(options.ajax.call){
 					ajax();
 					return false;	
 				}
-			}*/
+			}
 	};
 	$.fn.hsnValidate = function(ayar){
 		options = $.extend(true,{},defaults,ayar);
@@ -289,17 +240,17 @@
 		$(form).submit(function(e){
 			e.preventDefault();
 			object = $(form).find('[data-hsnValidate]');
-			init();
+			init(e);
 		});
 		if(options.blurTrigger){
-			$(form).find('[data-hsnValidate]').not('[type=checkbox]').on('blur',function(){
+			$(form).find('[data-hsnValidate]').not('[type=checkbox]').on('blur',function(e){
 				object = this;
-				init();
+				init(e);
 			});
-			$(form).find('[data-hsnValidate][type=checkbox]').on('click',function(){
+			$(form).find('[data-hsnValidate][type=checkbox]').on('click',function(e){
 				var name = $(this).attr('name');
 				object = $(form).find('[data-hsnValidate][type=checkbox][name='+name+']').get(0);
-				init();
+				init(e);
 			});
 		};
 	};	
@@ -308,10 +259,8 @@
 		//ilerde kullanırız
 	};
 	$.hsnValidate.reset = function(_inp) {
-		//handler = false;
 		_inp.each(function(index, name) {
 			_window.close(name)
-			//$(name).parent().children('.'+options.errorClass+'').remove();
 		});	
 	};
 	$.hsnValidate.init = function() {
