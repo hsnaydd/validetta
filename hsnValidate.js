@@ -14,7 +14,8 @@
  */
 
 (function($){
-	var handler = false,form,object,
+	"use strict"
+	var handler = false,form,object,options,
 	defaults = {
 		errorClass 		: 'formHata',
 		errorCloseClass : 'formHataKapa',
@@ -51,36 +52,36 @@
 	},
 	check = {
 		//Bosluk Kontrolu
-		space : function(_inp){
-				return (clear($(_inp).val()) == '') ? false : true;
+		space : function(val){
+				return (clear(val) == '') ? false : true;
 		},
 		//Mail Kontrolu
-		mail : function(_inp){
+		mail : function(val){
 			var reg = new RegExp(/^[a-z]{1}[\d\w\.-]+@[\d\w-]{3,}\.[\w]{2,3}(\.\w{2})?$/);
-			return ((reg.test($(_inp).val()) == false) && $(_inp).val()!='') ? false : true ;
+			return ((reg.test(val) == false) && val!='') ? false : true ;
 		},
 		//Numara Kontrolu
-		number : function(_inp){
+		number : function(val){
 			var reg = new RegExp(/^[\+][0-9]+?$|^[0-9]+?$/);
-			return ((reg.test($(_inp).val()) == false) && $(_inp).val()!='') ?  false : true;
+			return ((reg.test(val) == false) && val!='') ?  false : true;
 		},
 		//Minimum uzunluk kontrol
-		minLength : function(_inp,val){
-			var _length = $(_inp).val().length;
-			return ( _length < val && _length != 0) ? false : true;
+		minLength : function(val,arg){
+			var _length = val.length;
+			return ( _length < arg && _length != 0) ? false : true;
 		},
 		//Max uzunluk kontrol
-		maxLength : function(_inp,val){
-			return ($(_inp).val().length > val) ? false : true;
+		maxLength : function(val,arg){
+			return (val.length > arg) ? false : true;
 		},
 		//Eşitlik kontrolü
-		equal : function(_inp,val){
-			return ($(form).find('input[type=text][name='+val+']').val() != $(_inp).val()) ? false : true;
+		equal : function(val,arg){
+			return ($(form).find('input[type=text][name='+arg+']').val() != val) ? false : true;
 		},
 		//Kredi kartı kontrolü
-		creditCard : function(_inp){
+		creditCard : function(val){
 			var reg = new RegExp(/[^0-9]+/g),
-			cardNumber = $(_inp).val().replace(reg,''),
+			cardNumber = val.replace(reg,''),
 			pos, digit, i, sub_total, sum = 0,
 			strlen = cardNumber.length;
 			if(strlen < 16){return false;}
@@ -107,36 +108,33 @@
 			checked : function(_inp){
 						return (!$(_inp).is(':checked')) ? false : true;
 			},
-			maxChecked : function(_inp,val){	
+			maxChecked : function(_inp,arg){	
 				var name = $(_inp).attr('name'),
 				    count = $(form).find('input[type="checkbox"][name="'+name+'"]').filter(':checked').length;
-				return (count > val) ? false : true;
+				return (count > arg) ? false : true;
 			},
-			minChecked : function(_inp,val){
+			minChecked : function(_inp,arg){
 				var name = $(_inp).attr('name'),
 				    count = $(form).find('input[type="checkbox"][name="'+name+'"]').filter(':checked').length;
-				return (count < val) ? false : true;
+				return (count < arg) ? false : true;
 			}
 		},
 		//Selectbox Kontrolü
 		selectbox : {
-			selected : function(_inp){
-				var val = $(_inp).val();
+			selected : function(val){
 				return (val == '' || val == null) ? false : true;
 			},
-			maxSelected : function(_inp,val){
-				var count = $(_inp).val();
-				return (count != null && count != '' && count.length > val) ? false : true;	
+			maxSelected : function(val,arg){
+				return (val != null && val != '' && val.length > arg) ? false : true;	
 			},
-			minSelected : function(_inp,val){
-				var count = $(_inp).val();
-				return (count != null && count != '' && count.length < val) ? false : true;
+			minSelected : function(val,arg){
+				return (val != null && val != '' && val.length < arg) ? false : true;
 			}
 		}
 	},
 	_window = {
 		open : function(_inp,error){
-			if($(_inp).parent().find('.'+options.errorClass).length > 0 ) return;
+			if($(_inp).parent().find('.'+options.errorClass).length > 0 ){return;}
 			var pos= $(_inp).position(),
 			W = $(_inp).width(),
 			H = $(_inp).height(),
@@ -161,7 +159,7 @@
 		var data = $(form).serialize(),request,
 			url = (options.ajax.url) ? options.ajax.url : $(form).attr('action');
 		/* Debug */
-		if((!options.ajax.url && $(form).attr('action')=='')) console.log('Form action not valid !');
+		(!options.ajax.url && $(form).attr('action')=='') && console.log('Form action not valid !');
 		$.ajax({
 			type 	: options.ajax.type,
 			url		: url,
@@ -180,28 +178,28 @@
 			$.hsnValidate.reset($(object));
 			var reg = RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal)\[(\w){1,10}\]/i);
 			$(object).each(function(i, element){
-				var el = element, errors ='',
+				var el = element, errors ='',val = $(el).val(),
 				methods = $(el).data('hsnvalidate').split(',');
 				$(methods).each(function(i, element) {
 					if(element == 'required'){
 						if($(el).attr('type')=='checkbox' && !check.checkbox.checked(el)){errors += options.errorMessage.checkbox+'<br>';}
-						else if(el.tagName =='SELECT' && !check.selectbox.selected(el)){errors += options.errorMessage.selectbox+'<br>';}
-						else if(($(el).attr('type') =='text' || el.tagName =='TEXTAREA') && !check.space(el)){errors += options.errorMessage.empty+'<br>';}	
+						else if(el.tagName =='SELECT' && !check.selectbox.selected(val)){errors += options.errorMessage.selectbox+'<br>';}
+						else if(($(el).attr('type') =='text' || el.tagName =='TEXTAREA') && !check.space(val)){errors += options.errorMessage.empty+'<br>';}	
 					}
-					if(element == 'number' && !check.number(el)){
+					if(element == 'number' && !check.number(val)){
 						errors += options.errorMessage.number+'<br>';
 					}
-					if(element == 'email' && !check.mail(el)){
+					if(element == 'email' && !check.mail(val)){
 						errors += options.errorMessage.email+'<br>';
 					}
-					if(element == 'creditCard' && $(el).val()!='' && !check.creditCard(el)){
+					if(element == 'creditCard' && val!='' && !check.creditCard(val)){
 						errors += options.errorMessage.creditCard+'<br>';
 					}	
 					if(reg.test(element)){
 						var rules = element.split(/\[|,|\]/);
-						if(rules[0] == 'maxLength' && !check.maxLength(el,rules[1])){
+						if(rules[0] == 'maxLength' && !check.maxLength(val,rules[1])){
 							errors += options.errorMessage.maxLength.replace('{count}',rules[1])+'<br>';
-						}else if(rules[0] == 'minLength' && !check.minLength(el,rules[1])){
+						}else if(rules[0] == 'minLength' && !check.minLength(val,rules[1])){
 							errors += options.errorMessage.minLength.replace('{count}',rules[1])+'<br>';
 						}else if(rules[0] == 'maxChecked' && !check.checkbox.maxChecked(el,rules[1])){
 							var name = $(el).attr('name');
@@ -211,11 +209,11 @@
 							var name = $(el).attr('name');
 							el = $(object).filter('[type=checkbox][name='+name+']').eq(0);
 							errors += options.errorMessage.minChecked.replace('{count}',rules[1])+'<br>';
-						}else if(rules[0] == 'maxSelected' && !check.selectbox.maxSelected(el,rules[1])){
+						}else if(rules[0] == 'maxSelected' && !check.selectbox.maxSelected(val,rules[1])){
 							errors += options.errorMessage.maxSelected.replace('{count}',rules[1])+'<br>';
-						}else if(rules[0] == 'minSelected' && !check.selectbox.minSelected(el,rules[1])){
+						}else if(rules[0] == 'minSelected' && !check.selectbox.minSelected(val,rules[1])){
 							errors += options.errorMessage.minSelected.replace('{count}',rules[1])+'<br>';
-						}else if(rules[0] == 'equal' && !check.equal(el,rules[1])){
+						}else if(rules[0] == 'equal' && !check.equal(val,rules[1])){
 							errors += options.errorMessage.notEqual+'<br>'
 						}
 					}

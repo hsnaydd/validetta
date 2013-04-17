@@ -9,11 +9,6 @@
 <script type="text/javascript">
 $(function(){
 	$('#kayit').hsnValidate({
-		checkbox : {
-			name : 'deneme',
-			max	 : 2,
-			min	 : 1	
-		},
 		ajax : {
 			call 		: true,
 			type 		: 'POST',
@@ -45,7 +40,7 @@ label[for=deneme]{width:100px}
 <body>
 <form id="kayit" action="dosyalar/ajax.php" method="post">
 	<ul>
-		<li><label>İsim</label><input type="text" name="isim" data-hsnvalidate="required,minLength[2]" class="required" /></li>
+		<li><label>İsim</label><input type="text" name="isim" data-hsnvalidate="required,minLength[2],maxLength[3]" class="required" /></li>
 	    <li><label>Numara</label><input type="text" name="soyisim" data-hsnvalidate="number,required" /></li>
 		<li><label>Numaraya Eşit</label><input type="text" name="soyisim2" data-hsnvalidate="equal[soyisim]" /></li>
 	    <li><label>Email</label><input type="text" name="email" data-hsnvalidate="email" /></li>
