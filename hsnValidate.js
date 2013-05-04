@@ -45,13 +45,14 @@
 			complete	: $.noop
 		},
 		blurTrigger		: true,
-		onCompleteFunc	: $.noop	
+		onCompleteFunc	: $.noop,
+		customReg		: {}	
 	},
 	clear = function(value){
 		return value = value.replace(/^\s+|\s+$/g, '');
 	},
 	check = {
-		//Bosluk Kontrolu
+		//Empty Space Control
 		space : function(val){
 				return (clear(val) == '') ? false : true;
 		},
@@ -74,11 +75,13 @@
 		maxLength : function(val,arg){
 			return (val.length > arg) ? false : true;
 		},
-		//Eşitlik kontrolü
+		//Equal Control
 		equal : function(val,arg){
 			return ($(form).find('input[type=text][name='+arg+']').val() != val) ? false : true;
 		},
-		//Kredi kartı kontrolü
+		/*	Credit Card Control
+			@ From : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers 
+		*/
 		creditCard : function(val){
 			var reg = new RegExp(/[^0-9]+/g),
 			cardNumber = val.replace(reg,''),
@@ -130,6 +133,10 @@
 			minSelected : function(val,arg){
 				return (val != null && val != '' && val.length < arg) ? false : true;
 			}
+		},
+		customReg : function(val,reg){
+			var reg = new RegExp(reg);
+			return ((reg.test(val) == false) && val!='') ? false : true ;
 		}
 	},
 	_window = {
@@ -176,45 +183,47 @@
 	},
 	init = function(e){
 			$.hsnValidate.reset($(object));
-			var reg = RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal)\[(\w){1,10}\]/i);
+			var reg = RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|custom)\[(\w){1,10}\]/i);
 			$(object).each(function(i, element){
 				var el = element, errors ='',val = $(el).val(),
 				methods = $(el).data('hsnvalidate').split(',');
 				$(methods).each(function(i, element) {
 					if(element == 'required'){
-						if($(el).attr('type')=='checkbox' && !check.checkbox.checked(el)){errors += options.errorMessage.checkbox+'<br>';}
-						else if(el.tagName =='SELECT' && !check.selectbox.selected(val)){errors += options.errorMessage.selectbox+'<br>';}
-						else if(($(el).attr('type') =='text' || el.tagName =='TEXTAREA') && !check.space(val)){errors += options.errorMessage.empty+'<br>';}	
+						if($(el).attr('type')=='checkbox' && !check.checkbox.checked(el)){errors += options.errorMessage.checkbox+'<br />';}
+						else if(el.tagName =='SELECT' && !check.selectbox.selected(val)){errors += options.errorMessage.selectbox+'<br />';}
+						else if(($(el).attr('type') =='text' || el.tagName =='TEXTAREA') && !check.space(val)){errors += options.errorMessage.empty+'<br />';}	
 					}
 					if(element == 'number' && !check.number(val)){
-						errors += options.errorMessage.number+'<br>';
+						errors += options.errorMessage.number+'<br />';
 					}
 					if(element == 'email' && !check.mail(val)){
-						errors += options.errorMessage.email+'<br>';
+						errors += options.errorMessage.email+'<br />';
 					}
 					if(element == 'creditCard' && val!='' && !check.creditCard(val)){
-						errors += options.errorMessage.creditCard+'<br>';
+						errors += options.errorMessage.creditCard+'<br />';
 					}	
 					if(reg.test(element)){
 						var rules = element.split(/\[|,|\]/);
 						if(rules[0] == 'maxLength' && !check.maxLength(val,rules[1])){
-							errors += options.errorMessage.maxLength.replace('{count}',rules[1])+'<br>';
+							errors += options.errorMessage.maxLength.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'minLength' && !check.minLength(val,rules[1])){
-							errors += options.errorMessage.minLength.replace('{count}',rules[1])+'<br>';
+							errors += options.errorMessage.minLength.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'maxChecked' && !check.checkbox.maxChecked(el,rules[1])){
 							var name = $(el).attr('name');
 							el = $(object).filter('[type=checkbox][name='+name+']').eq(0);
-							errors += options.errorMessage.maxChecked.replace('{count}',rules[1])+'<br>';
+							errors += options.errorMessage.maxChecked.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'minChecked' && !check.checkbox.minChecked(el,rules[1]) ){
 							var name = $(el).attr('name');
 							el = $(object).filter('[type=checkbox][name='+name+']').eq(0);
-							errors += options.errorMessage.minChecked.replace('{count}',rules[1])+'<br>';
+							errors += options.errorMessage.minChecked.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'maxSelected' && !check.selectbox.maxSelected(val,rules[1])){
-							errors += options.errorMessage.maxSelected.replace('{count}',rules[1])+'<br>';
+							errors += options.errorMessage.maxSelected.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'minSelected' && !check.selectbox.minSelected(val,rules[1])){
-							errors += options.errorMessage.minSelected.replace('{count}',rules[1])+'<br>';
+							errors += options.errorMessage.minSelected.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'equal' && !check.equal(val,rules[1])){
-							errors += options.errorMessage.notEqual+'<br>'
+							errors += options.errorMessage.notEqual+'<br />'
+						}else if(rules[0] == 'custom' && !check.customReg(val,options.customReg[rules[1]].method)){
+							errors += (options.customReg[rules[1]].errorMessage || options.errorMessage.empty)+'<br />'
 						}
 					}
                 });
