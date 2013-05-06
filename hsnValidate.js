@@ -16,24 +16,24 @@
 (function($){
 	"use strict"
 	var handler = false,form,object,options,
+	messages = {
+		empty		: 'Bu alanı doldurmanız gerekli. Lütfen kontrol ediniz.',
+		email		: 'Eposta adresiniz geçersiz görünüyor. Lütfen kontrol ediniz.',
+		number		: 'Bu alana sadece rakam girişi yapabilirsiniz.',
+		maxLength	: 'Max {count} karakter girebilirsiniz !',
+		minLength	: 'Minimum {count} karakter girmelisiniz! ',
+		checkbox	: 'Bu alanı işaretmeleniz gerekli. Lütfen kontrol ediniz.',
+		maxChecked	: 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
+		minChecked	: 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
+		selectbox	: 'Bu alanda seçim yapmanız gerekli. Lütfen kontrol ediniz.',
+		maxSelected : 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
+		minSelected : 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
+		notEqual	: 'Alanlar birbiriyle oyuşmuyor. Lütfen kontrol ediniz',
+		creditCard	: 'Kredi kartı numarası geçersiz. Lütfen kontrol ediniz.'
+	},
 	defaults = {
 		errorClass 		: 'formHata',
 		errorCloseClass : 'formHataKapa',
-		errorMessage : {
-			empty		: 'Bu alanı doldurmanız gerekli. Lütfen kontrol ediniz.',
-			email		: 'Eposta adresiniz geçersiz görünüyor. Lütfen kontrol ediniz.',
-			number		: 'Bu alana sadece rakam girişi yapabilirsiniz.',
-			maxLength	: 'Max {count} karakter girebilirsiniz !',
-			minLength	: 'Minimum {count} karakter girmelisiniz! ',
-			checkbox	: 'Bu alanı işaretmeleniz gerekli. Lütfen kontrol ediniz.',
-			maxChecked	: 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
-			minChecked	: 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
-			selectbox	: 'Bu alanda seçim yapmanız gerekli. Lütfen kontrol ediniz.',
-			maxSelected : 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
-			minSelected : 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
-			notEqual	: 'Alanlar birbiriyle oyuşmuyor. Lütfen kontrol ediniz',
-			creditCard	: 'Kredi kartı numarası geçersiz. Lütfen kontrol ediniz.'
-		},
 		ajax : {
 			call 		: false,
 			type		: 'GET',
@@ -189,41 +189,41 @@
 				methods = $(el).data('hsnvalidate').split(',');
 				$(methods).each(function(i, element) {
 					if(element == 'required'){
-						if($(el).attr('type')=='checkbox' && !check.checkbox.checked(el)){errors += options.errorMessage.checkbox+'<br />';}
-						else if(el.tagName =='SELECT' && !check.selectbox.selected(val)){errors += options.errorMessage.selectbox+'<br />';}
-						else if(($(el).attr('type') =='text' || el.tagName =='TEXTAREA') && !check.space(val)){errors += options.errorMessage.empty+'<br />';}	
+						if($(el).attr('type')=='checkbox' && !check.checkbox.checked(el)){errors += messages.checkbox+'<br />';}
+						else if(el.tagName =='SELECT' && !check.selectbox.selected(val)){errors += messages.selectbox+'<br />';}
+						else if(($(el).attr('type') =='text' || el.tagName =='TEXTAREA') && !check.space(val)){errors += messages.empty+'<br />';}	
 					}
 					if(element == 'number' && !check.number(val)){
-						errors += options.errorMessage.number+'<br />';
+						errors += messages.number+'<br />';
 					}
 					if(element == 'email' && !check.mail(val)){
-						errors += options.errorMessage.email+'<br />';
+						errors += messages.email+'<br />';
 					}
 					if(element == 'creditCard' && val!='' && !check.creditCard(val)){
-						errors += options.errorMessage.creditCard+'<br />';
+						errors += messages.creditCard+'<br />';
 					}	
 					if(reg.test(element)){
 						var rules = element.split(/\[|,|\]/);
 						if(rules[0] == 'maxLength' && !check.maxLength(val,rules[1])){
-							errors += options.errorMessage.maxLength.replace('{count}',rules[1])+'<br />';
+							errors += messages.maxLength.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'minLength' && !check.minLength(val,rules[1])){
-							errors += options.errorMessage.minLength.replace('{count}',rules[1])+'<br />';
+							errors += messages.minLength.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'maxChecked' && !check.checkbox.maxChecked(el,rules[1])){
 							var name = $(el).attr('name');
 							el = $(object).filter('[type=checkbox][name='+name+']').eq(0);
-							errors += options.errorMessage.maxChecked.replace('{count}',rules[1])+'<br />';
+							errors += messages.maxChecked.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'minChecked' && !check.checkbox.minChecked(el,rules[1]) ){
 							var name = $(el).attr('name');
 							el = $(object).filter('[type=checkbox][name='+name+']').eq(0);
-							errors += options.errorMessage.minChecked.replace('{count}',rules[1])+'<br />';
+							errors += messages.minChecked.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'maxSelected' && !check.selectbox.maxSelected(val,rules[1])){
-							errors += options.errorMessage.maxSelected.replace('{count}',rules[1])+'<br />';
+							errors += messages.maxSelected.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'minSelected' && !check.selectbox.minSelected(val,rules[1])){
-							errors += options.errorMessage.minSelected.replace('{count}',rules[1])+'<br />';
+							errors += messages.minSelected.replace('{count}',rules[1])+'<br />';
 						}else if(rules[0] == 'equal' && !check.equal(val,rules[1])){
-							errors += options.errorMessage.notEqual+'<br />'
+							errors += messages.notEqual+'<br />'
 						}else if(rules[0] == 'custom' && !check.customReg(val,options.customReg[rules[1]].method)){
-							errors += (options.customReg[rules[1]].errorMessage || options.errorMessage.empty)+'<br />'
+							errors += (options.customReg[rules[1]].errorMessage || messages.empty)+'<br />'
 						}
 					}
                 });
@@ -243,6 +243,9 @@
 	};
 	$.fn.hsnValidate = function(ayar){
 		options = $.extend(true,{},defaults,ayar);
+		if($.hsnValidateLanguage){
+			messages = $.extend(true,{},messages,$.hsnValidateLanguage.messages);
+		}
 		form = this;
 		$(form).submit(function(e){
 			e.preventDefault();
