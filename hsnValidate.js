@@ -253,17 +253,13 @@
 			init(e);
 		});
 		if(options.blurTrigger){
-			$(form).find('[data-hsnValidate]').not('[type=checkbox]').on('blur',function(e){
+			$(form).find('[data-hsnValidate]').not('[type=checkbox]').on('change',function(e){
 				object = this;
 				init(e);
 			});
 			$(form).find('[data-hsnValidate][type=checkbox]').on('click',function(e){
 				var name = $(this).attr('name');
 				object = $(form).find('[data-hsnValidate][type=checkbox][name='+name+']').get(0);
-				init(e);
-			});
-			$(form).find('select[data-hsnValidate]').change(function(e){
-				object = this;
 				init(e);
 			});
 		};
