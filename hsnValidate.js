@@ -17,19 +17,19 @@
 	"use strict"
 	var handler = false,form,object,options,
 	messages = {
-		empty		: 'Bu alanı doldurmanız gerekli. Lütfen kontrol ediniz.',
-		email		: 'Eposta adresiniz geçersiz görünüyor. Lütfen kontrol ediniz.',
-		number		: 'Bu alana sadece rakam girişi yapabilirsiniz.',
-		maxLength	: 'Max {count} karakter girebilirsiniz !',
-		minLength	: 'Minimum {count} karakter girmelisiniz! ',
-		checkbox	: 'Bu alanı işaretmeleniz gerekli. Lütfen kontrol ediniz.',
-		maxChecked	: 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
-		minChecked	: 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
-		selectbox	: 'Bu alanda seçim yapmanız gerekli. Lütfen kontrol ediniz.',
-		maxSelected : 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
-		minSelected : 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
-		notEqual	: 'Alanlar birbiriyle oyuşmuyor. Lütfen kontrol ediniz',
-		creditCard	: 'Kredi kartı numarası geçersiz. Lütfen kontrol ediniz.'
+		empty		: 'This field is required. Please be sure to check.',
+		email		: 'Your E-mail address appears to be invalid. Please be sure to check.',
+		number		: 'You can only enter numbers in this field.',
+		maxLength	: 'Maximum {count} characters allowed!',
+		minLength	: 'Minimum {count} characters allowed! ',
+		checkbox	: 'This checkbox is required. Please be sure to check.',
+		maxChecked	: 'Maximum {count} options allowed. Please be sure to check.',
+		minChecked	: 'Please select minimum {count} options.',
+		selectbox	: 'Please select an option.',
+		maxSelected : 'Maximum {count} selection allowed. Please be sure to check.',
+		minSelected : 'Minimum {count} selection allowed. Please be sure to check.',
+		notEqual	: 'Fields do not match. Please be sure to check.',
+		creditCard	: 'Invalid credit card number. Please be sure to check.'
 	},
 	defaults = {
 		errorClass 		: 'formHata',
@@ -260,6 +260,10 @@
 			$(form).find('[data-hsnValidate][type=checkbox]').on('click',function(e){
 				var name = $(this).attr('name');
 				object = $(form).find('[data-hsnValidate][type=checkbox][name='+name+']').get(0);
+				init(e);
+			});
+			$(form).find('select[data-hsnValidate]').change(function(e){
+				object = this;
 				init(e);
 			});
 		};
