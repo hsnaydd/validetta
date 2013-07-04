@@ -183,7 +183,7 @@
 	},
 	init = function(e){
 			$.hsnValidate.reset($(object));
-			var reg = RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|custom)\[(\w){1,10}\]/i);
+			var reg = new RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|custom)\[(\w){1,10}\]/i);
 			$(object).each(function(i, element){
 				var el = element, errors ='',val = $(el).val(),
 				methods = $(el).data('hsnvalidate').split(',');
@@ -223,6 +223,7 @@
 						}else if(rules[0] == 'equal' && !check.equal(val,rules[1])){
 							errors += messages.notEqual+'<br />'
 						}else if(rules[0] == 'custom' && !check.customReg(val,options.customReg[rules[1]].method)){
+							console.log(options.customReg);
 							errors += (options.customReg[rules[1]].errorMessage || messages.empty)+'<br />'
 						}
 					}
@@ -242,27 +243,46 @@
 			}
 	};
 	$.fn.hsnValidate = function(ayar){
-		options = $.extend(true,{},defaults,ayar);
+		// Lets check language file
 		if($.hsnValidateLanguage){
-			messages = $.extend(true,{},messages,$.hsnValidateLanguage.messages);
+				messages = $.extend(true,{},messages,$.hsnValidateLanguage.messages);
 		}
-		form = this;
-		$(form).submit(function(e){
-			e.preventDefault();
-			object = $(form).find('[data-hsnValidate]');
-			init(e);
+		// return each (for multiple form)
+		return this.each(function(){
+			// Assing to local variable
+			var _options = $.extend(true,{},defaults,ayar);
+			var _form = this;
+			// Handle submit event
+			$(this).submit(function(e){
+				// assing to global variable
+				form = _form;
+				options = _options;
+				e.preventDefault();
+				object = $(form).find('[data-hsnValidate]');
+				init(e);
+			});
+			// blur event 
+			if(_options.blurTrigger){
+				// handle change event for selectbox
+				$(this).find('[data-hsnValidate]').not('[type=checkbox]').on('change',function(e){
+					// assing to global variable
+					object = this;
+					form = _form;
+					options = _options;
+					init(e);
+				});
+				// handle click event for checkboxes
+				$(this).find('[data-hsnValidate][type=checkbox]').on('click',function(e){
+					var name = $(this).attr('name');
+					// assing to global variable
+					object = $(_form).find('[data-hsnValidate][type=checkbox][name='+name+']').get(0);
+					form = _form;
+					options = _options;
+					init(e);
+				});
+			};
 		});
-		if(options.blurTrigger){
-			$(form).find('[data-hsnValidate]').not('[type=checkbox]').on('change',function(e){
-				object = this;
-				init(e);
-			});
-			$(form).find('[data-hsnValidate][type=checkbox]').on('click',function(e){
-				var name = $(this).attr('name');
-				object = $(form).find('[data-hsnValidate][type=checkbox][name='+name+']').get(0);
-				init(e);
-			});
-		};
+		
 	};	
 	/* Fonksiyonlar */
 	$.hsnValidate = function() {

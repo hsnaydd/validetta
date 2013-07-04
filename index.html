@@ -30,10 +30,12 @@ $(function(){
 				errorMessage : 'Custom Reg Error Message !'
 			},
 			regname2: {
-				method : /^[\+][0-9]+?$|^[0-9]+?$/
+				method : /^[\+][0-9]+?$|^[0-9]+?$/,
+				errorMessage : 'Lan mal !'
 			}
 		}
 	});
+	$('#kayit2').hsnValidate();
 });
 </script>
 <style type="text/css">
@@ -50,12 +52,12 @@ label[for=deneme]{width:100px}
 <body>
 <form id="kayit" action="dosyalar/ajax.php" method="post">
 	<ul>
-		<li><label>İsim</label><input type="text" name="isim" data-hsnvalidate="required,minLength[2],maxLength[3]" class="required" /></li>
+		<li><label>İsim</label><input type="text" name="isim" data-hsnValidate="required,minLength[2],maxLength[3]" class="required" /></li>
 	    <li><label>Numara</label><input type="text" name="soyisim" data-hsnvalidate="number,required" /></li>
 		<li><label>Numaraya Eşit</label><input type="text" name="soyisim2" data-hsnvalidate="equal[soyisim]" /></li>
 	    <li><label>Email</label><input type="text" name="email" data-hsnvalidate="email" /></li>
         <li><label>Kredi Kartı</label><input type="text" name="creditCard" data-hsnvalidate="creditCard" /></li>
-         <li><label>CustomReg</label><input type="text" name="creditCard" data-hsnvalidate="custom[regname2]" /></li>
+         <li><label>CustomReg</label><input type="text" name="costum" data-hsnvalidate="custom[regname]" /></li>
 	    <li><label for="deneme" class="ilblock">Checkbox 1</label><input type="checkbox" data-hsnvalidate="minChecked[1],maxChecked[2]" name="deneme" class="ilblock"/></li>
         <li><label for="deneme" class="ilblock">Checkbox 2</label><input type="checkbox" data-hsnvalidate="minChecked[1],maxChecked[2]" name="deneme" class="ilblock"/></li>
         <li><label for="deneme" class="ilblock">Checkbox 3</label><input type="checkbox" data-hsnvalidate="minChecked[1],maxChecked[2]" name="deneme" class="ilblock"/></li>
@@ -78,8 +80,15 @@ label[for=deneme]{width:100px}
          <li><label for="deneme" class="ilblock">Checkbox 1</label><input type="checkbox" data-hsnvalidate="required" name="deneme1" class="ilblock"/></li>
 	    <li><input type="submit" value="Kaydet" /><input type="reset"/></li>
 	</ul>
-
-
+</form>
+<hr />
+<form action="dosyalar/ajax.php" id="kayit2" method="POST">
+	<ul>
+		<li><label>İsim</label><input type="text" name="isim" data-hsnValidate="required,minLength[2],maxLength[3]" class="required" /></li>
+		<li><label>Numara</label><input type="text" name="soyisim" data-hsnvalidate="number,required" /></li>
+		<li><label>Email</label><input type="text" name="email" data-hsnvalidate="email" /></li>
+		<li><input type="submit" value="Kaydet" /><input type="reset"/></li>
+	</ul>
 </form>
 </body>
 </html>
