@@ -5,13 +5,13 @@
 <title>Form Validator</title>
 <link rel="stylesheet" type="text/css" href="hsnValidate.css">
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-<!-- <script type="text/javascript" src="hsnValidate.js"></script> -->
-<script type="text/javascript" src="deneme.js"></script>
+<script type="text/javascript" src="hsnValidate.js"></script>
+<!-- <script type="text/javascript" src="deneme.js"></script> -->
 <script type="text/javascript" src="languages/hsnValidateLang-tr.js"></script>
 <script type="text/javascript">
 $(function(){
 	$('#kayit').hsnValidate({
-		ajax : {
+		/*ajax : {
 			call 		: true,
 			type 		: 'POST',
 			dataType	: 'json',
@@ -24,7 +24,7 @@ $(function(){
 			complete : function(){
 				console.log('Finish him')	
 			}
-		},
+		},*/
 		customReg : {
 			regname : {
 				method : /^[\+][0-9]+?$|^[0-9]+?$/,
@@ -36,7 +36,25 @@ $(function(){
 			}
 		}
 	});
-	$('#kayit2').hsnValidate();
+	$('#kayit2').hsnValidate({
+		/*ajax : {
+			call 		: true,
+			type 		: 'POST',
+			dataType	: 'json',
+			success		: function(veri){
+				console.log(veri)
+			},
+			beforeSend : function(){
+				console.log('start')	
+			},
+			complete : function(){
+				console.log('Finish him')	
+			},
+			fail : function(a,b){
+				console.log(b+':'+a.status+' : '+a.statusText);
+			}
+		}*/
+	});
 	/*$('#kayit').hsnDeneme({
 		Adi : 'Hasan',
 		Soyadi : 'Aydogdu'
@@ -90,7 +108,7 @@ label[for=deneme]{width:100px}
 <form action="dosyalar/ajax.php" id="kayit2" method="POST">
 	<ul>
 		<li><label>İsim</label><input type="text" name="isim" data-hsnValidate="required,minLength[2],maxLength[3]" class="required" /></li>
-		<li><label>Numara</label><input type="text" name="soyisim" data-hsnvalidate="number,required" /></li>
+		<li><label>Numara</label><input type="text" name="soyisim" data-hsnvalidate="number" /></li>
 		<li><label>Email</label><input type="text" name="email" data-hsnvalidate="email" /></li>
 		<li><input type="submit" value="Kaydet" /><input type="reset"/></li>
 	</ul>
