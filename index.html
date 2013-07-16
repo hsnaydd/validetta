@@ -41,7 +41,7 @@ $(function(){
 			call 		: true,
 			type 		: 'POST',
 			dataType	: 'json',
-			success		: function(veri){
+			success		: function(a,veri){
 				console.log(veri)
 			},
 			beforeSend : function(){
@@ -53,12 +53,13 @@ $(function(){
 			fail : function(a,b){
 				console.log(b+':'+a.status+' : '+a.statusText);
 			}
-		}*/
+		},*/
+		onCompleteFunc : function(object,event){
+			var _inp = $('#kayit2').find('input[name=isim]');
+			object.window.open.call(object, _inp, 'Abooov oldu lan')
+			event.preventDefault();
+		}
 	});
-	/*$('#kayit').hsnDeneme({
-		Adi : 'Hasan',
-		Soyadi : 'Aydogdu'
-	});*/
 });
 </script>
 <style type="text/css">
@@ -107,7 +108,8 @@ label[for=deneme]{width:100px}
 <hr />
 <form action="dosyalar/ajax.php" id="kayit2" method="POST">
 	<ul>
-		<li><label>İsim</label><input type="text" name="isim" data-hsnValidate="required,minLength[2],maxLength[3]" class="required" /></li>
+		<li><label>İsim</label><input type="text" name="isim_hsn" data-hsnValidate="required,minLength[2],maxLength[3]" class="required" /></li>
+		<li><label for="ex3-n2">equal</label><input type="text" name="ex3-n2" data-hsnvalidate="equal[isim_hsn]" > <br /></li>
 		<li><label>Numara</label><input type="text" name="soyisim" data-hsnvalidate="number" /></li>
 		<li><label>Email</label><input type="text" name="email" data-hsnvalidate="email" /></li>
 		<li><input type="submit" value="Kaydet" /><input type="reset"/></li>

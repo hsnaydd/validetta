@@ -1,5 +1,5 @@
 /*!
- * snValidate - jQuery Eklentisi
+ * hsnValidate - jQuery Eklentisi
  * version: 1.0 (30 Mart 2013, Cumartesi)
  * @jQuery v1.7 ve üstü ile çalışmaktadır.
  *
@@ -18,7 +18,7 @@
     var HsnValidate = {}; // Plugin Class 
     var object = {}; // Current object/objects
     // RegExp for input validate rules
-    var reg = new RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|custom)\[(\w){1,10}\]/i);
+    var reg = new RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|custom)\[[(\w)-_]{1,10}\]/i);
     // RegExp for mail kontrol method
     var regMail = new RegExp(/^[a-z]{1}[\d\w\.-]+@[\d\w-]{3,}\.[\w]{2,3}(\.\w{2})?$/);
     //RegExp for input number control method
@@ -99,9 +99,10 @@
         // define private 'that' for sub functions
         var that = this;
         $(this.form).submit(function(e){
-            //e.preventDefault();
+            //console.time('hsn');
             object = $(this).find('[data-hsnValidate]');
             that.init.call(that,e);
+            //console.timeEnd('hsn');
         });
         if(this.options.blurTrigger){
             // handle change event for form elements (without checkbox)
@@ -206,7 +207,7 @@
             });
             if(_errors !== ''){ that.window.open.call( that ,_el,_errors); }
         });
-        if(that.handler && e.type !== 'submit'){return false; }
+        if(e.type !== 'submit'){return false; }
         else if(that.handler && e.type === 'submit'){return e.preventDefault();}
         else{
         /*if(that.options.onCompleteFunc){
@@ -215,8 +216,9 @@
         }else{return;}*/
             if(that.options.ajax.call){
                 that.ajax.call(that,arguments);
-                return e.preventDefault(); 
+                e.preventDefault(); 
             }
+            that.options.onCompleteFunc(that,e);
             return;
         }
     };
@@ -335,13 +337,14 @@
     */
     HsnValidate.prototype.window = {
         open : function(_inp,error){
-            //if($(_inp).parent().find('.'+options.errorClass).length > 0 ){return;}
+            var _name = $(_inp).attr('name');
+            if($(_inp).parent().find('.hsnProp-'+_name).length > 0 ){return;}
             var pos,W,H,T,errorObject,errorCloseObject;
             pos = $(_inp).position();
             W = $(_inp).width();
             H = $(_inp).height();
             T= pos.top;
-            errorObject = $('<span>').addClass(this.options.errorClass);
+            errorObject = $('<span>').addClass(this.options.errorClass+' hsnProp-'+_name);
             errorCloseObject = $('<span>x</span>');
             errorCloseObject.addClass(this.options.errorCloseClass);
             errorObject.empty().css({
@@ -378,7 +381,7 @@
                 return that.options.ajax.beforeSend();
             }
         })
-        .done(function(result){that.options.ajax.success(result);})
+        .done(function(result){that.options.ajax.success(that,result);})
         .fail(function(jqXHR, textStatus){ that.options.ajax.fail(jqXHR, textStatus);})
         .always(function(result){that.options.ajax.complete(result);}); 
     };
