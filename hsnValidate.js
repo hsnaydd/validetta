@@ -14,8 +14,10 @@
  */
 (function($){
     "use strict";
-    // Declare variables
-    var HsnValidate = {}; // Plugin Class 
+    /**
+    *  Declare variables
+    */
+    var HsnValidate = {}; // Plugin Class
     var object = {}; // Current object/objects
     // RegExp for input validate rules
     var reg = new RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|custom)\[[(\w)-_]{1,10}\]/i);
@@ -24,9 +26,7 @@
     //RegExp for input number control method
     var regNumber = new RegExp(/^[\+][0-9]+?$|^[0-9]+?$/);
     /**
-    * Form kontrol hata mesajları 
-    * @Object messages
-    * @type {Object}
+    *  Form kontrol hata mesajları 
     */
     var messages = {
         empty   : 'This field is required. Please be sure to check.',
@@ -44,144 +44,136 @@
         creditCard  : 'Invalid credit card number. Please be sure to check.'
     };
     /**
-    * Eklenti default ayarları
-    * 
-    * @type {Object} defaults
+    *  Eklenti default ayarları
     */
     var defaults = {
-        /**
-        * errorClass description
-        *
-        * @propertyName errorClass
-        * @default : 'formHataKapa'
-        */
-        errorClass    : 'formHata',
-        errorCloseClass : 'formHataKapa',
-        ajax : {
-          call    : false,
-          type    : 'GET',
-          url     : null,
-          dataType  : 'html',
-          beforeSend  : $.noop,
-          success   : $.noop,
-          fail    : $.noop,
-          complete  : $.noop
+        errorClass    : 'formHata', // Hata mesajı penceresine eklenecek olan class
+        errorCloseClass : 'formHataKapa', // Hata mesajı penceresini kapatan HTML elementine eklenecek class
+        ajax : { // Ajax işlemleri
+          call    : false, // Ajax işlemi yapmak isyorsanız true olarak ayarlamalısınız.
+          type    : 'GET', // Ajax post type
+          url     : null, // Ajax url. URL bilgisini burada eklemek yerine FORM action özniyeliğinde de belirtebilirsiniz.
+          dataType  : 'html', // Ajax dataType
+          beforeSend  : $.noop, // Ajax başlamadan önce çalıştırılıcak fonksiyon
+          success   : $.noop, // Ajax işlemi başarılı ise çalıştırılacak fonksiyon
+          fail    : $.noop, // Ajax işlemi başarısız ise çalıştırılacak fonksiyon
+          complete  : $.noop // Ajax işlemi tamamlandığında (başarılı yada başarısız) çalıştırılacak fonksiyon
         },
-        blurTrigger   : true,
-        onCompleteFunc  : $.noop,
-        customReg   : {}  
+        realTime   : true, // Eğer true seçilirse real-time form kontrolü aktif edilir
+        onCompleteFunc  : $.noop, // Form kontrolü tamamlandıktan sonra çalıştırılacak fonksiyon
+        customReg   : {} // Costum Reg metodu değişkeni
     };
     /**
     * Plugin Class
-    * @classDescription : Form validator
-    * @param {object} form : Kontrol edilen form elementi
+    *
+    * @param {object} form : Kontrol edilen <form> elementi
     * @param {object} options : Kullanıcının belirlediği ayarlar
-    * @return {object}
+    * @return {method} events 
     */
     HsnValidate = function(form,options){
-        /*!
-        * @param handler : uses for handle submit
-        * @param object : current element
-        * @private
+        /**
+        *  Public  Properties
+        *  @property handler : uses to handle submit event
+        *  @property options : stored plugin options
+        *  @property form : stored <form> element
         */
         this.handler = false;
         this.options = $.extend(true,{},defaults,options);
         this.form = form ;
-        this.events.call(this,arguments);
+        // Events methodunu başlatalım
+        return this.events.call(this,arguments);
     };
     /**
-    * Events
-    * handle submit, change ve checkbox click events
+    * Events Method
+    * Eklentinin çalışmasını tetikleyecek eventları tanımlar
     * 
-    * @return {Void}
+    * @return {method} init, {method} reset or {false}
     */
     HsnValidate.prototype.events = function(){
-        // define private 'that' for sub functions
-        var that = this;
+        var that = this; // scoped this
+        // Handle submit event 
         $(this.form).submit(function(e){
-            //console.time('hsn');
+            // kontrol edilecek alanlar global değişkene aktarıldı
+            // fields to be controlled transferred to global variable
             object = $(this).find('[data-hsnValidate]');
-            that.init.call(that,e);
-            //console.timeEnd('hsn');
+            // init metodunu başlat
+            return that.init.call(that,e);
         });
-        if(this.options.blurTrigger){
+        // real-time option control
+        if(this.options.realTime === true){
             // handle change event for form elements (without checkbox)
             $(this.form).find('[data-hsnValidate]').not('[type=checkbox]').on('change',function(e){
+                // field to be controlled transferred to global variable
                 object = this;
-                that.init.call(that,e);
+                // init metodunu başlat
+                return that.init.call(that,e);
             });
             // handle click event for checkboxes
             $(this.form).find('[data-hsnValidate][type=checkbox]').on('click',function(e){
                 var name = $(this).attr('name');
+                // fields to be controlled transferred to global variable
                 object = $(that.form).find('[data-hsnValidate][type=checkbox][name='+name+']').get(0);
-                that.init.call(that,e);
+                // init metodunu başlat
+                return that.init.call(that,e);
             });
         }
-        // Reset Buton clicked
+        // Reset Butonu ile hata mesajlarını temizleme
         $(this.form).find('input[type=reset]').on('click',function(){
+            // formun kontrol edilmiş alanlarını bulduk
             var _inp = $(that.form).find('.'+that.options.errorClass);
-            that.reset.call(that,_inp);
+            // kontrol edilmiş alanlarda hata mesajı varsa temizemek için reset metodunu çalıştırdık
+            return that.reset.call(that,_inp);
         });
-        //Manuel Hata Kapatma
+        // Manuel olarak hata mesajlarını kapatma fonksiyonu
         $(this.form).on('click','.'+this.options.errorCloseClass, function(){
             $(this).parent().remove();
                 return false;
         });
     };
     /**
-    * İnput reset function
-    * @param {String} _inp 
-    */
-    HsnValidate.prototype.reset = function(_inp){
-        var that = this;
-        _inp.each(function(index, el) {
-            that.window.close.call(that,el);
-        }); 
-    };
-    /**
-    * Init Function
-    * @method : this.init();
+    * Init Method
+    * 
     * @params {Object} e : event object
     * @return {Function} or {Boolen}
     */
     HsnValidate.prototype.init = function(e){
-        // this is stored in that for sub fuctions
-        var that = this;
+        var that = this; // scoped this
         // Reset errors props from all elements 
+        console.time('hsn');
         this.reset.call(this,$(object));
         // Start control each elements
-        $(object).each(function(i, element){
+        for (var i = object.length - 1; i >= 0; i--) {
             /**
             * Declaring variables
             * 
-            * @params {object} _el : current element
-            * @params {string} _errors : current element's errors
-            * @params {string} _val : current element's value
-            * @params {object} _methods : current elemenet's kontrol methods 
+            * @params {object} _el : current field
+            * @params {string} _errors : current field's errors
+            * @params {string} _val : current field's value
+            * @params {object} _methods : current field's control methods 
             */
             var _el, _errors, _val = {}, _methods = {}; 
-            _el = element;
+            _el = object[i];
             _errors ='';
             _val = $(_el).val();
             _methods = $(_el).data('hsnvalidate').split(',');
-            $(_methods).each(function(i, method) {
-                if(method === 'required'){
+            for (var j = _methods.length - 1; j >= 0; j--) {
+                if(_methods[j] === 'required'){
                     if($(_el).attr('type')==='checkbox' && !that.check.checkbox.checked(_el)){ _errors += messages.checkbox+'<br />'; }
                     else if(_el.tagName ==='SELECT' && !that.check.selectbox.selected(_val)){ _errors += messages.selectbox+'<br />'; }
                     if(($(_el).attr('type') ==='text' || _el.tagName ==='TEXTAREA') && !that.check.space.call(that,_val)){ _errors += messages.empty+'<br />'; }  
                 }
-                if(method === 'number' && !that.check.number(_val)){
+                if(_methods[j] === 'number' && !that.check.number(_val)){
                     _errors += messages.number+'<br />';
                 }
-                if(method === 'email' && !that.check.mail(_val)){
+                if(_methods[j] === 'email' && !that.check.mail(_val)){
                     _errors += messages.email+'<br />';
                 }
-                if(method === 'creditCard' && _val!=='' && !that.check.creditCard(_val)){
+                if(_methods[j] === 'creditCard' && _val!=='' && !that.check.creditCard(_val)){
                     _errors += messages.creditCard+'<br />';
                 }
-                if(reg.test(method)){
+                if(reg.test(_methods[j])){
                     var rules,_name;
-                    rules = method.split(/\[|,|\]/);
+                    rules = _methods[j].split(/\[|,|\]/);
                     if(rules[0] === 'maxLength' && !that.check.maxLength(_val,rules[1])){
                         _errors += messages.maxLength.replace('{count}',rules[1])+'<br />';
                     }else if(rules[0] === 'minLength' && !that.check.minLength(_val,rules[1])){
@@ -204,32 +196,18 @@
                         _errors += (that.options.customReg[rules[1]].errorMessage || messages.empty)+'<br />';
                     }
                 }
-            });
+            };
             if(_errors !== ''){ that.window.open.call( that ,_el,_errors); }
-        });
-        if(e.type !== 'submit'){return false; }
-        else if(that.handler && e.type === 'submit'){return e.preventDefault();}
+        };
+        console.timeEnd('hsn');
+        if(e.type !== 'submit' || that.handler ){return false; }
         else{
-        /*if(that.options.onCompleteFunc){
-          that.options.onCompleteFunc()
-          return false;
-        }else{return;}*/
             if(that.options.ajax.call){
-                that.ajax.call(that,arguments);
-                e.preventDefault(); 
+                e.preventDefault();
+                that.ajax.call(that,arguments);  
             }
-            that.options.onCompleteFunc(that,e);
-            return;
+            return that.options.onCompleteFunc(that,e);
         }
-    };
-    /**
-    * Clear - İnput değerinin sağ ve solundaki boşlukları temizler
-    *
-    * @param {string} value
-    * @return {String} 
-    */
-    HsnValidate.prototype.clear = function(value){
-      return value.replace(/^\s+|\s+$/g, '');
     };
     /**
     * Validator functions
@@ -359,6 +337,25 @@
             $(_inp).parent().children('.'+this.options.errorClass+'').remove();
              this.handler = false;
         }
+    };
+    /**
+    * İnput reset function
+    * @param {String} _inp 
+    */
+    HsnValidate.prototype.reset = function(_inp){
+        var that = this;
+        _inp.each(function(index, el) {
+            that.window.close.call(that,el);
+        }); 
+    };
+    /**
+    * Clear - İnput değerinin sağ ve solundaki boşlukları temizler
+    *
+    * @param {string} value
+    * @return {String} 
+    */
+    HsnValidate.prototype.clear = function(value){
+      return value.replace(/^\s+|\s+$/g, '');
     };
     /**
     * Ajax function

@@ -37,12 +37,12 @@ $(function(){
 		}
 	});
 	$('#kayit2').hsnValidate({
-		/*ajax : {
+		ajax : {
 			call 		: true,
 			type 		: 'POST',
 			dataType	: 'json',
 			success		: function(a,veri){
-				console.log(veri)
+				console.log(a)
 			},
 			beforeSend : function(){
 				console.log('start')	
@@ -53,12 +53,13 @@ $(function(){
 			fail : function(a,b){
 				console.log(b+':'+a.status+' : '+a.statusText);
 			}
-		},*/
+		},
 		onCompleteFunc : function(object,event){
-			var _inp = $('#kayit2').find('input[name=isim]');
-			object.window.open.call(object, _inp, 'Abooov oldu lan')
+			var _inp = $('#kayit2').find('input[name=isim_hsn]');
+			object.window.open.call(object, _inp, 'Abooov oldu lan');
 			event.preventDefault();
-		}
+		},
+		realTime : false
 	});
 });
 </script>
