@@ -12,13 +12,13 @@
  * Copyright 2012 Hasan Aydoğdu - http://www.hasanaydogdu.com
  *
  */
-(function($){
+(function ($) {
     "use strict";
     /**
     *  Declare variables
     */
     var HsnValidate = {}; // Plugin Class
-    var object = {}; // Current object/objects
+    var fields = {}; // Current fields/fieldss
     // RegExp for input validate rules
     var reg = new RegExp(/(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|custom)\[[(\w)-_]{1,10}\]/i);
     // RegExp for mail kontrol method
@@ -81,7 +81,7 @@
         this.options = $.extend(true,{},defaults,options);
         this.form = form ;
         // Events methodunu başlatalım
-        return this.events.call(this,arguments);
+        return this.events.call(this);
     };
     /**
     * Events Method
@@ -95,7 +95,7 @@
         $(this.form).submit(function(e){
             // kontrol edilecek alanlar global değişkene aktarıldı
             // fields to be controlled transferred to global variable
-            object = $(this).find('[data-hsnValidate]');
+            fields = this.querySelectorAll('[data-hsnValidate]');
             // init metodunu başlat
             return that.init.call(that,e);
         });
@@ -104,30 +104,29 @@
             // handle change event for form elements (without checkbox)
             $(this.form).find('[data-hsnValidate]').not('[type=checkbox]').on('change',function(e){
                 // field to be controlled transferred to global variable
-                object = this;
+                fields = $(this);
                 // init metodunu başlat
                 return that.init.call(that,e);
             });
             // handle click event for checkboxes
             $(this.form).find('[data-hsnValidate][type=checkbox]').on('click',function(e){
-                var name = $(this).attr('name');
+                var name = this.getAttribute('name');
                 // fields to be controlled transferred to global variable
-                object = $(that.form).find('[data-hsnValidate][type=checkbox][name='+name+']').get(0);
+                fields = that.form.querySelectorAll('[data-hsnValidate][type=checkbox][name='+name+']');
                 // init metodunu başlat
                 return that.init.call(that,e);
             });
         }
         // Reset Butonu ile hata mesajlarını temizleme
         $(this.form).find('input[type=reset]').on('click',function(){
-            // formun kontrol edilmiş alanlarını bulduk
-            var _inp = $(that.form).find('.'+that.options.errorClass);
             // kontrol edilmiş alanlarda hata mesajı varsa temizemek için reset metodunu çalıştırdık
-            return that.reset.call(that,_inp);
+            return that.reset.call(that);
         });
         // Manuel olarak hata mesajlarını kapatma fonksiyonu
         $(this.form).on('click','.'+this.options.errorCloseClass, function(){
-            $(this).parent().remove();
-                return false;
+            var _errProp = this.parentNode;
+            if(_errProp){ _errProp.parentNode.removeChild(_errProp); }
+            return false;
         });
     };
     /**
@@ -136,13 +135,13 @@
     * @params {Object} e : event object
     * @return {Function} or {Boolen}
     */
-    HsnValidate.prototype.init = function(e){
+    HsnValidate.prototype.init = function( e ){
         var that = this; // scoped this
         // Reset errors props from all elements 
-        console.time('hsn');
-        this.reset.call(this,$(object));
+        //console.time('hsn');
+        this.reset.call( this, fields);
         // Start control each elements
-        for (var i = object.length - 1; i >= 0; i--) {
+        for ( var i = fields.length - 1; i >= 0; i-- ) {
             /**
             * Declaring variables
             * 
@@ -152,61 +151,63 @@
             * @params {object} _methods : current field's control methods 
             */
             var _el, _errors, _val = {}, _methods = {}; 
-            _el = object[i];
+            _el = fields[i];
             _errors ='';
-            _val = $(_el).val();
-            _methods = $(_el).data('hsnvalidate').split(',');
-            for (var j = _methods.length - 1; j >= 0; j--) {
-                if(_methods[j] === 'required'){
-                    if($(_el).attr('type')==='checkbox' && !that.check.checkbox.checked(_el)){ _errors += messages.checkbox+'<br />'; }
-                    else if(_el.tagName ==='SELECT' && !that.check.selectbox.selected(_val)){ _errors += messages.selectbox+'<br />'; }
-                    if(($(_el).attr('type') ==='text' || _el.tagName ==='TEXTAREA') && !that.check.space.call(that,_val)){ _errors += messages.empty+'<br />'; }  
+            _val = $( _el ).val();
+            // Kontrol metodlarını alalım
+            _methods = _el.getAttribute( 'data-hsnvalidate' ).split(',');
+            // Metotları kontrole başlayalım
+            // that.check : Object Fields Control Method
+            for ( var j = _methods.length - 1; j >= 0; j-- ) {
+                if( _methods[j] === 'required' ){
+                    if( _el.getAttribute('type') === 'checkbox' && !that.check.checkbox.checked( _el ) ){ _errors += messages.checkbox+'<br />'; }
+                    else if( _el.tagName ==='SELECT' && !that.check.selectbox.selected( _val ) ){ _errors += messages.selectbox+'<br />'; }
+                    if( ( _el.getAttribute('type') ==='text' || _el.tagName ==='TEXTAREA' ) && !that.check.space.call( that, _val ) ){ _errors += messages.empty+'<br />'; }  
                 }
-                if(_methods[j] === 'number' && !that.check.number(_val)){
+                if( _methods[j] === 'number' && !that.check.number( _val ) ){
                     _errors += messages.number+'<br />';
                 }
-                if(_methods[j] === 'email' && !that.check.mail(_val)){
+                if( _methods[j] === 'email' && !that.check.mail( _val ) ){
                     _errors += messages.email+'<br />';
                 }
-                if(_methods[j] === 'creditCard' && _val!=='' && !that.check.creditCard(_val)){
+                if( _methods[j] === 'creditCard' && _val !=='' && !that.check.creditCard( _val ) ){
                     _errors += messages.creditCard+'<br />';
                 }
-                if(reg.test(_methods[j])){
-                    var rules,_name;
-                    rules = _methods[j].split(/\[|,|\]/);
-                    if(rules[0] === 'maxLength' && !that.check.maxLength(_val,rules[1])){
-                        _errors += messages.maxLength.replace('{count}',rules[1])+'<br />';
-                    }else if(rules[0] === 'minLength' && !that.check.minLength(_val,rules[1])){
-                        _errors += messages.minLength.replace('{count}',rules[1])+'<br />';
-                    }else if(rules[0] === 'maxChecked' && !that.check.checkbox.maxChecked.call(that,_el,rules[1])){
-                        _name = $(_el).attr('name');
-                        _el = $(object).filter('[type=checkbox][name='+_name+']').eq(0);
-                        _errors += messages.maxChecked.replace('{count}',rules[1])+'<br />';
-                    }else if(rules[0] === 'minChecked' && !that.check.checkbox.minChecked.call(that,_el,rules[1]) ){
-                        _name = $(_el).attr('name');
-                        _el = $(object).filter('[type=checkbox][name='+_name+']').eq(0);
-                        _errors += messages.minChecked.replace('{count}',rules[1])+'<br />';
-                    }else if(rules[0] === 'maxSelected' && !that.check.selectbox.maxSelected(_val,rules[1])){
-                        _errors += messages.maxSelected.replace('{count}',rules[1])+'<br />';
-                    }else if(rules[0] === 'minSelected' && !that.check.selectbox.minSelected(_val,rules[1])){
-                        _errors += messages.minSelected.replace('{count}',rules[1])+'<br />';
-                    }else if(rules[0] === 'equal' && !that.check.equal.call(that,_val,rules[1])){
+                if( reg.test( _methods[j] ) ){
+                    var rules;
+                    rules = _methods[j].split( /\[|,|\]/ );
+                    if( rules[0] === 'maxLength' && !that.check.maxLength( _val, rules[1] ) ){
+                        _errors += messages.maxLength.replace( '{count}', rules[1] )+'<br />';
+                    }else if( rules[0] === 'minLength' && !that.check.minLength( _val, rules[1] ) ){
+                        _errors += messages.minLength.replace( '{count}', rules[1] )+'<br />';
+                    }else if( rules[0] === 'maxChecked' && !that.check.checkbox.maxChecked.call( that, _el, rules[1] ) ){
+                        _el = that.form.querySelectorAll( 'input[type=checkbox][data-hsnvalidate][name='+ _el.name +']' )[0];
+                        _errors += messages.maxChecked.replace( '{count}', rules[1] )+'<br />';
+                    }else if( rules[0] === 'minChecked' && !that.check.checkbox.minChecked.call( that, _el, rules[1] ) ){
+                        _el = that.form.querySelectorAll( 'input[type=checkbox][data-hsnvalidate][name='+ _el.name +']' )[0];
+                        _errors += messages.minChecked.replace( '{count}', rules[1] )+'<br />';
+                    }else if( rules[0] === 'maxSelected' && !that.check.selectbox.maxSelected( _val, rules[1] ) ){
+                        _errors += messages.maxSelected.replace( '{count}', rules[1] )+'<br />';
+                    }else if( rules[0] === 'minSelected' && !that.check.selectbox.minSelected( _val, rules[1] ) ){
+                        _errors += messages.minSelected.replace( '{count}', rules[1] )+'<br />';
+                    }else if( rules[0] === 'equal' && !that.check.equal.call( that, _val, rules[1] ) ){
                         _errors += messages.notEqual+'<br />';
-                    }else if(rules[0] === 'custom' && !that.check.customReg(_val,that.options.customReg[rules[1]].method)){
-                        _errors += (that.options.customReg[rules[1]].errorMessage || messages.empty)+'<br />';
+                    }else if( rules[0] === 'custom' && !that.check.customReg( _val, that.options.customReg[ rules[1] ].method ) ){
+                        _errors += ( that.options.customReg[ rules[1] ].errorMessage || messages.empty )+'<br />';
                     }
                 }
-            };
-            if(_errors !== ''){ that.window.open.call( that ,_el,_errors); }
-        };
-        console.timeEnd('hsn');
-        if(e.type !== 'submit' || that.handler ){return false; }
-        else{
-            if(that.options.ajax.call){
-                e.preventDefault();
-                that.ajax.call(that,arguments);  
             }
-            return that.options.onCompleteFunc(that,e);
+            if( _errors !== '' ){ that.window.open.call( that , _el, _errors ); }
+        }
+        //console.timeEnd('hsn');
+        if( e.type !== 'submit' ){ return; }
+        else if( that.handler === true ){ return false; }
+        else{
+            if( that.options.ajax.call ){
+                that.ajax.call( that, arguments );
+                return false;
+            }
+            return that.options.onCompleteFunc( that, e );
         }
     };
     /**
@@ -219,94 +220,92 @@
         * @return {Boolen} Return true if input value isnt empty 
         *
         */
-        space : function(val){
-            return (this.clear(val) === '') ? false : true;
+        space : function( val ){
+            return ( this.clear( val ) === '' ) ? false : true;
         },
         /**
         * Mail Kontrolü - Gelen değerin geçerli bir eposta adresi olup olmadığını kontrol eder
         *
         * @return {Boolen} input değeri geçersiz bir eposta ise ve input değeri boş değilse false döner
         */
-        mail : function(val){
-            return ((regMail.test(val) === false) && val!=='') ? false : true ;
+        mail : function( val ){
+            return ( ( regMail.test( val ) === false ) && val !== '' ) ? false : true ;
         },
         //Numara Kontrolu
-        number : function(val){
-            return ((regNumber.test(val) === false) && val!=='') ?  false : true;
+        number : function( val ){
+            return ( ( regNumber.test( val ) === false ) && val !== '' ) ?  false : true;
         },
         //Minimum uzunluk kontrol
-        minLength : function(val,arg){
+        minLength : function( val, arg ){
             var _length = val.length;
-            return ( _length < arg && _length !== 0) ? false : true;
+            return ( _length < arg && _length !== 0 ) ? false : true;
         },
         //Max uzunluk kontrol
-        maxLength : function(val,arg){
-            return (val.length > arg) ? false : true;
+        maxLength : function( val, arg ){
+            return ( val.length > arg ) ? false : true;
         },
         //Equal Control
-        equal : function(val,arg){
-            return ($(this.form).find('input[type=text][name='+arg+']').val() !== val) ? false : true;
+        equal : function( val, arg ){
+            return ( $( this.form ).find( 'input[type=text][name='+arg+']' ).val() !== val ) ? false : true;
         },
         /*  Credit Card Control
         *
         * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers 
         * @return {Boolen} 
         */
-        creditCard : function(val){
+        creditCard : function( val ){
             var reg, cardNumber, pos, digit, i, sub_total, sum = 0, strlen;
-            reg = new RegExp(/[^0-9]+/g);
-            cardNumber = val.replace(reg,'');
+            reg = new RegExp( /[^0-9]+/g );
+            cardNumber = val.replace( reg, '' );
             strlen = cardNumber.length;
-            if(strlen < 16){return false;}
-            for(i=0;i<strlen;i++){
+            if( strlen < 16 ){ return false; }
+            for( i=0; i<strlen; i++ ){
                 pos = strlen - i;
-                digit = parseInt(cardNumber.substring(pos - 1, pos), 10);
-                if(i % 2 === 1){
+                digit = parseInt( cardNumber.substring( pos - 1, pos ), 10 );
+                if( i % 2 === 1 ){
                     sub_total = digit * 2;
-                    if(sub_total > 9){
-                        sub_total = 1 + (sub_total - 10);
+                    if( sub_total > 9 ){
+                        sub_total = 1 + ( sub_total - 10 );
                     }
                 } else {
                     sub_total = digit;
                 }
                 sum += sub_total;
             }
-            if(sum > 0 && sum % 10 === 0){
+            if( sum > 0 && sum % 10 === 0 ){
                 return true;
             }
             return false;
         },
         //Checkbox Kontrolu
         checkbox : {
-            checked : function(_inp){
-                return (!$(_inp).is(':checked')) ? false : true;
+            checked : function( _inp ){
+                return ( !_inp.checked ) ? false : true;
             },
-            maxChecked : function(_inp,arg){  
-                var name = $(_inp).attr('name'),
-                count = $(this.form).find('input[type="checkbox"][name="'+name+'"]').filter(':checked').length;
-                return (count > arg) ? false : true;
+            maxChecked : function( _inp, arg ){  
+                var count =  $( this.form.querySelectorAll( 'input[type=checkbox][name='+ _inp.name +']' ) ).filter( ':checked' ).length ;
+                return ( count > arg ) ? false : true;
             },
-            minChecked : function(_inp,arg){
-                var name = $(_inp).attr('name'),
-                count = $(this.form).find('input[type="checkbox"][name="'+name+'"]').filter(':checked').length;
-                return (count < arg) ? false : true;
+            minChecked : function( _inp, arg ){
+                var count =  $( this.form.querySelectorAll( 'input[type=checkbox][name='+ _inp.name +']' ) ).filter( ':checked' ).length ;
+                return ( count < arg ) ? false : true;
             }
         },
         //Selectbox Kontrolü
         selectbox : {
-            selected : function(val){
-                return (val === '' || val === null) ? false : true;
+            selected : function( val ){
+                return ( val === '' || val === null ) ? false : true;
             },
-            maxSelected : function(val,arg){
-                return (val !== null && val !== '' && val.length > arg) ? false : true; 
+            maxSelected : function( val, arg){
+                return ( val !== null && val !== '' && val.length > arg ) ? false : true; 
             },
-            minSelected : function(val,arg){
-                return (val !== null && val !== '' && val.length < arg) ? false : true;
+            minSelected : function( val, arg ){
+                return ( val !== null && val !== '' && val.length < arg ) ? false : true;
             }
         },
-        customReg : function(val,reg){
-            var _reg = new RegExp(reg);
-            return ((_reg.test(val) === false) && val!=='') ? false : true ;
+        customReg : function( val, reg ){
+            var _reg = new RegExp( reg );
+            return ( ( _reg.test( val ) === false ) && val !== '' ) ? false : true ;
         }
     };
     /**
@@ -314,39 +313,46 @@
     * @return {Void}
     */
     HsnValidate.prototype.window = {
-        open : function(_inp,error){
-            var _name = $(_inp).attr('name');
-            if($(_inp).parent().find('.hsnProp-'+_name).length > 0 ){return;}
-            var pos,W,H,T,errorObject,errorCloseObject;
-            pos = $(_inp).position();
-            W = $(_inp).width();
-            H = $(_inp).height();
+        open : function( _inp, error ){
+            var _inpParent = _inp.parentNode;
+            if( _inpParent === undefined ){ _inpParent = _inp[0].parentNode ;}
+            if( $( _inpParent ).find( '.'+this.options.errorClass ).length > 0 ){ return; }
+            var pos, W, H, T, errorObject, errorCloseObject;
+            pos = $( _inp ).position();
+            W = $( _inp ).width();
+            H = $( _inp ).height();
             T= pos.top;
-            errorObject = $('<span>').addClass(this.options.errorClass+' hsnProp-'+_name);
-            errorCloseObject = $('<span>x</span>');
-            errorCloseObject.addClass(this.options.errorCloseClass);
+            errorObject = $( '<span>' ).addClass( this.options.errorClass );
+            errorCloseObject = $( '<span>x</span>' );
+            errorCloseObject.addClass( this.options.errorCloseClass );
             errorObject.empty().css({
                 'left':pos.left+W+30+'px',
                 'top' :T+'px'
             });
-            $(_inp).parent().append(errorObject);
-            errorObject.append(error,errorCloseObject);
+            $( _inpParent ).append( errorObject );
+            errorObject.append( error, errorCloseObject );
             this.handler = true; 
         },
-        close : function(_inp){
-            $(_inp).parent().children('.'+this.options.errorClass+'').remove();
-             this.handler = false;
+        close : function( _inp ){
+            _inp.parentNode.removeChild( _inp );
+            this.handler = false;
         }
     };
     /**
     * İnput reset function
     * @param {String} _inp 
     */
-    HsnValidate.prototype.reset = function(_inp){
-        var that = this;
-        _inp.each(function(index, el) {
-            that.window.close.call(that,el);
-        }); 
+    HsnValidate.prototype.reset = function( _inp ){
+        var that = this, _errorMessages = {};
+        if( _inp === undefined || ( _inp.length > 1 && _inp[0].getAttribute('type') !== 'checkbox' ) ){ 
+            _errorMessages = $(that.form).find( '.'+ that.options.errorClass ); 
+        }
+        else{ 
+            _errorMessages = $(_inp[0].parentNode).find( '.'+that.options.errorClass ); 
+        }
+        for(var i = _errorMessages.length -1; i >= 0; i--){
+            that.window.close.call( that, _errorMessages[i] );
+        } 
     };
     /**
     * Clear - İnput değerinin sağ ve solundaki boşlukları temizler
@@ -354,8 +360,8 @@
     * @param {string} value
     * @return {String} 
     */
-    HsnValidate.prototype.clear = function(value){
-      return value.replace(/^\s+|\s+$/g, '');
+    HsnValidate.prototype.clear = function( value ){
+      return value.replace( /^\s+|\s+$/g, '' );
     };
     /**
     * Ajax function
@@ -363,11 +369,12 @@
     *@return {Void}
     */
     HsnValidate.prototype.ajax = function(){
-        var data, url, that = this;
-        data = $(this.form).serialize();
-        url = (this.options.ajax.url) ? this.options.ajax.url : $(this.form).attr('action');
+        var data, url, that = this, formAction;
+        data = $( this.form ).serialize();
+        formAction = this.form.getAttribute('action');
+        url = ( this.options.ajax.url ) ? this.options.ajax.url : formAction;
         /* Debug */
-        if(!this.options.ajax.url && $(this.form).attr('action') === ''){ console.log('Form action not valid !'); }
+        if( !this.options.ajax.url && ( formAction === '' || formAction === null ) ){ return console.log('Form action not valid !'); }
         $.ajax({
             type    : that.options.ajax.type,
             url     : url,
@@ -378,22 +385,21 @@
                 return that.options.ajax.beforeSend();
             }
         })
-        .done(function(result){that.options.ajax.success(that,result);})
-        .fail(function(jqXHR, textStatus){ that.options.ajax.fail(jqXHR, textStatus);})
-        .always(function(result){that.options.ajax.complete(result);}); 
+        .done( function( result ){ that.options.ajax.success( that, result ); } )
+        .fail( function( jqXHR, textStatus ){ that.options.ajax.fail( jqXHR, textStatus ); } )
+        .always( function( result ){ that.options.ajax.complete( result ); } ); 
     };
     /**
     * Plugin hsnValidate
     * @param options : user options
     */
     $.fn.hsnValidate = function (options){
-        if($.hsnValidateLanguage){
-            messages = $.extend(true,{},messages,$.hsnValidateLanguage.messages);
+        if( $.hsnValidateLanguage ){
+            messages = $.extend( true, {}, messages, $.hsnValidateLanguage.messages );
         }
-        return this.each(function(){
-            new HsnValidate(this,options);
+        return this.each( function(){
+            new HsnValidate( this, options );
             return this;
         });
     };
-
 })(jQuery);
