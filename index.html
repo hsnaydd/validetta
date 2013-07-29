@@ -56,6 +56,7 @@ $(function(){
 			}
 		},*/
 		onCompleteFunc : function(object,event){
+			console.log('asd')
 			var _inp = $('#kayit2').find('input[name=isim_hsn]');
 			object.window.open.call(object, _inp, 'Abooov oldu lan');
 			event.preventDefault();
