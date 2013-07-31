@@ -2,6 +2,7 @@
  * hsnValidate - jQuery Eklentisi
  * version: 1.0 (30 Mart 2013, Cumartesi)
  * @jQuery v1.7 ve üstü ile çalışmaktadır.
+ * @Browser Support ie8 and above, and all modern browsers
  *
  * Örneklere http://... adresinden  ulaşabilirsiniz.
  * Proje Adresi : https://github.com/hsnayd/hsnValidate 
@@ -149,10 +150,10 @@
             * 
             * @params {object} _el : current field
             * @params {string} _errors : current field's errors
-            * @params {string} _val : current field's value
-            * @params {object} _methods : current field's control methods 
+            * @params {array} _val : current field's value
+            * @params {array} _methods : current field's control methods 
             */
-            var _el, _errors, _val = {}, _methods = {}; 
+            var _el, _errors, _val = [], _methods = []; 
             _el = fields[i];
             _errors = '';
             _val = $( _el ).val();
@@ -161,31 +162,39 @@
             // Metotları kontrole başlayalım
             // that.check : Object Fields Control Method
             for ( var j = _methods.length - 1; j >= 0; j-- ) {
+                // Required Control
                 if( _methods[j] === 'required' ){
                     if( _el.getAttribute('type') === 'checkbox' && !that.check.checkbox.checked( _el ) ){ _errors += messages.checkbox+'<br />'; }
                     else if( _el.tagName ==='SELECT' && !that.check.selectbox.selected( _val ) ){ _errors += messages.selectbox+'<br />'; }
                     if( ( _el.getAttribute('type') ==='text' || _el.tagName ==='TEXTAREA' ) && !that.check.space.call( that, _val ) ){ _errors += messages.empty+'<br />'; }  
                 }
+                // Number Control
                 if( _methods[j] === 'number' && !that.check.number( _val ) ){
                     _errors += messages.number+'<br />';
                 }
+                // Email Control
                 if( _methods[j] === 'email' && !that.check.mail( _val ) ){
                     _errors += messages.email+'<br />';
                 }
+                // Credit Cart Control
                 if( _methods[j] === 'creditCard' && _val !=='' && !that.check.creditCard( _val ) ){
                     _errors += messages.creditCard+'<br />';
                 }
+                // Rules Control (minChecked, maxChecked, minSelected etc.)
                 if( reg.test( _methods[j] ) ){
-                    var rules;
-                    rules = _methods[j].split( /\[|,|\]/ );
+                    // reulesleri alalım
+                    // And Control rules
+                    var rules = _methods[j].split( /\[|,|\]/ );
                     if( rules[0] === 'maxLength' && !that.check.maxLength( _val, rules[1] ) ){
                         _errors += messages.maxLength.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'minLength' && !that.check.minLength( _val, rules[1] ) ){
                         _errors += messages.minLength.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'maxChecked' && !that.check.checkbox.maxChecked.call( that, _el, rules[1] ) ){
+                        // Redirect to the first checkbox
                         _el = that.form.querySelectorAll( 'input[type=checkbox][data-hsnvalidate][name='+ _el.name +']' )[0];
                         _errors += messages.maxChecked.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'minChecked' && !that.check.checkbox.minChecked.call( that, _el, rules[1] ) ){
+                        // Redirect to the first checkbox
                         _el = that.form.querySelectorAll( 'input[type=checkbox][data-hsnvalidate][name='+ _el.name +']' )[0];
                         _errors += messages.minChecked.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'maxSelected' && !that.check.selectbox.maxSelected( _val, rules[1] ) ){
@@ -199,16 +208,20 @@
                     }
                 }
             }
+            // Hata mesajlarını kontrol edelim
+            // Eğer Hata mesajı mevcut ise hata penceresi açma metodunu çalıştıralım
             if( _errors !== '' ){ that.window.open.call( that , _el, _errors ); }
         }
         //console.timeEnd('hsn');
-        if( e.type !== 'submit' ){ return; }
-        else if( that.handler === true ){ return false; }
-        else{
+        if( e.type !== 'submit' ){ return; } // event type submit değilse her şartta işlemleri bitir
+        else if( that.handler === true ){ return false; } // Eğer event type submit ise ve handler true ise submiti durdur
+        else{ // Eğer validation başarılı ise bitiş fonksiyonlarını çalıştır 
+            // Ajax işlemi yapılacaksa ajax metodunu çalıştır
             if( that.options.ajax.call ){
                 that.ajax.call( that, arguments );
                 return false;
             }
+            // Ajax işlemi yoksa bitiş fonksiyonunu çalıştır
             return that.options.onCompleteFunc( that, e );
         }
     };
@@ -217,19 +230,11 @@
     * @param {String} Val : input value
     */
     HsnValidate.prototype.check = {
-        /**
-        * Boşluk Kontrolü - gelen değerin boş olup olmadığını kontrol eder
-        * @return {Boolen} Return true if input value isnt empty 
-        *
-        */
+        //  Boşluk Kontrolü - gelen değerin boş olup olmadığını kontrol eder
         space : function( val ){
             return ( this.clear( val ) === '' ) ? false : true;
         },
-        /**
-        * Mail Kontrolü - Gelen değerin geçerli bir eposta adresi olup olmadığını kontrol eder
-        *
-        * @return {Boolen} input değeri geçersiz bir eposta ise ve input değeri boş değilse false döner
-        */
+        //  Mail Kontrolü - Gelen değerin geçerli bir eposta adresi olup olmadığını kontrol eder
         mail : function( val ){
             return ( ( regMail.test( val ) === false ) && val !== '' ) ? false : true ;
         },
@@ -253,7 +258,6 @@
         /*  Credit Card Control
         *
         * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers 
-        * @return {Boolen} 
         */
         creditCard : function( val ){
             var reg, cardNumber, pos, digit, i, sub_total, sum = 0, strlen;
@@ -305,50 +309,89 @@
                 return ( val !== null && val !== '' && val.length < arg ) ? false : true ;
             }
         },
+        // Custom Reg kontrol fonksiyonu
         customReg : function( val, reg ){
             var _reg = new RegExp( reg );
             return ( ( _reg.test( val ) === false ) && val !== '' ) ? false : true ;
         }
     };
     /**
-    * error promp method
+    * error window method
     * @return {Void}
     */
     HsnValidate.prototype.window = {
+        /**
+        * Hata penceresi açma metodu
+        * @params _inp{object} : hatalı element ( native elemenet yada Jquery object )
+        * @params error : hata mesajı
+        */
         open : function( _inp, error ){
+            // Hata penceresi açılacak olan elementin parentını alalım
             var _inpParent = _inp.parentNode ;
+            // Parent undefined ise demekki object olarak gelmiştir. elemente dönüştürelim
             if( typeof _inpParent === 'undefined' ){ _inpParent = _inp[0].parentNode ; }
+            // Eğer hata penceresi açılacak elementin ( gelen elementin parentının içerisi ) 
+            // içinde başka bir hata penceresi zaten açılmış ise fonksiyonu döndür.
             if( $( _inpParent ).find( '.'+this.options.errorClass ).length > 0 ){ return ; }
+            // Değişkenlerimizi declare edelim
             var pos, W, H, T, errorObject, errorCloseObject ;
+            // elementin posizyonunun alalım
+            // !! ie8 desteği için jQuery fonksiyonlarını kullanıyoruz
             pos = $( _inp ).position();
+            // Genişlik ve yüksekliğini alalım
+            // !! ie8 desteği için jQuery fonksiyonlarını kullanıyoruz
             W = $( _inp ).width();
             H = $( _inp ).height();
+            // top değerini T değişkenine depoladık
             T= pos.top ;
+            // Hata pencere elementini oluşturalım
             errorObject = document.createElement( 'span' );
+            // Hata pencere classımızı ekleyelim
             errorObject.className = this.options.errorClass ;
+            // Hata penceresini kapatmak için kullanacağımız elementi oluşturalım
             errorCloseObject = document.createElement( 'span' );
+            // görüntü olarak x işaretini ekliyoruz manuel hata penceresi kapatma elementine
             errorCloseObject.innerHTML = 'x';
+            // son olarak manuel hata penceresi kapatma objemize hata penceresi kapatma elementi classını ekliyoruz
             errorCloseObject.className = this.options.errorCloseClass ;
+            // Hata pencere elementimizin içini boşaltalım
+            // daha sonra posizyonunu belirleyelim
             $(errorObject).empty().css({
                 'left':pos.left+W+30+'px',
                 'top' :T+'px'
             });
+            // dökumanımıza ekleyelim
             _inpParent.appendChild( errorObject );
+            // Hata mesajımızı içine ekleyelim
             errorObject.innerHTML = error ;
+            // hata penceresi kapama elementimizi de hata penceresi elementine ekleyelim
             errorObject.appendChild( errorCloseObject );
+            // Submiti durdurmak için handler ı true olarak ayarlayalım
             this.handler = true ; 
         },
+        /** 
+        * Hata penceresi kapatma metodu
+        * 
+        * @params _inp : kapatılacak hata mesajı penceresi elementi
+        */
         close : function( _inp ){
             _inp.parentNode.removeChild( _inp );
+            // Validasyon işlemi bittiği için
+            // handlerı başlangıç pozisyonuna döndürüyoruz
+            // aksi halde validation başarılı olsa dahi submit devam etmiyecektir.
             this.handler = false ;
         }
     };
     /**
-    * İnput reset function
-    * @param {String} _inp 
+    * form error window reset method
+    * @param {object} _inp : 
     */
     HsnValidate.prototype.reset = function( _inp ){
-        var that = this, _errorMessages = {} ;
+        var that = this, // scoped this
+        _errorMessages = {} ;
+        // Eğer _inp değeri boşsa ( bu tüm <form> u resetleme işlemidir )
+        // yada gelen _inp değeri birden fazla element içeriyorsa
+        // ve bu elementler checkbox değilse
         if( typeof _inp === 'undefined' || ( _inp.length > 1 && _inp[0].getAttribute('type') !== 'checkbox' ) ){ 
             _errorMessages = $(that.form).find( '.'+ that.options.errorClass ); 
         }

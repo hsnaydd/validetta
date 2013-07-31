@@ -111,9 +111,8 @@ label[for=deneme]{width:100px}
 <hr />
 <form  id="kayit2" method="POST">
 	<ul>
-		<li><label>İsim</label><input type="text" name="isim_hsn" data-hsnValidate="required,minLength[2],maxLength[3]" class="required" /> <br />
-		<input type="text" name="ex3-n2" data-hsnvalidate="equal[isim_hsn]" ></li>
-		<li><label for="ex3-n2">equal</label> <br /></li>
+		<li><label>İsim</label><input type="text" name="isim_hsn" data-hsnValidate="required,minLength[2],maxLength[3]" class="required" /> <br /></li>
+		<li><label for="ex3-n2">equal</label> <input type="text" name="ex3-n2" data-hsnvalidate="equal[isim_hsn]" > <br /></li>
 		<li><label>Numara</label><input type="text" name="soyisim" data-hsnvalidate="number" /></li>
 		<li><label>Email</label><input type="text" name="email" data-hsnvalidate="email" /></li>
 		<li><input type="submit" value="Kaydet" /><input type="reset"/></li>
