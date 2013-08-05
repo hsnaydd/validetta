@@ -21,7 +21,7 @@
     var HsnValidate = {}, // Plugin Class
         fields = {}, // Current fields/fieldss
         // RegExp for input validate rules
-        reg = new RegExp( /(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|custom)\[[(\w)-_]{1,10}\]/i ),
+        reg = new RegExp( /(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|customReg)\[[(\w)-_]{1,10}\]/i ),
         // RegExp for mail kontrol method
         regMail = new RegExp( /^[a-z]{1}[\d\w\.-]+@[\d\w-]{3,}\.[\w]{2,3}(\.\w{2})?$/ ),
         //RegExp for input number control method
@@ -127,7 +127,7 @@
             var _errProp = this.parentNode;
             // Hata almamak için tıklanılan elementin parentını kontrol ediyoruz
             // Parent ı seçme başarılı ise hata penceresini kapatıyoruz
-            if( _errProp ){ that.window.close.call( that, _errProp ) }
+            if( _errProp ){ that.window.close.call( that, _errProp ); }
             return false;
         });
     };
@@ -164,9 +164,10 @@
             for ( var j = _methods.length - 1; j >= 0; j-- ) {
                 // Required Control
                 if( _methods[j] === 'required' ){
-                    if( _el.getAttribute('type') === 'checkbox' && !that.check.checkbox.checked( _el ) ){ _errors += messages.checkbox+'<br />'; }
+                    var _elType = _el.getAttribute('type');
+                    if( _elType === 'checkbox' && !that.check.checkbox.checked( _el ) ){ _errors += messages.checkbox+'<br />'; }
                     else if( _el.tagName ==='SELECT' && !that.check.selectbox.selected( _val ) ){ _errors += messages.selectbox+'<br />'; }
-                    if( ( _el.getAttribute('type') ==='text' || _el.tagName ==='TEXTAREA' ) && !that.check.space.call( that, _val ) ){ _errors += messages.empty+'<br />'; }  
+                    if( ( _elType ==='text' || _elType ==='password' || _el.tagName ==='TEXTAREA' ) && !that.check.space.call( that, _val ) ){ _errors += messages.empty+'<br />'; }  
                 }
                 // Number Control
                 if( _methods[j] === 'number' && !that.check.number( _val ) ){
@@ -203,7 +204,7 @@
                         _errors += messages.minSelected.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'equal' && !that.check.equal.call( that, _val, rules[1] ) ){
                         _errors += messages.notEqual+'<br />';
-                    }else if( rules[0] === 'custom' && !that.check.customReg( _val, that.options.customReg[ rules[1] ].method ) ){
+                    }else if( rules[0] === 'customReg' && !that.check.customReg( _val, that.options.customReg[ rules[1] ].method ) ){
                         _errors += ( that.options.customReg[ rules[1] ].errorMessage || messages.empty )+'<br />';
                     }
                 }
