@@ -118,7 +118,7 @@
             });
         }
         // Reset Butonu ile hata mesajlarını temizleme
-        $( this.form ).find( 'input[type=reset]' ).on( 'click', function(){
+        $( this.form ).find( '[type=reset]' ).on( 'click', function(){
             // kontrol edilmiş alanlarda hata mesajı varsa temizemek için reset metodunu çalıştırdık
             return that.reset.call( that );
         });
@@ -185,6 +185,9 @@
                 if( reg.test( _methods[j] ) ){
                     // reulesleri alalım
                     // And Control rules
+                    // Aşağıda kullanılan {count} öngörülen maxsimum yada minimum değerdir
+                    // örneğin; method minLength ve rules 2 ise ( minLength[2] ) 
+                    // Output error windows text : 'Please select minimum 2 options. '
                     var rules = _methods[j].split( /\[|,|\]/ );
                     if( rules[0] === 'maxLength' && !that.check.maxLength( _val, rules[1] ) ){
                         _errors += messages.maxLength.replace( '{count}', rules[1] )+'<br />';
