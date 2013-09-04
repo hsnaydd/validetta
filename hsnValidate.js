@@ -1,11 +1,11 @@
 /*!
- * hsnValidate - jQuery Eklentisi
+ * hsnValidate - jQuery front-end form validate plugin
  * version: 1.0 (30 Mart 2013, Cumartesi)
- * @jQuery v1.7 ve üstü ile çalışmaktadır.
- * @Browser Support ie8 and above, and all modern browsers
+ * @jQuery Support: v1.7 and above
+ * @Browser Support : ie8 and above, and all modern browsers
  *
- * Örneklere http://... adresinden  ulaşabilirsiniz.
- * Proje Adresi : https://github.com/hsnayd/hsnValidate 
+ * Examples : http://lab.hasanaydogdu.com/hsnValidate/#examples
+ * GitHub Repository : https://github.com/hsnayd/hsnValidate 
  * Lisans: MIT ve GPL
  *  * http://www.opensource.org/licenses/mit-license.php
  *  * http://www.gnu.org/licenses/gpl.txt
@@ -22,12 +22,12 @@
         fields = {}, // Current fields/fieldss
         // RegExp for input validate rules
         reg = new RegExp( /(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|customReg)\[[(\w)-_]{1,10}\]/i ),
-        // RegExp for mail kontrol method
+        // RegExp for mail control method
         regMail = new RegExp( /^[a-z]{1}[\d\w\.-]+@[\d\w-]{3,}\.[\w]{2,3}(\.\w{2})?$/ ),
         //RegExp for input number control method
         regNumber = new RegExp( /^[\+][0-9]+?$|^[0-9]+?$/ );
     /**
-    *  Form kontrol hata mesajları 
+    *  Form validate error messages
     */
     var messages = {
         empty   : 'This field is required. Please be sure to check.',
@@ -45,59 +45,56 @@
         creditCard  : 'Invalid credit card number. Please be sure to check.'
     };
     /**
-    *  Eklenti default ayarları
+    *  Plugin defaults
     */
     var defaults = {
-        errorClass    : 'formHata', // Hata mesajı penceresine eklenecek olan class
-        errorCloseClass : 'formHataKapa', // Hata mesajı penceresini kapatan HTML elementine eklenecek class
-        ajax : { // Ajax işlemleri
-          call    : false, // Ajax işlemi yapmak isyorsanız true olarak ayarlamalısınız.
-          type    : 'GET', // Ajax post type
-          url     : null, // Ajax url. URL bilgisini burada eklemek yerine FORM action özniteliğinde de belirtebilirsiniz.
-          dataType  : 'html', // Ajax dataType
-          beforeSend  : $.noop, // Ajax başlamadan önce çalıştırılıcak fonksiyon
-          success   : $.noop, // Ajax işlemi başarılı ise çalıştırılacak fonksiyon
-          fail    : $.noop, // Ajax işlemi başarısız ise çalıştırılacak fonksiyon
-          complete  : $.noop // Ajax işlemi tamamlandığında (başarılı yada başarısız) çalıştırılacak fonksiyon
+        errorClass    : 'formHata', // The html class which to be added to error message window
+        errorCloseClass : 'formHataKapa', // The html class that will add on element of HTML which is closing the error message window
+        ajax : { // Ajax processing
+            call    : false, // If you want to make an ajax request, set it to true
+            type    : 'GET',
+            url     : null, // Ajax url. Instead of adding URL information here, you can also specify it at form action attribute(URL bilgisini burada eklemek yerine FORM action özniteliğinde de belirtebilirsiniz.)
+            dataType  : 'html',
+            beforeSend  : $.noop,
+            success   : $.noop,
+            fail    : $.noop,
+            complete  : $.noop
         },
-        realTime   : true, // Eğer true seçilirse real-time form kontrolü aktif edilir
-        onCompleteFunc  : $.noop, // Form kontrolü tamamlandıktan sonra çalıştırılacak fonksiyon
-        customReg   : {} // Costum Reg metodu değişkeni
+        realTime   : true, // To enable real-time form control, set this option true (Eğer true seçilirse real-time form kontrolü aktif edilir)
+        onCompleteFunc  : $.noop, // This is the function to be run after the completion of form control // Form kontrolü tamamlandıktan sonra çalıştırılacak fonksiyon
+        customReg   : {} // Costum reg method variable
     };
     /**
     * Plugin Class
     *
-    * @param {object} form : Kontrol edilen <form> elementi
-    * @param {object} options : Kullanıcının belirlediği ayarlar
+    * @param {object} form : <form> element which being controlled
+    * @param {object} options : User-specified settings
     * @return {method} events 
     */
     HsnValidate = function( form, options ){
         /**
         *  Public  Properties
-        *  @property handler : uses to handle submit event
-        *  @property options : Register plugin options
-        *  @property form : Register <form> element
+        *  @property handler : It is used to stop or resume submit event handler
+        *  @property options : Property is stored in plugin options
+        *  @property form : Property is stored in <form> element
         */
         this.handler = false;
         this.options = $.extend( true, {}, defaults, options );
         this.form = form ;
-        // Events methodunu başlatalım
         return this.events.call( this );
     };
     /**
     * Events Method
     * Eklentinin çalışması yada hata pencerelerinin kapatılması işlemlerini tetikler
     * 
-    * @return {method} init, {method} reset or {false}
+    * @return {method} init, {method} reset or {boolean} false
     */
     HsnValidate.prototype.events = function(){
-        var that = this; // scoped this
+        var that = this; // stored this
         // Handle submit event 
         $( this.form ).submit( function( e ){
-            // kontrol edilecek alanlar global değişkene aktarıldı
             // fields to be controlled transferred to global variable
             fields = this.querySelectorAll( '[data-hsnvalidate]' );
-            // init metodunu başlat
             return that.init.call( that, e );
         });
         // real-time option control
@@ -106,27 +103,25 @@
             $( this.form ).find( '[data-hsnvalidate]' ).not( '[type=checkbox]' ).on( 'change', function( e ){
                 // field to be controlled transferred to global variable
                 fields = $( this );
-                // init metodunu başlat
                 return that.init.call( that, e );
             });
             // handle click event for checkboxes
             $( this.form ).find( '[data-hsnvalidate][type=checkbox]' ).on( 'click', function( e ){
                 // fields to be controlled transferred to global variable
                 fields = that.form.querySelectorAll( '[data-hsnvalidate][type=checkbox][name='+ this.name +']' );
-                // init metodunu başlat
                 return that.init.call( that, e );
             });
         }
-        // Reset Butonu ile hata mesajlarını temizleme
+        // handle <form> reset button to clear error messages
         $( this.form ).find( '[type=reset]' ).on( 'click', function(){
-            // kontrol edilmiş alanlarda hata mesajı varsa temizemek için reset metodunu çalıştırdık
             return that.reset.call( that );
         });
-        // Manuel olarak hata mesajlarını kapatma fonksiyonu
+        // error messages manually cleaning function
+        // handle error close button to manually clearing error messages
         $( this.form ).on( 'click', '.'+this.options.errorCloseClass, function(){
+            // We're checking the parent value of clicked element to avoid getting error
+            // if parent value is true, clear error window
             var _errProp = this.parentNode;
-            // Hata almamak için tıklanılan elementin parentını kontrol ediyoruz
-            // Parent ı seçme başarılı ise hata penceresini kapatıyoruz
             if( _errProp ){ that.window.close.call( that, _errProp ); }
             return false;
         });
@@ -139,7 +134,7 @@
     * @return {Function} or {Boolen}
     */
     HsnValidate.prototype.init = function( e ){
-        var that = this; // scoped this
+        var that = this; // stored this
         // Reset errors props from all elements 
         //console.time('hsn');
         this.reset.call( this, fields );
