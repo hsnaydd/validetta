@@ -85,7 +85,7 @@
     };
     /**
     * Events Method
-    * Eklentinin çalışması yada hata pencerelerinin kapatılması işlemlerini tetikler
+    * This is the method of handling events
     * 
     * @return {method} init, {method} reset or {boolean} false
     */
@@ -128,7 +128,7 @@
     };
     /**
     * Init Method
-    * Form kontrolünün başlama metodu
+    * In this method, fields are validated
     * 
     * @params {Object} e : event object
     * @return {Function} or {Boolen}
@@ -136,7 +136,6 @@
     HsnValidate.prototype.init = function( e ){
         var that = this; // stored this
         // Reset errors props from all elements 
-        //console.time('hsn');
         this.reset.call( this, fields );
         // Start control each elements
         for ( var i = fields.length - 1; i >= 0; i-- ) {
@@ -152,9 +151,9 @@
             _el = fields[i];
             _errors = '';
             _val = $( _el ).val();
-            // Kontrol metodlarını alalım
+            // get control methods
             _methods = _el.getAttribute( 'data-hsnvalidate' ).split( ',' );
-            // Metotları kontrole başlayalım
+            // start to check fields
             // that.check : Object Fields Control Method
             for ( var j = _methods.length - 1; j >= 0; j-- ) {
                 // Required Control
@@ -178,8 +177,8 @@
                 }
                 // Rules Control (minChecked, maxChecked, minSelected etc.)
                 if( reg.test( _methods[j] ) ){
-                    // reulesleri alalım
-                    // And Control rules
+                    // get rules
+                    // And start to check rules
                     // Aşağıda kullanılan {count} öngörülen maxsimum yada minimum değerdir
                     // örneğin; method minLength ve rules 2 ise ( minLength[2] ) 
                     // Output error windows text : 'Please select minimum 2 options. '
@@ -211,7 +210,6 @@
             // Eğer Hata mesajı mevcut ise hata penceresi açma metodunu çalıştıralım
             if( _errors !== '' ){ that.window.open.call( that , _el, _errors ); }
         }
-        //console.timeEnd('hsn');
         if( e.type !== 'submit' ){ return; } // event type submit değilse her şartta işlemleri bitir
         else if( that.handler === true ){ return false; } // Eğer event type submit ise ve handler true ise submiti durdur
         else{ // Eğer validation başarılı ise bitiş fonksiyonlarını çalıştır 
