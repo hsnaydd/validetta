@@ -179,9 +179,9 @@
                 if( reg.test( _methods[j] ) ){
                     // get rules
                     // And start to check rules
-                    // Aşağıda kullanılan {count} öngörülen maxsimum yada minimum değerdir
-                    // örneğin; method minLength ve rules 2 ise ( minLength[2] ) 
-                    // Output error windows text : 'Please select minimum 2 options. '
+                    // {count} which used below is the specified maximum or minimum value
+                    // e.g if method is minLength and  rule is 2 ( minLength[2] ) 
+                    // Output error windows text will be : 'Please select minimum 2 options. '
                     var rules = _methods[j].split( /\[|,|\]/ );
                     if( rules[0] === 'maxLength' && !that.check.maxLength( _val, rules[1] ) ){
                         _errors += messages.maxLength.replace( '{count}', rules[1] )+'<br />';
@@ -189,6 +189,7 @@
                         _errors += messages.minLength.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'maxChecked' && !that.check.checkbox.maxChecked.call( that, _el, rules[1] ) ){
                         // Redirect to the first checkbox
+                        // I want to see the error message on the first element of checkbox group
                         _el = that.form.querySelectorAll( 'input[type=checkbox][data-hsnvalidate][name='+ _el.name +']' )[0];
                         _errors += messages.maxChecked.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'minChecked' && !that.check.checkbox.minChecked.call( that, _el, rules[1] ) ){
@@ -206,8 +207,7 @@
                     }
                 }
             }
-            // Hata mesajlarını kontrol edelim
-            // Eğer Hata mesajı mevcut ise hata penceresi açma metodunu çalıştıralım
+            // Check the errors
             if( _errors !== '' ){ that.window.open.call( that , _el, _errors ); }
         }
         if( e.type !== 'submit' ){ return; } // event type submit değilse her şartta işlemleri bitir
