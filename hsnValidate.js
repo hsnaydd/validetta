@@ -84,8 +84,8 @@
         return this.events.call( this );
     };
     /**
-    * Events Method
-    * This is the method of handling events
+    * @method events
+    *   This is the method of handling events
     * 
     * @return {method} init, {method} reset or {boolean} false
     */
@@ -127,8 +127,8 @@
         });
     };
     /**
-    * Init Method
-    * In this method, fields are validated
+    * @method init
+    *   In this method, fields are validated
     * 
     * @params {Object} e : event object
     * @return {Function} or {Boolen}
@@ -161,7 +161,7 @@
                     var _elType = _el.getAttribute('type');
                     if( _elType === 'checkbox' && !that.check.checkbox.checked( _el ) ){ _errors += messages.checkbox+'<br />'; }
                     else if( _el.tagName ==='SELECT' && !that.check.selectbox.selected( _val ) ){ _errors += messages.selectbox+'<br />'; }
-                    if( ( _elType ==='text' || _elType ==='password' || _el.tagName ==='TEXTAREA' ) && !that.check.space.call( that, _val ) ){ _errors += messages.empty+'<br />'; }  
+                    if( ( _elType ==='text' || _elType ==='password' || _el.tagName ==='TEXTAREA' ) && !that.check.empty.call( that, _val ) ){ _errors += messages.empty+'<br />'; }  
                 }
                 // Number Control
                 if( _methods[j] === 'number' && !that.check.number( _val ) ){
@@ -210,45 +210,48 @@
             // Check the errors
             if( _errors !== '' ){ that.window.open.call( that , _el, _errors ); }
         }
-        if( e.type !== 'submit' ){ return; } // event type submit değilse her şartta işlemleri bitir
-        else if( that.handler === true ){ return false; } // Eğer event type submit ise ve handler true ise submiti durdur
-        else{ // Eğer validation başarılı ise bitiş fonksiyonlarını çalıştır 
-            // Ajax işlemi yapılacaksa ajax metodunu çalıştır
+        if( e.type !== 'submit' ){ return; } // if event type is not submit, break
+        else if( that.handler === true ){ return false; } // if event type is submit and handler is true, break submit
+        else{
+            // if ajax request set, start ajax process
             if( that.options.ajax.call ){
                 that.ajax.call( that, arguments );
                 return false;
             }
-            // Ajax işlemi yoksa bitiş fonksiyonunu çalıştır
+            // Return onComplateFunc()
+            // onComplateFunc() was defined by default at line 64
+            // if onComplateFunc() is not defined by user, submit process will continue
             return that.options.onCompleteFunc( that, e );
         }
     };
     /**
-    * Validator functions
-    * @param {String} Val : input value
+    * @method check
+    *   Validator functions
+    * @param {String} val : input value
     */
     HsnValidate.prototype.check = {
-        //  Boşluk Kontrolü - gelen değerin boş olup olmadığını kontrol eder
-        space : function( val ){
+        // Empty check - it checks the value if it's empty or not
+        empty : function( val ){
             return ( this.clear( val ) === '' ) ? false : true;
         },
-        //  Mail Kontrolü - Gelen değerin geçerli bir eposta adresi olup olmadığını kontrol eder
+        //  Mail check - it checks the value if it's a valid email address or not//Gelen değerin geçerli bir eposta adresi olup olmadığını kontrol eder
         mail : function( val ){
             return ( ( regMail.test( val ) === false ) && val !== '' ) ? false : true ;
         },
-        //Numara Kontrolu
+        // Number check
         number : function( val ){
             return ( ( regNumber.test( val ) === false ) && val !== '' ) ?  false : true;
         },
-        //Minimum uzunluk kontrol
+        // Minimum length check
         minLength : function( val, arg ){
             var _length = val.length;
             return ( _length < arg && _length !== 0 ) ? false : true;
         },
-        //Max uzunluk kontrol
+        // Maximum lenght check
         maxLength : function( val, arg ){
             return ( val.length > arg ) ? false : true;
         },
-        //Equal Control
+        // Equal check
         equal : function( val, arg ){
             return ( $( this.form ).find( 'input[type=text][name='+ arg +']' ).val() !== val ) ? false : true;
         },
@@ -280,7 +283,7 @@
             }
             return false ;
         },
-        //Checkbox Kontrolu
+        //Checkbox check
         checkbox : {
             checked : function( _inp ){
                 return ( !_inp.checked ) ? false : true ;
@@ -294,7 +297,7 @@
                 return ( count < arg ) ? false : true ;
             }
         },
-        //Selectbox Kontrolü
+        //Selectbox check
         selectbox : {
             selected : function( val ){
                 return ( val === '' || val === null ) ? false : true ;
@@ -306,102 +309,93 @@
                 return ( val !== null && val !== '' && val.length < arg ) ? false : true ;
             }
         },
-        // Custom Reg kontrol fonksiyonu
+        // Custom reg check
         customReg : function( val, reg ){
             var _reg = new RegExp( reg );
             return ( ( _reg.test( val ) === false ) && val !== '' ) ? false : true ;
         }
     };
     /**
-    * error window method
+    * @method window
+    *   this the section which opening or closing error windows process is done
+    *   Hata penceresi açma yada kapama işlemlerinin yapıdığı metot
     * @return {Void}
     */
     HsnValidate.prototype.window = {
         /**
-        * Hata penceresi açma metodu
-        * @params _inp{object} : hatalı element ( native elemenet yada Jquery object )
-        * @params error : hata mesajı
+        * @property open
+        * @params _inp{object} : element which has an error ( it can be native element or jQuery object )
+        * @params error : error message
         */
         open : function( _inp, error ){
-            // Hata penceresi açılacak olan elementin parentını alalım
             var _inpParent = _inp.parentNode ;
             // Parent undefined ise demekki object olarak gelmiştir. elemente dönüştürelim
+            // If the parent element undefined, that means _inp is an object. So we need to transform to the element
             if( typeof _inpParent === 'undefined' ){ _inpParent = _inp[0].parentNode ; }
             // Eğer hata penceresi açılacak elementin ( gelen elementin parentının içerisi ) 
             // içinde başka bir hata penceresi zaten açılmış ise fonksiyonu döndür.
+            // if there is an error window which previously opened for _inp, return
             if( $( _inpParent ).find( '.'+this.options.errorClass ).length > 0 ){ return ; }
-            // Değişkenlerimizi declare edelim
             var pos, W, H, T, errorObject, errorCloseObject ;
-            // elementin posizyonunun alalım
-            // !! ie8 desteği için jQuery fonksiyonlarını kullanıyoruz
+            // !! Here, JQuery functions are using to support the IE8
             pos = $( _inp ).position();
-            // Genişlik ve yüksekliğini alalım
-            // !! ie8 desteği için jQuery fonksiyonlarını kullanıyoruz
+            // !! Here, JQuery functions are using to support the IE8
             W = $( _inp ).width();
             H = $( _inp ).height();
-            // top değerini T değişkenine depoladık
             T= pos.top ;
-            // Hata pencere elementini oluşturalım
+            // Create the error window object which will be appear
             errorObject = document.createElement( 'span' );
-            // Hata pencere classımızı ekleyelim
             errorObject.className = this.options.errorClass ;
             // Hata penceresini kapatmak için kullanacağımız elementi oluşturalım
+            // Create the element which use to close the error window
             errorCloseObject = document.createElement( 'span' );
-            // görüntü olarak x işaretini ekliyoruz manuel hata penceresi kapatma elementine
             errorCloseObject.innerHTML = 'x';
-            // son olarak manuel hata penceresi kapatma objemize hata penceresi kapatma elementi classını ekliyoruz
             errorCloseObject.className = this.options.errorCloseClass ;
-            // Hata pencere elementimizin içini boşaltalım
-            // daha sonra posizyonunu belirleyelim
             $(errorObject).empty().css({
                 'left':pos.left+W+30+'px',
                 'top' :T+'px'
             });
-            // dökumanımıza ekleyelim
             _inpParent.appendChild( errorObject );
-            // Hata mesajımızı içine ekleyelim
             errorObject.innerHTML = error ;
-            // hata penceresi kapama elementimizi de hata penceresi elementine ekleyelim
             errorObject.appendChild( errorCloseObject );
-            // Submiti durdurmak için handler ı true olarak ayarlayalım
+            // we have an error so we need to break submit
+            // set to handler true
             this.handler = true ; 
         },
         /** 
-        * Hata penceresi kapatma metodu
-        * 
-        * @params _inp : kapatılacak hata mesajı penceresi elementi
+        * @property : close
+        * @params _inp : the error message window which will be disappear
         */
         close : function( _inp ){
             _inp.parentNode.removeChild( _inp );
-            // Validasyon işlemi bittiği için
-            // handlerı başlangıç pozisyonuna döndürüyoruz
-            // aksi halde validation başarılı olsa dahi submit devam etmiyecektir.
+            // set to handler false
+            // otherwise at the next validation attempt, submit will not continue even the validation is successful
             this.handler = false ;
         }
     };
     /**
-    * form error window reset method
-    * @param {object} _inp : 
+    * @method reset
+    *   removes all error messages windows
+    * @param {object} or {void} _inp : form elements which have an error message window
     */
     HsnValidate.prototype.reset = function( _inp ){
-        var that = this, // scoped this
-        _errorMessages = {} ;
-        // Eğer _inp değeri boşsa ( bu tüm <form> u resetleme işlemidir )
-        // yada gelen _inp değeri birden fazla element içeriyorsa
-        // ve bu elementler checkbox değilse
+        var _errorMessages = {} ;
+        // if _inp is undefined ( This is the process of resetting all <form> )
+        // or _inp is an object that has element more than one
+        // and these elements are not checkbox
         if( typeof _inp === 'undefined' || ( _inp.length > 1 && _inp[0].getAttribute('type') !== 'checkbox' ) ){ 
-            _errorMessages = $(that.form).find( '.'+ that.options.errorClass ); 
+            _errorMessages = $(this.form).find( '.'+ this.options.errorClass ); 
         }
         else{ 
-            _errorMessages = $(_inp[0].parentNode).find( '.'+that.options.errorClass ); 
+            _errorMessages = $(_inp[0].parentNode).find( '.'+this.options.errorClass ); 
         }
         for(var i = _errorMessages.length -1; i >= 0; i--){
-            that.window.close.call( that, _errorMessages[i] );
+            this.window.close.call( this, _errorMessages[i] );
         } 
     };
     /**
-    * Clear - İnput değerinin sağ ve solundaki boşlukları temizler
-    *
+    * @method clear
+    *   Clears the left and right spaces of parameter / parametrenin sağındaki ve solundaki boşlukları temizler
     * @param {string} value
     * @return {String} 
     */
@@ -409,9 +403,9 @@
       return value.replace( /^\s+|\s+$/g, '' );
     };
     /**
-    * Ajax function
-    *
-    *@return {Void}
+    * @method ajax
+    *   ajax requests are done here
+    * @return {Void}
     */
     HsnValidate.prototype.ajax = function(){
         var data, url, that = this, formAction ;
@@ -436,7 +430,7 @@
     };
     /**
     * Plugin hsnValidate
-    * @param options : user options
+    * @param options : User-specified settings
     */
     $.fn.hsnValidate = function (options){
         if( $.hsnValidateLanguage ){
