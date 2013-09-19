@@ -12,12 +12,13 @@
  *
  * Copyright 2012 Hasan Aydoğdu - http://www.hasanaydogdu.com
  *
+ * Special Comment : I'm sorry for my english translation errors :)
  */
 ( function ( $ ) {
     "use strict";
     /**
-    *  Declare variables
-    */
+     *  Declare variables
+     */
     var HsnValidate = {}, // Plugin Class
         fields = {}, // Current fields/fieldss
         // RegExp for input validate rules
@@ -27,12 +28,12 @@
         //RegExp for input number control method
         regNumber = new RegExp( /^[\+][0-9]+?$|^[0-9]+?$/ );
     /**
-    *  Form validate error messages
-    */
+     *  Form validate error messages
+     */
     var messages = {
         empty   : 'This field is required. Please be sure to check.',
         email   : 'Your E-mail address appears to be invalid. Please be sure to check.',
-        number    : 'You can only enter numbers in this field.',
+        number    : 'You can enter only numbers in this field.',
         maxLength : 'Maximum {count} characters allowed!',
         minLength : 'Minimum {count} characters allowed! ',
         checkbox  : 'This checkbox is required. Please be sure to check.',
@@ -45,50 +46,50 @@
         creditCard  : 'Invalid credit card number. Please be sure to check.'
     };
     /**
-    *  Plugin defaults
-    */
+     *  Plugin defaults
+     */
     var defaults = {
         errorClass    : 'formHata', // The html class which to be added to error message window
         errorCloseClass : 'formHataKapa', // The html class that will add on element of HTML which is closing the error message window
         ajax : { // Ajax processing
             call    : false, // If you want to make an ajax request, set it to true
             type    : 'GET',
-            url     : null, // Ajax url. Instead of adding URL information here, you can also specify it at form action attribute(URL bilgisini burada eklemek yerine FORM action özniteliğinde de belirtebilirsiniz.)
+            url     : null, // Ajax url. !!! Instead of adding URL information here, you can also specify it at form action attribute.
             dataType  : 'html',
             beforeSend  : $.noop,
             success   : $.noop,
             fail    : $.noop,
             complete  : $.noop
         },
-        realTime   : true, // To enable real-time form control, set this option true (Eğer true seçilirse real-time form kontrolü aktif edilir)
-        onCompleteFunc  : $.noop, // This is the function to be run after the completion of form control // Form kontrolü tamamlandıktan sonra çalıştırılacak fonksiyon
+        realTime   : true, // To enable real-time form control, set this option true.
+        onCompleteFunc  : $.noop, // This is the function to be run after the completion of form control.
         customReg   : {} // Costum reg method variable
     };
     /**
-    * Plugin Class
-    *
-    * @param {object} form : <form> element which being controlled
-    * @param {object} options : User-specified settings
-    * @return {method} events 
-    */
+     * Plugin Class
+     *
+     * @param {object} form : <form> element which being controlled
+     * @param {object} options : User-specified settings
+     * @return {method} events 
+     */
     HsnValidate = function( form, options ){
         /**
-        *  Public  Properties
-        *  @property handler : It is used to stop or resume submit event handler
-        *  @property options : Property is stored in plugin options
-        *  @property form : Property is stored in <form> element
-        */
+         *  Public  Properties
+         *  @property handler : It is used to stop or resume submit event handler
+         *  @property options : Property is stored in plugin options
+         *  @property form : Property is stored in <form> element
+         */
         this.handler = false;
         this.options = $.extend( true, {}, defaults, options );
         this.form = form ;
         return this.events.call( this );
     };
     /**
-    * @method events
-    *   This is the method of handling events
-    * 
-    * @return {method} init, {method} reset or {boolean} false
-    */
+     * @method events
+     *   This is the method of handling events
+     * 
+     * @return {method} init, {method} reset or {boolean} false
+     */
     HsnValidate.prototype.events = function(){
         var that = this; // stored this
         // Handle submit event 
@@ -127,26 +128,26 @@
         });
     };
     /**
-    * @method init
-    *   In this method, fields are validated
-    * 
-    * @params {Object} e : event object
-    * @return {Function} or {Boolen}
-    */
+     * @method init
+     *   In this method, fields are validated
+     * 
+     * @params {Object} e : event object
+     * @return {Function} or {Boolen}
+     */
     HsnValidate.prototype.init = function( e ){
         var that = this; // stored this
-        // Reset errors props from all elements 
+        // Reset error windows from all elements 
         this.reset.call( this, fields );
         // Start control each elements
         for ( var i = fields.length - 1; i >= 0; i-- ) {
             /**
-            * Declaring variables
-            * 
-            * @params {object} _el : current field
-            * @params {string} _errors : current field's errors
-            * @params {array} _val : current field's value
-            * @params {array} _methods : current field's control methods 
-            */
+             * Declaring variables
+             * 
+             * @params {object} _el : current field
+             * @params {string} _errors : current field's errors
+             * @params {array} _val : current field's value
+             * @params {array} _methods : current field's control methods 
+             */
             var _el, _errors, _val = [], _methods = []; 
             _el = fields[i];
             _errors = '';
@@ -225,10 +226,10 @@
         }
     };
     /**
-    * @method check
-    *   Validator functions
-    * @param {String} val : input value
-    */
+     * @method check
+     *   Validator functions
+     * @param {String} val : input value
+     */
     HsnValidate.prototype.check = {
         // Empty check - it checks the value if it's empty or not
         empty : function( val ){
@@ -255,10 +256,10 @@
         equal : function( val, arg ){
             return ( $( this.form ).find( 'input[type=text][name='+ arg +']' ).val() !== val ) ? false : true;
         },
-        /*  Credit Card Control
-        *
-        * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers 
-        */
+        /**  
+         * Credit Card Control
+         * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers 
+         */
         creditCard : function( val ){
             var reg, cardNumber, pos, digit, i, sub_total, sum = 0, strlen;
             reg = new RegExp( /[^0-9]+/g );
@@ -316,24 +317,20 @@
         }
     };
     /**
-    * @method window
-    *   this the section which opening or closing error windows process is done
-    *   Hata penceresi açma yada kapama işlemlerinin yapıdığı metot
-    * @return {Void}
-    */
+     * @method window
+     *   This the section which opening or closing error windows process is done
+     * @return {Void}
+     */
     HsnValidate.prototype.window = {
         /**
-        * @property open
-        * @params _inp{object} : element which has an error ( it can be native element or jQuery object )
-        * @params error : error message
-        */
+         * @property open
+         * @params _inp{object} : element which has an error ( it can be native element or jQuery object )
+         * @params error : error message
+         */
         open : function( _inp, error ){
             var _inpParent = _inp.parentNode ;
-            // Parent undefined ise demekki object olarak gelmiştir. elemente dönüştürelim
             // If the parent element undefined, that means _inp is an object. So we need to transform to the element
             if( typeof _inpParent === 'undefined' ){ _inpParent = _inp[0].parentNode ; }
-            // Eğer hata penceresi açılacak elementin ( gelen elementin parentının içerisi ) 
-            // içinde başka bir hata penceresi zaten açılmış ise fonksiyonu döndür.
             // if there is an error window which previously opened for _inp, return
             if( $( _inpParent ).find( '.'+this.options.errorClass ).length > 0 ){ return ; }
             var pos, W, H, T, errorObject, errorCloseObject ;
@@ -346,7 +343,6 @@
             // Create the error window object which will be appear
             errorObject = document.createElement( 'span' );
             errorObject.className = this.options.errorClass ;
-            // Hata penceresini kapatmak için kullanacağımız elementi oluşturalım
             // Create the element which use to close the error window
             errorCloseObject = document.createElement( 'span' );
             errorCloseObject.innerHTML = 'x';
@@ -363,9 +359,9 @@
             this.handler = true ; 
         },
         /** 
-        * @property : close
-        * @params _inp : the error message window which will be disappear
-        */
+         * @property : close
+         * @params _inp : the error message window which will be disappear
+         */
         close : function( _inp ){
             _inp.parentNode.removeChild( _inp );
             // set to handler false
@@ -374,10 +370,10 @@
         }
     };
     /**
-    * @method reset
-    *   removes all error messages windows
-    * @param {object} or {void} _inp : form elements which have an error message window
-    */
+     * @method reset
+     *   removes all error messages windows
+     * @param {object} or {void} _inp : form elements which have an error message window
+     */
     HsnValidate.prototype.reset = function( _inp ){
         var _errorMessages = {} ;
         // if _inp is undefined ( This is the process of resetting all <form> )
@@ -394,19 +390,19 @@
         } 
     };
     /**
-    * @method clear
-    *   Clears the left and right spaces of parameter / parametrenin sağındaki ve solundaki boşlukları temizler
-    * @param {string} value
-    * @return {String} 
-    */
+     * @method clear
+     *   Clears the left and right spaces of parameter.
+     * @param {string} value
+     * @return {String} 
+     */
     HsnValidate.prototype.clear = function( value ){
       return value.replace( /^\s+|\s+$/g, '' );
     };
     /**
-    * @method ajax
-    *   ajax requests are done here
-    * @return {Void}
-    */
+     * @method ajax
+     *   Ajax requests are done here.
+     * @return {Void}
+     */
     HsnValidate.prototype.ajax = function(){
         var data, url, that = this, formAction ;
         data = $( this.form ).serialize();
@@ -429,9 +425,10 @@
         .always( function( result ){ that.options.ajax.complete( result ); } ); 
     };
     /**
-    * Plugin hsnValidate
-    * @param options : User-specified settings
-    */
+     * Plugin hsnValidate
+     * @param {object} options : User-specified settings
+     * @return {object} this
+     */
     $.fn.hsnValidate = function (options){
         if( $.hsnValidateLanguage ){
             messages = $.extend( true, {}, messages, $.hsnValidateLanguage.messages );
