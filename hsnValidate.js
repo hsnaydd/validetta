@@ -254,7 +254,7 @@
         },
         // Equal check
         equal : function( val, arg ){
-            return ( $( this.form ).find( 'input[type=text][name='+ arg +']' ).val() !== val ) ? false : true;
+            return ( $( this.form ).find( 'input[name='+ arg +']' ).val() !== val ) ? false : true;
         },
         /**  
          * Credit Card Control

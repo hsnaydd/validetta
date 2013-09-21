@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Form Validator</title>
+<link rel="stylesheet" type="text/css" href="../hsnValidate.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="jquery.js?v1.10.2"><\/script>')</script>
+<script type="text/javascript" src="../hsnValidate.js?v1.0"></script>
+<script type="text/javascript" src="../languages/hsnValidateLang-tr.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('#exm1').hsnValidate({
+		customReg : {
+			regname : {
+				method : /^[\+][0-9]+?$|^[0-9]+?$/,
+				errorMessage : 'Custom Reg Error Message !'
+			},
+            // you can add more
+			example : { 
+				method : /^[\+][0-9]+?$|^[0-9]+?$/,
+				errorMessage : 'Lan mal !'
+			}
+		}
+	});
+	$('#exm2').hsnValidate({
+		ajax : {
+			call 		: true,
+			type 		: 'POST',
+			url			: 'ajax.json',
+            dataType    : 'json',
+			success		: function(a,veri){
+				alert('Öğrenci adı : '+veri.student[0].name+' Öğrenci No :'+veri.student[0].no);
+			},
+			beforeSend : function(){
+				console.log('start')	
+			},
+			complete : function(){
+				console.log('Finish him')	
+			},
+			fail : function(a,b){
+				console.log(b+':'+a.status+' : '+a.statusText);
+			}
+		},
+		realTime : false
+	});
+    $('#exm3').hsnValidate({
+        onCompleteFunc : function(object,event){
+            event.preventDefault();
+            var _inp = $('#exm3').find('input[name=exm3-name]');
+            object.window.open.call(object, _inp, 'This is an example about how you can focus an input after completion of form validation');
+            event.preventDefault();
+        }
+    });
+});
+</script>
+<style type="text/css">
+body{ margin:0; padding:0;}
+a{text-decoration:none;}
+ul{list-style:none;}
+li{padding:5px 10px; position:relative;}
+input{}
+label{width:300px; display:block;}
+label[for]{width:100px}
+.ilblock{display:inline-block;}
+</style>
+</head>
+<body>
+<h2>Example 1</h2>
+<form id="exm1" action="ajax.php" method="post">
+	<ul>
+		<li><label>Name</label><input type="text" name="name" data-hsnValidate="required,minLength[2],maxLength[3]" class="required" /></li>
+	    <li><label>Number</label><input type="text" name="number" data-hsnvalidate="number,required" /></li>
+		<li><label>Number equal</label><input type="text" name="numberEq" data-hsnvalidate="equal[number]" /></li>
+	    <li><label>Email</label><input type="text" name="email" data-hsnvalidate="email" /></li>
+        <li><label>Credit Cart</label><input type="text" name="creditCard" data-hsnvalidate="creditCard" /></li>
+         <li><label>CustomReg</label><input type="text" name="costum" data-hsnvalidate="customReg[regname]" /></li>
+	    <li><label for="exm-cb" class="ilblock">Checkbox 1</label><input type="checkbox" data-hsnvalidate="minChecked[1],maxChecked[2]" name="exm-cb" class="ilblock"/></li>
+        <li><label for="exm-cb" class="ilblock">Checkbox 2</label><input type="checkbox" data-hsnvalidate="minChecked[1],maxChecked[2]" name="exm-cb" class="ilblock"/></li>
+        <li><label for="exm-cb" class="ilblock">Checkbox 3</label><input type="checkbox" data-hsnvalidate="minChecked[1],maxChecked[2]" name="exm-cb" class="ilblock"/></li>
+        <li><label for="exm-sb" class="ilblock">Select Box</label>
+        	<select name="exm-sb" data-hsnvalidate="required">
+            	<option value="">select one</option>
+                <option value="1">option 1</option>
+            </select>
+        </li>
+        <li><label for="exm-msb" class="ilblock">Seçim Kutusu Multiple</label>
+        	<select name="exm-msb" multiple="multiple" data-hsnvalidate="required,minSelected[2],maxSelected[2]">
+            	<option value="">select one</option>
+                <option value="1">option 1</option>
+                <option value="2">option 2</option>
+                <option value="3">option 3</option>
+                
+            </select>
+        </li>
+	    <li><label>Text Area</label><textarea name="textarea" data-hsnvalidate="required"></textarea></li>
+         <li><label for="exm2-cb" class="ilblock">Checkbox 1</label><input type="checkbox" data-hsnvalidate="required" name="exm2-cb" class="ilblock"/></li>
+	    <li><input type="submit" value="Kaydet" /><input type="reset"/></li>
+	</ul>
+</form>
+<hr />
+<h2>Example 2</h2>
+<form  id="exm2" method="POST">
+	<ul>
+		<li><label>Password</label><input type="password" name='passworda' data-hsnValidate="required,minLength[3],maxLength[6]" class="required" /> <br /></li>
+		<li><label >Re-type Password</label> <input type="password" name="ex2-eq" data-hsnvalidate="equal[passworda]"> <br /></li>
+		<li><label>Email</label><input type="text" name="exm2-email" data-hsnvalidate="email" /></li>
+		<li><input type="submit" value="Kaydet" /><input type="reset"/></li>
+	</ul>
+</form>
+<hr />
+<h2>Example 3</h2>
+<form  id="exm3" method="POST">
+    <ul>
+        <li><label>Name</label><input type="text" name='exm3-name' data-hsnValidate="required"/><br /></li>
+        <li><label>Password</label><input type="password" name='password' data-hsnValidate="required"/> <br /></li>
+        <li><input type="submit" value="Save" /><input type="reset"/></li>
+    </ul>
+</form>
+</body>
+</html>
