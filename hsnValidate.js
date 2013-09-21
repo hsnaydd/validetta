@@ -49,8 +49,8 @@
      *  Plugin defaults
      */
     var defaults = {
-        errorClass    : 'formHata', // The html class which to be added to error message window
-        errorCloseClass : 'formHataKapa', // The html class that will add on element of HTML which is closing the error message window
+        errorClass    : 'hsnValidate-error', // The html class which to be added to error message window
+        errorCloseClass : 'hsnValidate-errorClose', // The html class that will add on element of HTML which is closing the error message window
         ajax : { // Ajax processing
             call    : false, // If you want to make an ajax request, set it to true
             type    : 'GET',
