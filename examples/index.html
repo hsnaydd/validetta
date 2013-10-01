@@ -7,7 +7,9 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="jquery.js?v1.10.2"><\/script>')</script>
 <script type="text/javascript" src="../hsnValidate.js?v1.0"></script>
-<script type="text/javascript" src="../languages/hsnValidateLang-tr.js"></script>
+<!-- 
+    <script type="text/javascript" src="../languages/hsnValidateLang-tr.js"></script> 
+-->
 <script type="text/javascript">
 $(function(){
 	$('#exm1').hsnValidate({
@@ -46,9 +48,9 @@ $(function(){
 	});
     $('#exm3').hsnValidate({
         onCompleteFunc : function(object,event){
-            event.preventDefault();
+            event.preventDefault(); // if you dont break submit and if form doesnt have error, page will post
             var _inp = $('#exm3').find('input[name=exm3-name]');
-            object.window.open.call(object, _inp, 'This is an example about how you can focus an input after completion of form validation');
+            object.window.open.call(object, _inp, 'This is an example about how you can focus an input after completion of form validation.');
             event.preventDefault();
         }
     });

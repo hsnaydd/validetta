@@ -1,8 +1,8 @@
 /*!
  * hsnValidate - jQuery front-end form validate plugin
  * version: 1.0 (30 Mart 2013, Cumartesi)
- * @jQuery Support: v1.7 and above
- * @Browser Support : ie8 and above, and all modern browsers
+ * @jQuery Requires: v1.7 or above
+ * @Browser Support : ie8 or above, and all modern browsers
  *
  * Examples : http://lab.hasanaydogdu.com/hsnValidate/#examples
  * GitHub Repository : https://github.com/hsnayd/hsnValidate 
@@ -35,7 +35,7 @@
         email   : 'Your E-mail address appears to be invalid. Please be sure to check.',
         number    : 'You can enter only numbers in this field.',
         maxLength : 'Maximum {count} characters allowed!',
-        minLength : 'Minimum {count} characters allowed! ',
+        minLength : 'Minimum {count} characters allowed!',
         checkbox  : 'This checkbox is required. Please be sure to check.',
         maxChecked  : 'Maximum {count} options allowed. Please be sure to check.',
         minChecked  : 'Please select minimum {count} options.',
