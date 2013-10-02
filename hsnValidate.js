@@ -1,6 +1,6 @@
 /*!
  * hsnValidate - Client-side form validation jQuery plugin
- * Version: 0.1-beta (02 October 2013)
+ * Version: 0.1.0 (02 October 2013)
  * @jQuery Requires: v1.7 or above
  * @Browser Support : ie8 or above, and all modern browsers
  *
