@@ -57,14 +57,14 @@ and add `data-hsnvalidate` attribute to element which you want to validate.
 - `number` : It checks fields if it is consist of number or not.
 - `email` : It checks E-mail if it is valid or not.
 - `creditCard` : It checks credit card number written to fields if it is valid or not.
-- `equal[input_name]` : It checks if the two fields are equal to each other according to input name.
+- `equal[input_name]` : It checks if the two fields are equal to each other according to input name. `input_name` should not be greater than 15 characters!
 - `minLength[x]` : It checks fields if it is consist of minimal X character.
 - `maxLength[x]` : It checks maximal X character entry to the area.
 - `minChecked[x]` : It checks minimal X option if it is marked or not.
 - `maxChecked[x]` : It checks maximal X option if it is marked or not.
 - `minSelected[x]` : It checks minimal X option if it is chosen or not.
 - `maxSelected[x]` : It checks maximal X option if it is chosen or not.
-- `customReg[regexp_name]` : It checks if field is suits to identified ordered expression or not.
+- `customReg[regexp_name]` : It checks if field is suits to identified ordered expression or not. `regexp_name` should not be greater than 15 characters!
 
 ## Options { }
 

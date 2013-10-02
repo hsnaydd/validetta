@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Form Validator</title>
+<title>Form Validator - Examples</title>
 <link rel="stylesheet" type="text/css" href="../hsnValidate.css">
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="jquery.js?v1.10.2"><\/script>')</script>
-<script type="text/javascript" src="../hsnValidate.js?v1.0"></script>
+<script type="text/javascript" src="../hsnValidate-min.js"></script>
 <!-- 
     <script type="text/javascript" src="../languages/hsnValidateLang-tr.js"></script> 
 -->
@@ -23,7 +23,8 @@ $(function(){
 				method : /^[\+][0-9]+?$|^[0-9]+?$/,
 				errorMessage : 'Lan mal !'
 			}
-		}
+		},
+        realTime : true
 	});
 	$('#exm2').hsnValidate({
 		ajax : {
@@ -31,8 +32,8 @@ $(function(){
 			type 		: 'POST',
 			url			: 'ajax.json',
             dataType    : 'json',
-			success		: function(a,veri){
-				alert('Öğrenci adı : '+veri.student[0].name+' Öğrenci No :'+veri.student[0].no);
+			success		: function(object,data){
+				alert('Student Name : '+data.student[0].name+' Student No :'+data.student[0].no);
 			},
 			beforeSend : function(){
 				console.log('start')	
@@ -40,11 +41,10 @@ $(function(){
 			complete : function(){
 				console.log('Finish him')	
 			},
-			fail : function(a,b){
-				console.log(b+':'+a.status+' : '+a.statusText);
+			fail : function(jqXHR, textStatus){
+				console.log(textStatus+':'+jqXHR.status+' : '+jqXHR.statusText);
 			}
-		},
-		realTime : false
+		}
 	});
     $('#exm3').hsnValidate({
         onCompleteFunc : function(object,event){

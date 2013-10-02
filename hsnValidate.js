@@ -1,6 +1,6 @@
 /*!
- * hsnValidate - jQuery front-end form validate plugin
- * version: 1.0 (30 Mart 2013, Cumartesi)
+ * hsnValidate - Client-side form validation jQuery plugin
+ * Version: 0.1-beta (02 October 2013)
  * @jQuery Requires: v1.7 or above
  * @Browser Support : ie8 or above, and all modern browsers
  *
@@ -10,7 +10,7 @@
  *  * http://www.opensource.org/licenses/mit-license.php
  *  * http://www.gnu.org/licenses/gpl.txt
  *
- * Copyright 2012 Hasan Aydoğdu - http://www.hasanaydogdu.com
+ * Copyright 2013 Hasan Aydoğdu - http://www.hasanaydogdu.com
  *
  * Special Comment : I'm sorry for my english translation errors :)
  */
@@ -22,7 +22,7 @@
     var HsnValidate = {}, // Plugin Class
         fields = {}, // Current fields/fieldss
         // RegExp for input validate rules
-        reg = new RegExp( /(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|customReg)\[[(\w)-_]{1,10}\]/i ),
+        reg = new RegExp( /(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|customReg)\[[(\w)-_]{1,15}\]/i ),
         // RegExp for mail control method
         regMail = new RegExp( /^[a-z]{1}[\d\w\.-]+@[\d\w-]{3,}\.[\w]{2,3}(\.\w{2})?$/ ),
         //RegExp for input number control method
@@ -61,7 +61,7 @@
             fail    : $.noop,
             complete  : $.noop
         },
-        realTime   : true, // To enable real-time form control, set this option true.
+        realTime   : false, // To enable real-time form control, set this option true.
         onCompleteFunc  : $.noop, // This is the function to be run after the completion of form control.
         customReg   : {} // Costum reg method variable
     };
