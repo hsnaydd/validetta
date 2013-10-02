@@ -15,9 +15,13 @@ hsnValidate is a tiny jQuery plugin which you can do client-side validation of y
 * You can limit number of choice of multiple select box or check box.
 * By creating your own regular expression, you can check fields according to this regular expression.
 
-##Browser support
+## Browser support
 
 The project is tested in Chrome and Firefox. It should work in the current stable releases of Chrome, Firefox, Safari as well as IE8 and up.
+
+## Dependencies
+
+jQuery  v1.7 or above.
 
 ## How does it work?
 
