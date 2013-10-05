@@ -1,11 +1,11 @@
 /*!
- * hsnValidate - Client-side form validation jQuery plugin
+ * Validetta - Client-side form validation jQuery plugin
  * Version: 0.1.0 (02 October 2013)
  * @jQuery Requires: v1.7 or above
  * @Browser Support : ie8 or above, and all modern browsers
  *
- * Examples : http://lab.hasanaydogdu.com/hsnValidate/#examples
- * GitHub Repository : https://github.com/hsnayd/hsnValidate 
+ * Examples : http://lab.hasanaydogdu.com/validetta/#examples
+ * GitHub Repository : https://github.com/hsnayd/validetta 
  * Lisans: MIT ve GPL
  *  * http://www.opensource.org/licenses/mit-license.php
  *  * http://www.gnu.org/licenses/gpl.txt
@@ -19,7 +19,7 @@
     /**
      *  Declare variables
      */
-    var HsnValidate = {}, // Plugin Class
+    var Validetta = {}, // Plugin Class
         fields = {}, // Current fields/fieldss
         // RegExp for input validate rules
         reg = new RegExp( /(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|customReg)\[[(\w)-_]{1,15}\]/i ),
@@ -49,8 +49,8 @@
      *  Plugin defaults
      */
     var defaults = {
-        errorClass    : 'hsnValidate-error', // The html class which to be added to error message window
-        errorCloseClass : 'hsnValidate-errorClose', // The html class that will add on element of HTML which is closing the error message window
+        errorClass    : 'validetta-error', // The html class which to be added to error message window
+        errorCloseClass : 'validetta-errorClose', // The html class that will add on element of HTML which is closing the error message window
         ajax : { // Ajax processing
             call    : false, // If you want to make an ajax request, set it to true
             type    : 'GET',
@@ -72,7 +72,7 @@
      * @param {object} options : User-specified settings
      * @return {method} events 
      */
-    HsnValidate = function( form, options ){
+    Validetta = function( form, options ){
         /**
          *  Public  Properties
          *  @property handler : It is used to stop or resume submit event handler
@@ -90,26 +90,26 @@
      * 
      * @return {method} init, {method} reset or {boolean} false
      */
-    HsnValidate.prototype.events = function(){
+    Validetta.prototype.events = function(){
         var that = this; // stored this
         // Handle submit event 
         $( this.form ).submit( function( e ){
             // fields to be controlled transferred to global variable
-            fields = this.querySelectorAll( '[data-hsnvalidate]' );
+            fields = this.querySelectorAll( '[data-validetta]' );
             return that.init.call( that, e );
         });
         // real-time option control
         if( this.options.realTime === true ){
             // handle change event for form elements (without checkbox)
-            $( this.form ).find( '[data-hsnvalidate]' ).not( '[type=checkbox]' ).on( 'change', function( e ){
+            $( this.form ).find( '[data-validetta]' ).not( '[type=checkbox]' ).on( 'change', function( e ){
                 // field to be controlled transferred to global variable
                 fields = $( this );
                 return that.init.call( that, e );
             });
             // handle click event for checkboxes
-            $( this.form ).find( '[data-hsnvalidate][type=checkbox]' ).on( 'click', function( e ){
+            $( this.form ).find( '[data-validetta][type=checkbox]' ).on( 'click', function( e ){
                 // fields to be controlled transferred to global variable
-                fields = that.form.querySelectorAll( '[data-hsnvalidate][type=checkbox][name='+ this.name +']' );
+                fields = that.form.querySelectorAll( '[data-validetta][type=checkbox][name='+ this.name +']' );
                 return that.init.call( that, e );
             });
         }
@@ -134,7 +134,7 @@
      * @params {Object} e : event object
      * @return {Function} or {Boolen}
      */
-    HsnValidate.prototype.init = function( e ){
+    Validetta.prototype.init = function( e ){
         var that = this; // stored this
         // Reset error windows from all elements 
         this.reset.call( this, fields );
@@ -153,7 +153,7 @@
             _errors = '';
             _val = $( _el ).val();
             // get control methods
-            _methods = _el.getAttribute( 'data-hsnvalidate' ).split( ',' );
+            _methods = _el.getAttribute( 'data-validetta' ).split( ',' );
             // start to check fields
             // that.check : Object Fields Control Method
             for ( var j = _methods.length - 1; j >= 0; j-- ) {
@@ -191,11 +191,11 @@
                     }else if( rules[0] === 'maxChecked' && !that.check.checkbox.maxChecked.call( that, _el, rules[1] ) ){
                         // Redirect to the first checkbox
                         // I want to see the error message on the first element of checkbox group
-                        _el = that.form.querySelectorAll( 'input[type=checkbox][data-hsnvalidate][name='+ _el.name +']' )[0];
+                        _el = that.form.querySelectorAll( 'input[type=checkbox][data-validetta][name='+ _el.name +']' )[0];
                         _errors += messages.maxChecked.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'minChecked' && !that.check.checkbox.minChecked.call( that, _el, rules[1] ) ){
                         // Redirect to the first checkbox
-                        _el = that.form.querySelectorAll( 'input[type=checkbox][data-hsnvalidate][name='+ _el.name +']' )[0];
+                        _el = that.form.querySelectorAll( 'input[type=checkbox][data-validetta][name='+ _el.name +']' )[0];
                         _errors += messages.minChecked.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'maxSelected' && !that.check.selectbox.maxSelected( _val, rules[1] ) ){
                         _errors += messages.maxSelected.replace( '{count}', rules[1] )+'<br />';
@@ -230,7 +230,7 @@
      *   Validator functions
      * @param {String} val : input value
      */
-    HsnValidate.prototype.check = {
+    Validetta.prototype.check = {
         // Empty check - it checks the value if it's empty or not
         empty : function( val ){
             return ( this.clear( val ) === '' ) ? false : true;
@@ -321,7 +321,7 @@
      *   This the section which opening or closing error windows process is done
      * @return {Void}
      */
-    HsnValidate.prototype.window = {
+    Validetta.prototype.window = {
         /**
          * @property open
          * @params _inp{object} : element which has an error ( it can be native element or jQuery object )
@@ -374,7 +374,7 @@
      *   removes all error messages windows
      * @param {object} or {void} _inp : form elements which have an error message window
      */
-    HsnValidate.prototype.reset = function( _inp ){
+    Validetta.prototype.reset = function( _inp ){
         var _errorMessages = {} ;
         // if _inp is undefined ( This is the process of resetting all <form> )
         // or _inp is an object that has element more than one
@@ -395,7 +395,7 @@
      * @param {string} value
      * @return {String} 
      */
-    HsnValidate.prototype.clear = function( value ){
+    Validetta.prototype.clear = function( value ){
       return value.replace( /^\s+|\s+$/g, '' );
     };
     /**
@@ -403,7 +403,7 @@
      *   Ajax requests are done here.
      * @return {Void}
      */
-    HsnValidate.prototype.ajax = function(){
+    Validetta.prototype.ajax = function(){
         var data, url, that = this, formAction ;
         data = $( this.form ).serialize();
         formAction = this.form.getAttribute( 'action' );
@@ -425,16 +425,16 @@
         .always( function( result ){ that.options.ajax.complete( result ); } ); 
     };
     /**
-     * Plugin hsnValidate
+     * Plugin Validetta
      * @param {object} options : User-specified settings
      * @return {object} this
      */
-    $.fn.hsnValidate = function (options){
-        if( $.hsnValidateLanguage ){
-            messages = $.extend( true, {}, messages, $.hsnValidateLanguage.messages );
+    $.fn.validetta = function (options){
+        if( $.validettaLanguage ){
+            messages = $.extend( true, {}, messages, $.validettaLanguage.messages );
         }
         return this.each( function(){
-            new HsnValidate( this, options );
+            new Validetta( this, options );
             return this ;
         });
     };

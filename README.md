@@ -1,8 +1,8 @@
-# hsnValidate
+# Validetta
 
-hsnValidate is a tiny jQuery plugin which you can do client-side validation of your forms. It aims to decrease your burden with easy usage and flexible structure.
+Validetta is a tiny jQuery plugin which you can do client-side validation of your forms. It aims to decrease your burden with easy usage and flexible structure.
 
-[View Demos](http://lab.hasanaydogdu.com/hsnValidate/#examples)
+[View Demos](http://lab.hasanaydogdu.com/validetta/#examples)
 
 ## What can be done?
 
@@ -25,35 +25,35 @@ jQuery  v1.7 or above.
 
 ## How does it work?
 
-It is sufficient to copy downloaded hsnValidate folder to root folder and attach essential folders to your web page. You don’t need to copy hsnValidate folder to root folder but those are applied in the following expression as if hsnValidate is copied to root folder.
+It is sufficient to copy downloaded validetta folder to root folder and attach essential folders to your web page. You don’t need to copy validetta folder to root folder but those are applied in the following expression as if validetta is copied to root folder.
 
 include the dependent libraries and css files
 
 ```html
-<link href="hsnValidate/hsnValidate.css" rel="stylesheet" type="text/css" media="screen" >
+<link href="validetta/validetta.css" rel="stylesheet" type="text/css" media="screen" >
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-<script type="text/javascript" src="hsnValidate/hsnValidate.js"></script>   
+<script type="text/javascript" src="validetta/validetta.js"></script>   
 ```
 
 You can include language file if you want.
 
 ```html
-<script type="text/javascript" src="hsnValidate/languages/hsnValidateLang-tr.js"></script>
+<script type="text/javascript" src="validetta/languages/validettaLang-tr.js"></script>
 ```
 
 Then, you will only need to call the plugin inside `$(document).ready function`:
 
 ```javascript
 $(document).ready(function() {
-    $("#form").hsnValidate();
+    $("#form").validetta();
 });
 ```
 
-and add `data-hsnvalidate` attribute to element which you want to validate.
+and add `data-validetta` attribute to element which you want to validate.
 
 ```html
-<input type="text" name="example" data-hsnvalidate="required,minLength[2],maxLength[3]" />
+<input type="text" name="example" data-validetta="required,minLength[2],maxLength[3]" />
 ```
 
 ## Checking methods [ ]

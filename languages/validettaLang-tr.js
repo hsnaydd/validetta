@@ -1,9 +1,9 @@
 (function($){
-	$.fn.hsnValidateLanguage = function(){	
+	$.fn.validettaLanguage = function(){	
 	}
-	$.hsnValidateLanguage = {
+	$.validettaLanguage = {
 		init : function(){
-			$.hsnValidateLanguage.messages = {
+			$.validettaLanguage.messages = {
 				empty		: 'Bu alanı doldurmanız gerekli. Lütfen kontrol ediniz.',
 				email		: 'Eposta adresiniz geçersiz görünüyor. Lütfen kontrol ediniz.',
 				number		: 'Bu alana sadece rakam girişi yapabilirsiniz.',
@@ -20,5 +20,5 @@
 			};
 		}
 	}
-	$.hsnValidateLanguage.init();
+	$.validettaLanguage.init();
 })(jQuery);
