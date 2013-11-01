@@ -1,6 +1,6 @@
 /*!
  * Validetta - Client-side form validation jQuery plugin
- * Version: 0.3.0 (28 October 2013)
+ * Version: 0.4.0 (01 November 2013)
  * @jQuery Requires: v1.7 or above
  * @Browser Support : ie8 or above, and all modern browsers
  *
@@ -24,7 +24,7 @@
         // RegExp for input validate rules
         reg = new RegExp( /(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|customReg)\[[(\w)-_]{1,15}\]/i ),
         // RegExp for mail control method
-        regMail = new RegExp( /^[a-z]{1}[\d\w\.-]+@[\d\w-]{3,}\.[\w]{2,3}(\.\w{2})?$/ ),
+        regMail = new RegExp( /^[a-zA-Z]{1}[\d\w\.-]+@[\d\w-]{3,}\.[\w]{2,3}(\.\w{2})?$/ ),
         //RegExp for input number control method
         regNumber = new RegExp( /^[\+][0-9]+?$|^[0-9]+?$/ );
     /**
