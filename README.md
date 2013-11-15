@@ -132,4 +132,7 @@ This is the function to be run after the completion of form control.
 ```
 
 ## License
-All code is open source and dual licensed under [GPL](http://www.gnu.org/licenses/gpl.txt) and [MIT](http://www.opensource.org/licenses/mit-license.php). Check the individual licenses for more information.
+
+MIT licensed
+
+Copyright (C) 2013 Hasan Aydoğdu, [http://www.hasanaydogdu.com](http://www.hasanaydogdu.com)
