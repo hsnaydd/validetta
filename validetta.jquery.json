@@ -1,0 +1,25 @@
+{
+    "name" : "validetta",
+    "version" : "0.5.0",
+    "title" : "Validetta - A tiny jquery plugin for validate your forms",
+    "description" : "Validetta is a tiny jQuery plugin which you can do client-side validation of your forms. It aims to decrease your burden with easy usage and flexible structure.",
+    "keywords" : ["validetta", "form", "forms", "jquery", "javascript", "validation", "validate"],
+    "homepage" : "http://lab.hasanaydogdu.com/validetta/",
+    "docs" : "http://lab.hasanaydogdu.com/validetta/",
+    "demo" : "http://lab.hasanaydogdu.com/validetta/#examples",
+    "bugs" : "https://github.com/hsnayd/validetta/issues",
+    "download" : "https://github.com/hsnayd/validetta/archive/v0.5.0.zip",
+    "author" : {
+            "name": "Hasan Aydoğdu",
+            "url" : "http://github.com/hsnayd"
+    },
+    "licenses" : [
+            {
+                    "type": "MIT",
+                    "url" : "http://raw.github.com/hsnayd/validetta/master/LICENCE"
+            }
+    ],
+    "dependencies": {
+            "jquery": ">=1.7"
+    }
+}
