@@ -1,6 +1,6 @@
 /*!
  * Validetta - Client-side form validation jQuery plugin
- * Version: 0.6.0 (15 November 2013)
+ * Version: 0.7.0 (12 December 2013)
  * @jQuery Requires: v1.7 or above
  * @Browser Support : ie8 or above, and all modern browsers
  *
@@ -149,7 +149,7 @@
              * @params {array} _val : current field's value
              * @params {array} _methods : current field's control methods 
              */
-            var _el, _errors, _val = [], _methods = []; 
+            var _el, _errors, _val = [], _methods = [];
             _el = fields[i];
             _errors = '';
             _val = $( _el ).val();
@@ -162,8 +162,9 @@
                 if( _methods[j] === 'required' ){
                     var _elType = _el.getAttribute('type');
                     if( _elType === 'checkbox' && !that.check.checkbox.checked( _el ) ){ _errors += messages.checkbox+'<br />'; }
+                    else if ( _elType === 'radio' && that.check.radio.call( that, _el ) ) { _errors += messages.empty+'<br />'; }
                     else if( _el.tagName ==='SELECT' && !that.check.selectbox.selected( _val ) ){ _errors += messages.selectbox+'<br />'; }
-                    if( ( _elType ==='text' || _elType ==='password' || _el.tagName ==='TEXTAREA' ) && !that.check.empty.call( that, _val ) ){ _errors += messages.empty+'<br />'; }  
+                    if( ( _elType ==='text' || _elType ==='password' || _el.tagName ==='TEXTAREA' ) && !that.check.empty.call( that, _val ) ){ _errors += messages.empty+'<br />'; }
                 }
                 // Number Control
                 if( _methods[j] === 'number' && !that.check.number( _val ) ){
@@ -290,7 +291,7 @@
             checked : function( _inp ){
                 return ( !_inp.checked ) ? false : true ;
             },
-            maxChecked : function( _inp, arg ){  
+            maxChecked : function( _inp, arg ){
                 var count =  $( this.form.querySelectorAll( 'input[type=checkbox][name='+ _inp.name +']' ) ).filter( ':checked' ).length ;
                 return ( count > arg ) ? false : true ;
             },
@@ -305,11 +306,16 @@
                 return ( val === '' || val === null ) ? false : true ;
             },
             maxSelected : function( val, arg){
-                return ( val !== null && val !== '' && val.length > arg ) ? false : true ; 
+                return ( val !== null && val !== '' && val.length > arg ) ? false : true ;
             },
             minSelected : function( val, arg ){
                 return ( val !== null && val !== '' && val.length < arg ) ? false : true ;
             }
+        },
+        // Radio 
+        radio : function ( _inp ) {
+            var count = $( this.form.querySelectorAll( 'input[type=radio][name='+ _inp.name +']' ) ).filter( ':checked' ).length ;
+            return ( count === 1 ) ? false : true ;
         },
         // Custom reg check
         customReg : function( val, reg ){
@@ -357,7 +363,7 @@
             errorObject.appendChild( errorCloseObject );
             // we have an error so we need to break submit
             // set to handler true
-            this.handler = true ; 
+            this.handler = true ;
         },
         /** 
          * @property : close
@@ -380,15 +386,15 @@
         // if _inp is undefined ( This is the process of resetting all <form> )
         // or _inp is an object that has element more than one
         // and these elements are not checkbox
-        if( typeof _inp === 'undefined' || ( _inp.length > 1 && _inp[0].getAttribute('type') !== 'checkbox' ) ){ 
-            _errorMessages = $(this.form).find( '.'+ this.options.errorClass ); 
+        if( typeof _inp === 'undefined' || ( _inp.length > 1 && _inp[0].getAttribute('type') !== 'checkbox' ) ){
+            _errorMessages = $(this.form).find( '.'+ this.options.errorClass );
         }
-        else{ 
-            _errorMessages = $(_inp[0].parentNode).find( '.'+this.options.errorClass ); 
+        else {
+            _errorMessages = $(_inp[0].parentNode).find( '.'+this.options.errorClass );
         }
         for(var i = _errorMessages.length -1; i >= 0; i--){
             this.window.close.call( this, _errorMessages[i] );
-        } 
+        }
     };
     /**
      * @method clear
@@ -423,7 +429,7 @@
         })
         .done( function( result ){ that.options.ajax.success( that, result ); } )
         .fail( function( jqXHR, textStatus ){ that.options.ajax.fail( jqXHR, textStatus ); } )
-        .always( function( result ){ that.options.ajax.complete( result ); } ); 
+        .always( function( result ){ that.options.ajax.complete( result ); } );
     };
     /**
      * Plugin Validetta

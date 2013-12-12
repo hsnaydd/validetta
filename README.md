@@ -78,7 +78,7 @@ If you want special style, you can add a class to error message with this option
 
 ```javascript
 {
-    errorClass      : 'formHata'
+    errorClass      : 'formError'
 }
 ```
 
@@ -88,7 +88,7 @@ You can add a class to error message closure button.
 
 ```javascript
 {
-    errorCloseClass : 'formHataKapa'
+    errorCloseClass : 'formErrorClose'
 }
 ```
 
