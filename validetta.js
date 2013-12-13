@@ -1,6 +1,6 @@
 /*!
  * Validetta - Client-side form validation jQuery plugin
- * Version: 0.7.0 (12 December 2013)
+ * Version: 0.8.0 (13 December 2013)
  * @jQuery Requires: v1.7 or above
  * @Browser Support : ie8 or above, and all modern browsers
  *
@@ -110,7 +110,7 @@
             // handle click event for checkboxes
             $( this.form ).find( '[data-validetta][type=checkbox]' ).on( 'click', function( e ){
                 // fields to be controlled transferred to global variable
-                fields = that.form.querySelectorAll( '[data-validetta][type=checkbox][name='+ this.name +']' );
+                fields = that.form.querySelectorAll( '[data-validetta][type=checkbox][name="'+ this.name +'"]' );
                 return that.init.call( that, e );
             });
         }
@@ -193,11 +193,11 @@
                     }else if( rules[0] === 'maxChecked' && !that.check.checkbox.maxChecked.call( that, _el, rules[1] ) ){
                         // Redirect to the first checkbox
                         // I want to see the error message on the first element of checkbox group
-                        _el = that.form.querySelectorAll( 'input[type=checkbox][data-validetta][name='+ _el.name +']' )[0];
+                        _el = that.form.querySelectorAll( 'input[type=checkbox][data-validetta][name="'+ _el.name +'"]' )[0];
                         _errors += messages.maxChecked.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'minChecked' && !that.check.checkbox.minChecked.call( that, _el, rules[1] ) ){
                         // Redirect to the first checkbox
-                        _el = that.form.querySelectorAll( 'input[type=checkbox][data-validetta][name='+ _el.name +']' )[0];
+                        _el = that.form.querySelectorAll( 'input[type=checkbox][data-validetta][name="'+ _el.name +'"]' )[0];
                         _errors += messages.minChecked.replace( '{count}', rules[1] )+'<br />';
                     }else if( rules[0] === 'maxSelected' && !that.check.selectbox.maxSelected( _val, rules[1] ) ){
                         _errors += messages.maxSelected.replace( '{count}', rules[1] )+'<br />';
@@ -256,7 +256,7 @@
         },
         // Equal check
         equal : function( val, arg ){
-            return ( $( this.form ).find( 'input[name='+ arg +']' ).val() !== val ) ? false : true;
+            return ( $( this.form ).find( 'input[name="'+ arg +'"]' ).val() !== val ) ? false : true;
         },
         /**  
          * Credit Card Control
@@ -292,11 +292,11 @@
                 return ( !_inp.checked ) ? false : true ;
             },
             maxChecked : function( _inp, arg ){
-                var count =  $( this.form.querySelectorAll( 'input[type=checkbox][name='+ _inp.name +']' ) ).filter( ':checked' ).length ;
+                var count =  $( this.form.querySelectorAll( 'input[type=checkbox][name="'+ _inp.name +'"]' ) ).filter( ':checked' ).length ;
                 return ( count > arg ) ? false : true ;
             },
             minChecked : function( _inp, arg ){
-                var count =  $( this.form.querySelectorAll( 'input[type=checkbox][name='+ _inp.name +']' ) ).filter( ':checked' ).length ;
+                var count =  $( this.form.querySelectorAll( 'input[type=checkbox][name="'+ _inp.name +'"]' ) ).filter( ':checked' ).length ;
                 return ( count < arg ) ? false : true ;
             }
         },
@@ -314,7 +314,7 @@
         },
         // Radio 
         radio : function ( _inp ) {
-            var count = $( this.form.querySelectorAll( 'input[type=radio][name='+ _inp.name +']' ) ).filter( ':checked' ).length ;
+            var count = $( this.form.querySelectorAll( 'input[type=radio][name="'+ _inp.name +'"]' ) ).filter( ':checked' ).length ;
             return ( count === 1 ) ? false : true ;
         },
         // Custom reg check
