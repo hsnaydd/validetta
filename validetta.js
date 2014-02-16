@@ -1,6 +1,6 @@
 /*!
  * Validetta - Client-side form validation jQuery plugin
- * Version: 0.8.0 (13 December 2013)
+ * Version: 0.9.0 (16 February 2014)
  * @jQuery Requires: v1.7 or above
  * @Browser Support : ie8 or above, and all modern browsers
  *
@@ -50,8 +50,10 @@
      *  Plugin defaults
      */
     var defaults = {
-        errorClass    : 'validetta-error', // The html class which to be added to error message window
-        errorCloseClass : 'validetta-errorClose', // The html class that will add on element of HTML which is closing the error message window
+        display : 'bubble', // Error display options, // bubble / inline
+        errorClass : 'validetta-bubble', // The html class which to be added to error message window
+        errorClose : true, // Error windows close button. if you want to active it, set is true
+        errorCloseClass : 'validetta-bubbleClose', // The html class that will add on element of HTML which is closing the error message window
         ajax : { // Ajax processing
             call    : false, // If you want to make an ajax request, set it to true
             type    : 'GET',
@@ -71,7 +73,7 @@
      *
      * @param {object} form : <form> element which being controlled
      * @param {object} options : User-specified settings
-     * @return {method} events 
+     * @return {method} events
      */
     Validetta = function( form, options ){
         /**
@@ -88,12 +90,12 @@
     /**
      * @method events
      *   This is the method of handling events
-     * 
+     *
      * @return {method} init, {method} reset or {boolean} false
      */
     Validetta.prototype.events = function(){
         var that = this; // stored this
-        // Handle submit event 
+        // Handle submit event
         $( this.form ).submit( function( e ){
             // fields to be controlled transferred to global variable
             fields = this.querySelectorAll( '[data-validetta]' );
@@ -118,15 +120,18 @@
         $( this.form ).find( '[type=reset]' ).on( 'click', function(){
             return that.reset.call( that );
         });
-        // error messages manually cleaning function
-        // handle error close button to manually clearing error messages
-        $( this.form ).on( 'click', '.'+this.options.errorCloseClass, function(){
-            // We're checking the parent value of clicked element to avoid getting error
-            // if parent value is true, clear error window
-            var _errProp = this.parentNode;
-            if( _errProp ){ that.window.close.call( that, _errProp ); }
-            return false;
-        });
+        // Error close button is active ?
+        if( this.options.errorClose ) {
+            // error messages manually cleaning function
+            // handle error close button to manually clearing error messages
+            $( this.form ).on( 'click', '.'+this.options.errorCloseClass, function(){
+                // We're checking the parent value of clicked element to avoid getting error
+                // if parent value is true, clear error window
+                var _errProp = this.parentNode;
+                if( _errProp ){ that.window.close.call( that, _errProp ); }
+                return false;
+            });
+        }
     };
     /**
      * @method init
@@ -137,17 +142,17 @@
      */
     Validetta.prototype.init = function( e ){
         var that = this; // stored this
-        // Reset error windows from all elements 
+        // Reset error windows from all elements
         this.reset.call( this, fields );
         // Start control each elements
         for ( var i = fields.length - 1; i >= 0; i-- ) {
             /**
              * Declaring variables
-             * 
+             *
              * @params {object} _el : current field
              * @params {string} _errors : current field's errors
              * @params {array} _val : current field's value
-             * @params {array} _methods : current field's control methods 
+             * @params {array} _methods : current field's control methods
              */
             var _el, _errors, _val = [], _methods = [];
             _el = fields[i];
@@ -184,7 +189,7 @@
                     // And start to check rules
                     // {count} which used below is the specified maximum or minimum value
                     // e.g if method is minLength and  rule is 2 ( minLength[2] ) 
-                    // Output error windows text will be : 'Please select minimum 2 options. '
+                    // Output error windows text will be : 'Please select minimum 2 options.'
                     var rules = _methods[j].split( /\[|,|\]/ );
                     if( rules[0] === 'maxLength' && !that.check.maxLength( _val, rules[1] ) ){
                         _errors += messages.maxLength.replace( '{count}', rules[1] )+'<br />';
@@ -237,7 +242,7 @@
         empty : function( val ){
             return ( this.clear( val ) === '' ) ? false : true;
         },
-        //  Mail check - it checks the value if it's a valid email address or not//Gelen değerin geçerli bir eposta adresi olup olmadığını kontrol eder
+        //  Mail check - it checks the value if it's a valid email address or not
         mail : function( val ){
             return ( ( regMail.test( val ) === false ) && val !== '' ) ? false : true ;
         },
@@ -260,7 +265,7 @@
         },
         /**  
          * Credit Card Control
-         * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers 
+         * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers
          */
         creditCard : function( val ){
             var reg, cardNumber, pos, digit, i, sub_total, sum = 0, strlen;
@@ -312,7 +317,7 @@
                 return ( val !== null && val !== '' && val.length < arg ) ? false : true ;
             }
         },
-        // Radio 
+        // Radio
         radio : function ( _inp ) {
             var count = $( this.form.querySelectorAll( 'input[type=radio][name="'+ _inp.name +'"]' ) ).filter( ':checked' ).length ;
             return ( count === 1 ) ? false : true ;
@@ -340,32 +345,37 @@
             if( typeof _inpParent === 'undefined' ){ _inpParent = _inp[0].parentNode ; }
             // if there is an error window which previously opened for _inp, return
             if( $( _inpParent ).find( '.'+this.options.errorClass ).length > 0 ){ return ; }
-            var pos, W, H, T, errorObject, errorCloseObject ;
-            // !! Here, JQuery functions are using to support the IE8
-            pos = $( _inp ).position();
-            // !! Here, JQuery functions are using to support the IE8
-            W = $( _inp ).width();
-            H = $( _inp ).height();
-            T= pos.top ;
             // Create the error window object which will be appear
-            errorObject = document.createElement( 'span' );
-            errorObject.className = this.options.errorClass ;
-            // Create the element which use to close the error window
-            errorCloseObject = document.createElement( 'span' );
-            errorCloseObject.innerHTML = 'x';
-            errorCloseObject.className = this.options.errorCloseClass ;
-            $(errorObject).empty().css({
-                'left':pos.left+W+30+'px',
-                'top' :T+'px'
-            });
+            var errorObject = document.createElement( 'span' );
+            errorObject.className = this.options.errorClass;
+            // if error display is bubble, calculate to positions
+            if( this.options.display === 'bubble' ){
+                var pos, W, H, T;
+                // !! Here, JQuery functions are using to support the IE8
+                pos = $( _inp ).position();
+                // !! Here, JQuery functions are using to support the IE8
+                W = $( _inp ).width();
+                H = $( _inp ).height();
+                T= pos.top ;
+                $( errorObject ).empty().css({
+                    'left':pos.left+W+30+'px',
+                    'top' :T+'px'
+                });
+            }
             _inpParent.appendChild( errorObject );
             errorObject.innerHTML = error ;
-            errorObject.appendChild( errorCloseObject );
+            // if errorClose is activated, create the element which use to close the error window
+            if( this.options.errorClose ){
+                var errorCloseObject = document.createElement( 'span' );
+                errorCloseObject.innerHTML = 'x';
+                errorCloseObject.className = this.options.errorCloseClass ;
+                errorObject.appendChild( errorCloseObject );
+            }
             // we have an error so we need to break submit
             // set to handler true
             this.handler = true ;
         },
-        /** 
+        /**
          * @property : close
          * @params _inp : the error message window which will be disappear
          */
@@ -400,7 +410,7 @@
      * @method clear
      *   Clears the left and right spaces of parameter.
      * @param {string} value
-     * @return {String} 
+     * @return {String}
      */
     Validetta.prototype.clear = function( value ){
       return value.replace( /^\s+|\s+$/g, '' );
