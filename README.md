@@ -72,6 +72,16 @@ and add `data-validetta` attribute to element which you want to validate.
 
 ## Options { }
 
+###  display
+
+You can display errors as inline or bubble
+
+```javascript
+{
+    display      : 'bubble' // or inline
+}
+```
+
 ### errorClass 
 
 If you want special style, you can add a class to error message with this option.
@@ -82,13 +92,14 @@ If you want special style, you can add a class to error message with this option
 }
 ```
 
-### errorCloseClass 
+### errorClose, errorCloseClass
 
-You can add a class to error message closure button.
+You can add a close button for error windows, and you can add specific class to it
 
 ```javascript
 {
-    errorCloseClass : 'formErrorClose'
+     errorClose : true,
+     errorCloseClass : 'formErrorClose'
 }
 ```
 
