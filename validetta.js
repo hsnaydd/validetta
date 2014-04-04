@@ -1,18 +1,6 @@
 /*!
  * Validetta - Client-side form validation jQuery plugin
- * Version: 0.9.0 (16 February 2014)
- * @jQuery Requires: v1.7 or above
- * @Browser Support : ie8 or above, and all modern browsers
- *
- * Examples : http://lab.hasanaydogdu.com/validetta/#examples
- * GitHub Repository : https://github.com/hsnayd/validetta 
- * Lisans: MIT ve GPL
- *  * http://www.opensource.org/licenses/mit-license.php
- *  * http://www.gnu.org/licenses/gpl.txt
- *
- * Copyright 2013 Hasan Aydoğdu - http://www.hasanaydogdu.com
- *
- * Special Comment : I'm sorry for my english translation errors :)
+ * Version: 0.9.0 (16 February 2014) | Copyright 2013 Hasan Aydoğdu - http://www.hasanaydogdu.com
  */
 ( function ( $ ) {
     "use strict";
@@ -44,7 +32,8 @@
         maxSelected : 'Maximum {count} selection allowed. Please be sure to check.',
         minSelected : 'Minimum {count} selection allowed. Please be sure to check.',
         notEqual  : 'Fields do not match. Please be sure to check.',
-        creditCard  : 'Invalid credit card number. Please be sure to check.'
+        creditCard  : 'Invalid credit card number. Please be sure to check.',
+		siret  : 'Invalid SIRET number.'
     };
     /**
      *  Plugin defaults
@@ -183,6 +172,11 @@
                 if( _methods[j] === 'creditCard' && _val !=='' && !that.check.creditCard( _val ) ){
                     _errors += messages.creditCard+'<br />';
                 }
+				
+				// SIRET number Control
+				if( _methods[j] === 'siret' && _val !=='' && !that.check.siret( _val ) ){
+                    _errors += messages.siret+'<br />';
+                }
                 // Rules Control (minChecked, maxChecked, minSelected etc.)
                 if( reg.test( _methods[j] ) ){
                     // get rules
@@ -290,6 +284,27 @@
                 return true ;
             }
             return false ;
+        },
+		siret : function( val ){
+			var isvalid, sum = 0, tmp;
+			if ((val.length != 14) || (isnan(val)))
+				isvalid = false;
+			else {
+				for (var cpt = 0; cpt < val.length; cpt++) {
+					if ((cpt % 2) == 0) {
+						Tmp = val.charat(cpt) * 2;
+						if (tmp > 9)
+							tmp -= 9;
+					} else
+						tmp = val.charat(cpt);
+					sum += parseint(tmp);
+				}
+				if ((sum % 10) == 0)
+					isvalid = true;
+				else
+					isvalid = false;
+			}
+			return isvalid;
         },
         //Checkbox check
         checkbox : {
