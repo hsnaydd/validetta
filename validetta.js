@@ -287,6 +287,7 @@
         },
 		siret : function( val ){
 			var isvalid, sum = 0, tmp;
+			val = val.replace(' ','');
 			if ((val.length != 14) || (isnan(val)))
 				isvalid = false;
 			else {
