@@ -195,7 +195,7 @@
         this.handler = false;
         this.options = $.extend( true, {}, defaults, options );
         this.form = form ;
-        return this.events.call( this );
+        this.events();
     };
 
     Validetta.prototype = {
@@ -214,7 +214,7 @@
             $( this.form ).submit( function( e ){
                 // fields to be controlled transferred to global variable
                 fields = this.querySelectorAll( '[data-validetta]' );
-                return that.init.call( that, e );
+                return that.init( e );
             });
             // real-time option control
             if( this.options.realTime === true ){
@@ -222,18 +222,18 @@
                 $( this.form ).find( '[data-validetta]' ).not( '[type=checkbox]' ).on( 'change', function( e ){
                     // field to be controlled transferred to global variable
                     fields = $( this );
-                    return that.init.call( that, e );
+                    return that.init( e );
                 });
                 // handle click event for checkboxes
                 $( this.form ).find( '[data-validetta][type=checkbox]' ).on( 'click', function( e ){
                     // fields to be controlled transferred to global variable
                     fields = that.form.querySelectorAll( '[data-validetta][type=checkbox][name="'+ this.name +'"]' );
-                    return that.init.call( that, e );
+                    return that.init( e );
                 });
             }
             // handle <form> reset button to clear error messages
             $( this.form ).find( '[type=reset]' ).on( 'click', function(){
-                return that.reset.call( that );
+                return that.reset();
             });
             // Error close button is active ?
             if( this.options.errorClose ) {
@@ -260,7 +260,7 @@
             console.time('test');
             var that = this; // stored this
             // Reset error windows from all elements
-            this.reset.call( this, fields );
+            this.reset( fields );
             // Start control each elements
             for ( var i = fields.length - 1; i >= 0; i-- ) {
                 /**
@@ -341,7 +341,7 @@
             else{
                 // if ajax request set, start ajax process
                 if( that.options.ajax.call ){
-                    that.ajax.call( that, arguments );
+                    that.ajax( arguments );
                     return false;
                 }
                 // Return onComplateFunc()
@@ -420,11 +420,11 @@
             // if _inp is undefined ( This is the process of resetting all <form> )
             // or _inp is an object that has element more than one
             // and these elements are not checkbox
-            if( typeof _inp === 'undefined' || ( _inp.length > 1 && _inp[0].getAttribute('type') !== 'checkbox' ) ){
-                _errorMessages = $(this.form).find( '.'+ this.options.errorClass );
+            if( typeof _inp === 'undefined' || ( _inp.length > 1 && _inp[0].getAttribute( 'type' ) !== 'checkbox' ) ){
+                _errorMessages = $( this.form ).find( '.'+ this.options.errorClass );
             }
             else {
-                _errorMessages = $(_inp[0].parentNode).find( '.'+this.options.errorClass );
+                _errorMessages = $( _inp[0].parentNode ).find( '.'+this.options.errorClass );
             }
             for ( var i = _errorMessages.length -1; i >= 0; i-- ){
                 this.window.close.call( this, _errorMessages[i] );
@@ -470,7 +470,6 @@
         }
         return this.each( function(){
             new Validetta( this, options );
-            return this ;
         });
     };
 })(jQuery);
