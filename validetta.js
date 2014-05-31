@@ -56,13 +56,12 @@
         errorCloseClass : 'validetta-bubbleClose', // The html class that will add on element of HTML which is closing the error message window
         ajax : { // Ajax processing
             call    : false, // If you want to make an ajax request, set it to true
-            type    : 'GET',
-            url     : null, // Ajax url. !!! Instead of adding URL information here, you can also specify it at form action attribute.
-            dataType  : 'html',
-            beforeSend  : $.noop,
-            success   : $.noop,
-            fail    : $.noop,
-            complete  : $.noop
+            settings : {}, // Ajax settings
+            callbackFuncs : { // Ajax callback functions
+                success   : $.noop,
+                fail    : $.noop,
+                complete  : $.noop
+            }
         },
         realTime   : false, // To enable real-time form control, set this option true.
         onCompleteFunc  : $.noop, // This is the function to be run after the completion of form control.
@@ -257,7 +256,6 @@
          * @return {Function} or {Boolen}
          */
         init : function( e ){
-            console.time('test');
             var that = this; // stored this
             // Reset error windows from all elements
             this.reset( fields );
@@ -307,7 +305,6 @@
                         // {count} which used below is the specified maximum or minimum value
                         // e.g if method is minLength and  rule is 2 ( minLength[2] ) 
                         // Output error windows text will be : 'Please select minimum 2 options.'
-                        //var rules = _methods[j].split( /\[|,|\]/ );
                         if( rules[1] === 'maxLength' && !validator.maxLength( _val, rules[2] ) ){
                             _errors += messages.maxLength.replace( '{count}', rules[2] )+'<br />';
                         }else if( rules[1] === 'minLength' && !validator.minLength( _val, rules[2] ) ){
@@ -335,19 +332,21 @@
                 // Check the errors
                 if( _errors !== '' ){ that.window.open.call( that , _el, _errors ); }
             }
-            console.timeEnd('test');
             if( e.type !== 'submit' ){ return; } // if event type is not submit, break
             else if( that.handler === true ){ return false; } // if event type is submit and handler is true, break submit
             else{
                 // if ajax request set, start ajax process
-                if( that.options.ajax.call ){
-                    that.ajax( arguments );
+                if( this.options.ajax.call ){
+                    var formAction = this.form.getAttribute( 'action' );
+                    this.options.ajax.settings.data = $( this.form ).serialize();
+                    this.options.ajax.settings.url = typeof this.options.ajax.settings.url !== 'undefined' ? this.options.ajax.settings.url : formAction;
+                    this.ajaxRequest( this.options.ajax.settings, this.options.ajax.callbackFuncs );
                     return false;
                 }
                 // Return onComplateFunc()
                 // onComplateFunc() was defined by default at line 64
                 // if onComplateFunc() is not defined by user, submit process will continue
-                return that.options.onCompleteFunc( that, e );
+                return this.options.onCompleteFunc( that, e );
             }
         },
  
@@ -432,30 +431,20 @@
         },
         
         /**
-         * @method ajax
+         * @method ajaxRequest
          *   Ajax requests are done here.
+         * @param {object} ajaxSettings Ajax settings
+         * @param {object} callbackFuncs Ajax callback functions
          * @return {Void}
          */
-        ajax : function(){
-            var data, url, that = this, formAction ;
-            data = $( this.form ).serialize();
-            formAction = this.form.getAttribute( 'action' );
-            url = ( this.options.ajax.url ) ? this.options.ajax.url : formAction ;
+        ajaxRequest : function( ajaxSettings, callbackFuncs ){
+            var that = this;
             /* Debug */
-            if( !this.options.ajax.url && ( formAction === '' || formAction === null ) ){ return console.log('Form action not valid !'); }
-            $.ajax({
-                type    : that.options.ajax.type,
-                url     : url,
-                data    : data,
-                dataType: that.options.ajax.dataType,
-                options: that.options,
-                beforeSend: function(){
-                    return that.options.ajax.beforeSend();
-                }
-            })
-            .done( function( result ){ that.options.ajax.success( that, result ); } )
-            .fail( function( jqXHR, textStatus ){ that.options.ajax.fail( jqXHR, textStatus ); } )
-            .always( function( result ){ that.options.ajax.complete( result ); } );
+            if( ajaxSettings.url === '' || ajaxSettings.url === null ){ return console.warn('Form action not valid !'); }
+            $.ajax( ajaxSettings )
+            .done( function( result ){ callbackFuncs.success( that, result ); } )
+            .fail( function( jqXHR, textStatus ){ callbackFuncs.fail( jqXHR, textStatus ); } )
+            .always( function( result ){ callbackFuncs.complete( result ); } );
         }
     };
 

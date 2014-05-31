@@ -32,21 +32,25 @@ $(function(){
         errorClose : false,
 		ajax : {
 			call 		: true,
-			type 		: 'POST',
-			url			: 'ajax.json',
-            dataType    : 'json',
-			success		: function(object,data){
-				alert('Student Name : '+data.student[0].name+' Student No :'+data.student[0].no);
-			},
-			beforeSend : function(){
-				console.log('start')	
-			},
-			complete : function(){
-				console.log('Finish him')	
-			},
-			fail : function(jqXHR, textStatus){
-				console.log(textStatus+':'+jqXHR.status+' : '+jqXHR.statusText);
-			}
+            settings    : {
+                url         : 'ajax.json',
+                dataType    : 'json',
+                beforeSend : function(){
+                    console.log('start')    
+                }
+            },
+            callbackFuncs : {
+    			success		: function(object,data){
+    				alert('Student Name : '+data.student[0].name+' Student No :'+data.student[0].no);
+    			},
+    			complete : function(){
+    				console.log('Finish him')	
+    			},
+    			fail : function(jqXHR, textStatus){
+    				console.log(textStatus+':'+jqXHR.status+' : '+jqXHR.statusText);
+    			}  
+            }
+            
 		}
 	});
     $('#exm3').validetta({
