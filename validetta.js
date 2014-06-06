@@ -51,8 +51,11 @@
      *  Plugin defaults
      */
     defaults = {
+        // Error Template : <span class="errorTemplateClass">Error messages will be here !</span>
         display : 'bubble', // Error display options, // bubble / inline
-        errorClass : 'validetta-bubble', // The html class which to be added to error message window
+        errorTemplateClass : 'validetta-bubble', // Class of the element that would receive error message
+        errorClass : 'validetta-error', // Class that would be added on every failing validation field
+        validClass : 'validetta-valid', // Same for valid validation
         errorClose : true, // Error windows close button. if you want to active it, set is true
         errorCloseClass : 'validetta-bubbleClose', // The html class that will add on element of HTML which is closing the error message window
         ajax : { // Ajax processing
@@ -236,7 +239,9 @@
                 });
             }
             // handle <form> reset button to clear error messages
-            $( this.form ).find( '[type=reset]' ).on( 'click', function(){
+            $( this.form ).on( 'reset', function(){
+                $( that.form.querySelectorAll( '.'+that.options.errorClass+', .'+that.options.validClass ) )
+                    .removeClass( that.options.errorClass, that.options.validClass );
                 return that.reset();
             });
             // Error close button is active ?
@@ -334,8 +339,19 @@
                         }
                     }
                 }
-                // Check the errors
-                if( _errors !== '' ){ that.window.open.call( that , _el, _errors ); }
+                // Check the error
+                var _elParent = _el.parentNode; // stored parent element of current input
+                if( _errors !== '' ){
+                    // if parent element has valid class, remove and add error class
+                    $( _elParent ).removeClass( this.options.validClass ).addClass( this.options.errorClass );
+                    // open error window
+                    that.window.open.call( that , _el, _errors );
+                } else {
+                    // if parent elemenet has error class, remove and add valid class
+                    if( $( _elParent ).hasClass( this.options.errorClass ) ) {
+                        $( _elParent ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
+                    }
+                }
             }
             if( e.type !== 'submit' ){ return; } // if event type is not submit, break
             else if( that.handler === true ){ return false; } // if event type is submit and handler is true, break submit
@@ -372,10 +388,10 @@
                 // If the parent element undefined, that means _inp is an object. So we need to transform to the element
                 if( typeof _inpParent === 'undefined' ){ _inpParent = _inp[0].parentNode ; }
                 // if there is an error window which previously opened for _inp, return
-                if( $( _inpParent ).find( '.'+this.options.errorClass ).length > 0 ){ return ; }
+                if( $( _inpParent ).find( '.'+this.options.errorTemplateClass ).length > 0 ){ return ; }
                 // Create the error window object which will be appear
                 var errorObject = document.createElement( 'span' );
-                errorObject.className = this.options.errorClass;
+                errorObject.className = this.options.errorTemplateClass;
                 // if error display is bubble, calculate to positions
                 if( this.options.display === 'bubble' ){
                     var pos, W, H, T;
@@ -426,10 +442,10 @@
             // or _inp is an object that has element more than one
             // and these elements are not checkbox
             if( typeof _inp === 'undefined' || ( _inp.length > 1 && _inp[0].getAttribute( 'type' ) !== 'checkbox' ) ){
-                _errorMessages = $( this.form ).find( '.'+ this.options.errorClass );
+                _errorMessages = $( this.form ).find( '.'+ this.options.errorTemplateClass );
             }
             else {
-                _errorMessages = $( _inp[0].parentNode ).find( '.'+this.options.errorClass );
+                _errorMessages = $( _inp[0].parentNode ).find( '.'+this.options.errorTemplateClass );
             }
             for ( var i = _errorMessages.length -1; i >= 0; i-- ){
                 this.window.close.call( this, _errorMessages[i] );
