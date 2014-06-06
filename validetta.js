@@ -27,35 +27,36 @@
         // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
         regMail = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
         //RegExp for input number control method
-        regNumber = new RegExp( /^[\-\+]?\d+\.?\d*$/ );
+        regNumber = new RegExp( /^[\-\+]?\d+\.?\d*$/ ),
     /**
      *  Form validate error messages
      */
-    var messages = {
-        empty   : 'This field is required. Please be sure to check.',
-        email   : 'Your E-mail address appears to be invalid. Please be sure to check.',
+    messages = {
+        empty     : 'This field is required. Please be sure to check.',
+        email     : 'Your E-mail address appears to be invalid. Please be sure to check.',
         number    : 'You can enter only numbers in this field.',
         maxLength : 'Maximum {count} characters allowed!',
         minLength : 'Minimum {count} characters allowed!',
         checkbox  : 'This checkbox is required. Please be sure to check.',
         maxChecked  : 'Maximum {count} options allowed. Please be sure to check.',
         minChecked  : 'Please select minimum {count} options.',
-        selectbox : 'Please select an option.',
+        selectbox   : 'Please select an option.',
         maxSelected : 'Maximum {count} selection allowed. Please be sure to check.',
         minSelected : 'Minimum {count} selection allowed. Please be sure to check.',
-        notEqual  : 'Fields do not match. Please be sure to check.',
+        notEqual    : 'Fields do not match. Please be sure to check.',
         creditCard  : 'Invalid credit card number. Please be sure to check.'
-    };
+    },
+
     /**
      *  Plugin defaults
      */
-    var defaults = {
+    defaults = {
         display : 'bubble', // Error display options, // bubble / inline
         errorClass : 'validetta-bubble', // The html class which to be added to error message window
         errorClose : true, // Error windows close button. if you want to active it, set is true
         errorCloseClass : 'validetta-bubbleClose', // The html class that will add on element of HTML which is closing the error message window
         ajax : { // Ajax processing
-            call    : false, // If you want to make an ajax request, set it to true
+            call : false, // If you want to make an ajax request, set it to true.
             settings : {}, // Ajax settings
             callbackFuncs : { // Ajax callback functions
                 success   : $.noop,
@@ -63,29 +64,31 @@
                 complete  : $.noop
             }
         },
-        realTime   : false, // To enable real-time form control, set this option true.
-        onCompleteFunc  : $.noop, // This is the function to be run after the completion of form control.
-        customReg   : {} // Costum reg method variable
-    };
+        realTime : false, // To enable real-time form control, set this option true.
+        onCompleteFunc : $.noop, // This is the function to be run after the completion of form control.
+        customReg : {} // Costum reg method variable
+    },
 
     /**
-     * @function trim
-     *   Clears the left and right spaces of given parameter.
-     *   This is the function for string parameter !
-     *   If parameter is an array, function will return the parameter without trimed
+     * Clears the left and right spaces of given parameter.
+     * This is the function for string parameter !
+     * If parameter is an array, function will return the parameter without trimed
+     *
+     * @function
      * @param {string} value
      * @return {mixed}
      */
-    function trim( value ){
+    trim = function( value ){
        return typeof value === 'string' ? value.replace( /^\s+|\s+$/g, '' ) : value;
-    }
+    },
 
     /**
-     * Checking methods
-     * @function validator
+     * validator
+     *
+     * @namespace
      * @param {String} val : input value
      */
-    var validator = {
+    validator = {
         // Empty check - it checks the value if it's empty or not
         empty : function( val ){
             return val !== '';
@@ -180,6 +183,8 @@
     /**
      * Plugin Class
      *
+     * @class  Validetta
+     * @constructor
      * @param {object} form : <form> element which being controlled
      * @param {object} options : User-specified settings
      * @return {method} events
@@ -202,10 +207,10 @@
         constructor : Validetta,
 
         /**
+         * This is the method of handling events
+         * 
          * @method events
-         *   This is the method of handling events
-         *
-         * @return {method} init, {method} reset or {boolean} false
+         * @return {mixed}
          */
         events : function(){
             var that = this; // stored this
@@ -249,9 +254,9 @@
         },
 
         /**
-         * @method init
-         *   In this method, fields are validated
+         * In this method, fields are validated
          * 
+         * @method init
          * @params {Object} e : event object
          * @return {Function} or {Boolen}
          */
@@ -351,8 +356,9 @@
         },
  
         /**
+         * This the section which opening or closing error windows process is done
+         * 
          * @method window
-         *   This the section which opening or closing error windows process is done
          * @return {Void}
          */
         window : {
@@ -375,7 +381,6 @@
                     var pos, W, H, T;
                     // !! Here, JQuery functions are using to support the IE8
                     pos = $( _inp ).position();
-                    // !! Here, JQuery functions are using to support the IE8
                     W = $( _inp ).width();
                     H = $( _inp ).height();
                     T= pos.top ;
@@ -410,8 +415,9 @@
         },
 
         /**
+         * Removes all error messages windows
+         * 
          * @method reset
-         *   removes all error messages windows
          * @param {object} or {void} _inp : form elements which have an error message window
          */
         reset : function( _inp ){
@@ -431,8 +437,9 @@
         },
         
         /**
+         * Ajax requests are done here.
+         * 
          * @method ajaxRequest
-         *   Ajax requests are done here.
          * @param {object} ajaxSettings Ajax settings
          * @param {object} callbackFuncs Ajax callback functions
          * @return {Void}
