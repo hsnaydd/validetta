@@ -31,34 +31,35 @@ $(function(){
         display : 'inline',
         errorTemplateClass : 'validetta-inline',
         errorClose : false,
-		ajax : {
-			call 		: true,
-            settings    : {
-                url         : 'ajax.json',
-                dataType    : 'json',
+		onValid : function( event ) {
+            event.preventDefault();
+            // this -> form object
+            // this.form is form element
+            $.ajax({
+                url : 'ajax.json',
+                data : $(this.form).serialize(),
+                dataType : 'json',
                 beforeSend : function(){
-                    console.log('start')    
+                    console.log('start');
                 }
-            },
-            callbackFuncs : {
-    			success		: function(object,data){
-    				alert('Student Name : '+data.student[0].name+' Student No :'+data.student[0].no);
-    			},
-    			complete : function(){
-    				console.log('Finish him')	
-    			},
-    			fail : function(jqXHR, textStatus){
-    				console.log(textStatus+':'+jqXHR.status+' : '+jqXHR.statusText);
-    			}  
-            }
-            
-		}
+            })
+            .done( function( data ){
+                alert('Student Name : '+data.student[0].name+' Student No :'+data.student[0].no);
+            })
+            .fail( function( jqXHR, textStatus ){
+                console.log(textStatus+':'+jqXHR.status+' : '+jqXHR.statusText);
+            })
+            .always( function( result ){ console.log('Finish him!!'); } );
+		},
+        onError : function(){
+            console.log( 'Stop bro !! There are some errors.')
+        }
 	});
     $('#exm3').validetta({
-        onCompleteFunc : function(object,event){
+        onValid : function( event ){
             event.preventDefault(); // if you dont break submit and if form doesnt have error, page will post
             var _inp = $('#exm3').find('input[name=exm3-name]');
-            object.window.open.call(object, _inp, 'This is an example about how you can focus an input after completion of form validation.');
+            this.window.open.call( this, _inp, 'This is an example about how you can focus an input after completion of form validation.');
             event.preventDefault();
         }
     });

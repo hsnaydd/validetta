@@ -58,18 +58,10 @@
         validClass : 'validetta-valid', // Same for valid validation
         errorClose : true, // Error windows close button. if you want to active it, set is true
         errorCloseClass : 'validetta-bubbleClose', // The html class that will add on element of HTML which is closing the error message window
-        ajax : { // Ajax processing
-            call : false, // If you want to make an ajax request, set it to true.
-            settings : {}, // Ajax settings
-            callbackFuncs : { // Ajax callback functions
-                success   : $.noop,
-                fail    : $.noop,
-                complete  : $.noop
-            }
-        },
         realTime : false, // To enable real-time form control, set this option true.
-        onCompleteFunc : $.noop, // This is the function to be run after the completion of form control.
-        customReg : {} // Costum reg method variable
+        customReg : {}, // Costum reg method variable
+        onValid : function(){}, // This function to be called when the user submits the form and there is no error.
+        onError : function(){} // This function to be called when the user submits the form and there are some errors
     },
 
     /**
@@ -354,21 +346,9 @@
                 }
             }
             if( e.type !== 'submit' ){ return; } // if event type is not submit, break
-            else if( that.handler === true ){ return false; } // if event type is submit and handler is true, break submit
-            else{
-                // if ajax request set, start ajax process
-                if( this.options.ajax.call ){
-                    var formAction = this.form.getAttribute( 'action' );
-                    this.options.ajax.settings.data = $( this.form ).serialize();
-                    this.options.ajax.settings.url = typeof this.options.ajax.settings.url !== 'undefined' ? this.options.ajax.settings.url : formAction;
-                    this.ajaxRequest( this.options.ajax.settings, this.options.ajax.callbackFuncs );
-                    return false;
-                }
-                // Return onComplateFunc()
-                // onComplateFunc() was defined by default at line 64
-                // if onComplateFunc() is not defined by user, submit process will continue
-                return this.options.onCompleteFunc( that, e );
-            }
+            // if event type is submit and handler is true, break submit and call onError() function
+            else if( this.handler === true ){ this.options.onError.call( this, e ); return false; }
+            else { return this.options.onValid.call( this, e ); } // if form is valid call onValid() function
         },
  
         /**
@@ -450,24 +430,6 @@
             for ( var i = _errorMessages.length -1; i >= 0; i-- ){
                 this.window.close.call( this, _errorMessages[i] );
             }
-        },
-        
-        /**
-         * Ajax requests are done here.
-         * 
-         * @method ajaxRequest
-         * @param {object} ajaxSettings Ajax settings
-         * @param {object} callbackFuncs Ajax callback functions
-         * @return {Void}
-         */
-        ajaxRequest : function( ajaxSettings, callbackFuncs ){
-            var that = this;
-            /* Debug */
-            if( ajaxSettings.url === '' || ajaxSettings.url === null ){ return console.warn('Form action not valid !'); }
-            $.ajax( ajaxSettings )
-            .done( function( result ){ callbackFuncs.success( that, result ); } )
-            .fail( function( jqXHR, textStatus ){ callbackFuncs.fail( jqXHR, textStatus ); } )
-            .always( function( result ){ callbackFuncs.complete( result ); } );
         }
     };
 
@@ -484,4 +446,4 @@
             new Validetta( this, options );
         });
     };
-})(jQuery);
+})( jQuery );
