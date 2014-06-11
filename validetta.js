@@ -22,7 +22,7 @@
     var Validetta = {}, // Plugin Class
         fields = {}, // Current fields/fieldss
         // RegExp for input validate rules
-        reg = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|customReg)\[(\w{1,15})\]/i ),
+        reg = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|customReg|remote)\[(\w{1,15})\]/i ),
         // RegExp for mail control method
         // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
         regMail = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
@@ -59,9 +59,10 @@
         errorClose : true, // Error windows close button. if you want to active it, set is true
         errorCloseClass : 'validetta-bubbleClose', // The html class that will add on element of HTML which is closing the error message window
         realTime : false, // To enable real-time form control, set this option true.
-        customReg : {}, // Costum reg method variable
         onValid : function(){}, // This function to be called when the user submits the form and there is no error.
-        onError : function(){} // This function to be called when the user submits the form and there are some errors
+        onError : function(){}, // This function to be called when the user submits the form and there are some errors
+        customReg : {}, // Costum reg method variable
+        remote : {}
     },
 
     /**
@@ -187,13 +188,15 @@
     Validetta = function( form, options ){
         /**
          *  Public  Properties
-         *  @property handler : It is used to stop or resume submit event handler
-         *  @property options : Property is stored in plugin options
-         *  @property form : Property is stored in <form> element
+         *  @property {mixed} handler : It is used to stop or resume submit event handler
+         *  @property {object} options : Property is stored in plugin options
+         *  @property {object} xhr stores xhr requests
+         *  @property {object} form : Property is stored in <form> element
          */
         this.handler = false;
         this.options = $.extend( true, {}, defaults, options );
-        this.form = form ;
+        this.form = form;
+        this.xhr = {};
         this.events();
     };
 
@@ -273,6 +276,7 @@
                  */
                 var _el = fields[i],
                     _errors = '',
+                    _remoteName,
                     _val = trim ( $( _el ).val() ),
                     // get control methods
                     _methods = _el.getAttribute( 'data-validetta' ).split( ',' );
@@ -328,6 +332,8 @@
                             _errors += messages.notEqual+'<br />';
                         }else if( rules[1] === 'customReg' && !validator.customReg( _val, that.options.customReg[ rules[2] ].method ) ){
                             _errors += ( that.options.customReg[ rules[2] ].errorMessage || messages.empty )+'<br />';
+                        }else if( rules[1] === 'remote' && typeof that.options.remote[ rules[2] ] !== 'undefined' ){
+                            _remoteName = rules[2];
                         }
                     }
                 }
@@ -335,17 +341,62 @@
                 var _elParent = _el.parentNode; // stored parent element of current input
                 if( _errors !== '' ){
                     // if parent element has valid class, remove and add error class
-                    $( _elParent ).removeClass( this.options.validClass ).addClass( this.options.errorClass );
+                    this.addErrorClass( _el );
                     // open error window
-                    that.window.open.call( that , _el, _errors );
-                } else {
-                    // if parent elemenet has error class, remove and add valid class
-                    if( $( _elParent ).hasClass( this.options.errorClass ) ) {
-                        $( _elParent ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
+                    this.window.open.call( this , _el, _errors );
+                // Check remote validation
+                } else if ( typeof _remoteName !== 'undefined' ) {
+                    var ajaxOptions = {},
+                    data = {},
+                    fieldName = _el.name || _el.getAttribute('id');
+
+                    if ( typeof this.remoteCache === 'undefined' ) this.remoteCache = {};
+
+                    data[ fieldName ] = _val; // Set data
+
+                    ajaxOptions = $.extend( true, {}, { // exends ajax options
+                        data: data
+                    }, this.options.remote[_remoteName] || {} );
+
+                    // use $.param() function for generate specific cache key
+                    var cacheKey = $.param( ajaxOptions );
+
+                    // Check cache
+                    var _cache = this.remoteCache[ cacheKey ];
+
+                    if ( typeof _cache !== 'undefined' ) {
+                        switch( _cache.state ){
+                            case 'pending' :  _cache.event = e.type; break; // pending means remote request not finished yet, update event type
+                            case 'rejected' : // rejected means remote request could not be performed
+                                e.preventDefault(); // we have to break submit because of throw error
+                                throw new Error( _cache.result.message );
+                            case 'resolved' : // resolved means remote request has done
+                                // Check to cache, if result is not valid open an error window
+                                if ( _cache.result.valid === false ) {
+                                    this.addErrorClass( _el );
+                                    this.window.open.call( this, _el, _cache.result.message );
+                                } else {
+                                    this.addValidClass( _el );
+                                }
+                                break;
+                        }
+                    } else {
+                        // Abort if previous ajax request still running
+                        if ( typeof this.xhr[ fieldName ] !== 'undefined' && this.xhr[ fieldName ].state() === 'pending' ) {
+                            this.xhr[ fieldName ].abort();
+                        }
+                        // Start caching
+                        _cache = this.remoteCache[ cacheKey ] = { state : 'pending', event : e.type };
+                        // make a remote request
+                        this.remoteRequest( ajaxOptions, _cache, _el, fieldName );
                     }
+                } else { // Nice, there are no error
+                    this.addValidClass( _el );
                 }
             }
-            if( e.type !== 'submit' ){ return; } // if event type is not submit, break
+            if( e.type !== 'submit' ) return; // if event type is not submit, break
+            // This is for when running remote request, return false and wait request response
+            else if ( this.handler === 'pending' ) return false;
             // if event type is submit and handler is true, break submit and call onError() function
             else if( this.handler === true ){ this.options.onError.call( this, e ); return false; }
             else { return this.options.onValid.call( this, e ); } // if form is valid call onValid() function
@@ -396,7 +447,7 @@
                 }
                 // we have an error so we need to break submit
                 // set to handler true
-                this.handler = true ;
+                this.handler = true;
             },
             /**
              * @property : close
@@ -408,6 +459,51 @@
                 // otherwise at the next validation attempt, submit will not continue even the validation is successful
                 this.handler = false ;
             }
+        },
+
+        /**
+         * Calls ajax request for remote validations
+         *
+         * @method remoteRequest
+         * @param  {object} ajaxOptions Ajax options
+         * @param  {object} cache Cache object
+         * @param  {object} inp processing element
+         * @param  {string} fieldName Field name for make specific caching
+         * @param  {object} e Event object
+         */
+        remoteRequest : function( ajaxOptions, cache, inp, fieldName, e ){
+            var that = this;
+
+            $( inp.parentNode ).addClass('validetta-pending');
+
+            // cache xhr
+            this.xhr[ fieldName ] = $.ajax( ajaxOptions )
+            .done( function( result ){
+                result = JSON.parse( result );
+                cache.state = 'resolved';
+                cache.result = result;
+                if ( cache.event === 'submit' ) {
+                    that.handler = false;
+                    $(that.form).trigger('submit');
+                }
+                else if( result.valid === false ) {
+                    that.addErrorClass( inp );
+                    that.window.open.call( that, inp, result.message );
+                } else {
+                    that.addValidClass( inp );
+                }
+            } )
+            .fail( function( jqXHR, textStatus ){
+                if ( textStatus !== 'abort') { // Dont throw error if request is aborted
+                    var _msg = 'Ajax request failed for field ('+fieldName+') : '+jqXHR.status+' '+jqXHR.statusText;
+                    cache.state = 'rejected';
+                    cache.result = { valid : false, message : _msg };
+                    throw new Error( _msg );
+                }
+            } )
+            .always( function( result ){ $( inp.parentNode ).removeClass('validetta-pending'); } );
+
+            this.handler = 'pending';
         },
 
         /**
@@ -429,6 +525,31 @@
             }
             for ( var i = _errorMessages.length -1; i >= 0; i-- ){
                 this.window.close.call( this, _errorMessages[i] );
+            }
+        },
+
+        /**
+         * Adds error class and removes valid class if exist
+         *
+         * @method addErrorClass
+         * @param {object} inp element
+         */
+        addErrorClass : function( inp ){
+            $( inp.parentNode ).removeClass( this.options.validClass ).addClass( this.options.errorClass );
+        },
+
+        /**
+         * Adds valid class and removes error class if exist
+         * if error class not exist, do not add valid class
+         *
+         * @method addValidClass
+         * @param {object} inp element
+         */
+        addValidClass : function( inp ){
+            // if parent elemenet has error class, remove and add valid class
+            var parent = inp.parentNode;
+            if( $( parent ).hasClass( this.options.errorClass ) ) {
+                $( parent ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
             }
         }
     };

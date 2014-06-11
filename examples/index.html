@@ -52,15 +52,23 @@ $(function(){
             .always( function( result ){ console.log('Finish him!!'); } );
 		},
         onError : function(){
-            console.log( 'Stop bro !! There are some errors.')
+            console.log( 'Stop bro !! There are some errors.');
         }
 	});
     $('#exm3').validetta({
+        realTime : true,
         onValid : function( event ){
             event.preventDefault(); // if you dont break submit and if form doesnt have error, page will post
             var _inp = $('#exm3').find('input[name=exm3-name]');
             this.window.open.call( this, _inp, 'This is an example about how you can focus an input after completion of form validation.');
             event.preventDefault();
+        },
+        remote : {
+            check_username : {
+                type : 'POST',
+                url : 'remote.php',
+                datatype : 'json'
+            }
         }
     });
 });
@@ -127,7 +135,7 @@ label[for]{width:100px}
 <h2>Example 3</h2>
 <form  id="exm3" method="POST">
     <ul>
-        <li><label>Name</label><input type="text" name='exm3-name' data-validetta="required"/><br /></li>
+        <li><label>Username</label><input type="text" name='exm3-name' data-validetta="required,remote[check_username]"/><br /></li>
         <li><label>Password</label><input type="password" name='password' data-validetta="required"/> <br /></li>
         <li><input type="submit" value="Save" /><input type="reset"/></li>
     </ul>
