@@ -90,7 +90,7 @@ label[for]{width:100px}
 	<ul>
 		<li><label>Name</label><input type="text" name="name" data-validetta="required,minLength[2],maxLength[3]" class="required" /></li>
 	    <li><label>Number</label><input type="text" name="number" data-validetta="number,required" /></li>
-		<li><label>Number equal</label><input type="text" name="numberEq" data-validetta="equal[number]" /></li>
+		<li><label>Number equal</label><input type="text" name="numberEq" data-validetta="equalTo[number]" /></li>
 	    <li><label>Email</label><input type="text" name="email" data-validetta="email" /></li>
         <li><label>Credit Cart</label><input type="text" name="creditCard" data-validetta="creditCard" /></li>
          <li><label>CustomReg</label><input type="text" name="costum" data-validetta="customReg[regname]" /></li>
@@ -126,7 +126,7 @@ label[for]{width:100px}
 <form  id="exm2" method="POST">
 	<ul>
 		<li><label>Password</label><input type="password" name='passworda' data-validetta="required,minLength[3],maxLength[6]" class="required" /> <br /></li>
-		<li><label >Re-type Password</label> <input type="password" name="ex2-eq" data-validetta="equal[passworda]"> <br /></li>
+		<li><label >Re-type Password</label> <input type="password" name="ex2-eq" data-validetta="equalTo[passworda]"> <br /></li>
 		<li><label>Email</label><input type="text" name="exm2-email" data-validetta="email" /></li>
 		<li><input type="submit" value="Kaydet" /><input type="reset"/></li>
 	</ul>

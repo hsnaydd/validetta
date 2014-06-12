@@ -22,7 +22,7 @@
     var Validetta = {}, // Plugin Class
         fields = {}, // Current fields/fieldss
         // RegExp for input validate rules
-        reg = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equal|customReg|remote)\[(\w{1,15})\]/i ),
+        reg = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|customReg|remote)\[(\w{1,15})\]/i ),
         // RegExp for mail control method
         // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
         regMail = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
@@ -106,8 +106,8 @@
         maxLength : function( val, arg ){
             return val.length <= arg;
         },
-        // Equal check
-        equal : function( val, arg ){
+        // equalTo check
+        equalTo : function( val, arg ){
             return $( this.form ).find( 'input[name="'+ arg +'"]' ).val() === val;
         },
         /**  
@@ -328,7 +328,7 @@
                             _errors += messages.maxSelected.replace( '{count}', rules[2] )+'<br />';
                         }else if( rules[1] === 'minSelected' && !validator.selectbox.minSelected( _val, rules[2] ) ){
                             _errors += messages.minSelected.replace( '{count}', rules[2] )+'<br />';
-                        }else if( rules[1] === 'equal' && !validator.equal.call( that, _val, rules[2] ) ){
+                        }else if( rules[1] === 'equalTo' && !validator.equalTo.call( that, _val, rules[2] ) ){
                             _errors += messages.notEqual+'<br />';
                         }else if( rules[1] === 'customReg' && !validator.customReg( _val, that.options.customReg[ rules[2] ].method ) ){
                             _errors += ( that.options.customReg[ rules[2] ].errorMessage || messages.empty )+'<br />';
