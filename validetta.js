@@ -81,45 +81,60 @@
     /**
      * validator
      *
+     * {count} which used below is the specified maximum or minimum value
+     * e.g if method is minLength and  rule is 2 ( minLength[2] ) 
+     * Output error windows text will be : 'Please select minimum 2 options.'
+     * 
      * @namespace
      * @param {String} val : input value
      */
     validator = {
+        required : function( tmp, that ){
+            switch ( tmp.el.getAttribute( 'type' ) || tmp.el.tagName ){
+                case 'checkbox' : return this.checked( tmp.el ) || messages.checkbox;
+                case 'radio' : return this.radio.call( that, tmp.el ) || messages.empty;
+                case 'SELECT' : return this.selected( tmp.val ) || messages.selectbox;
+                case 'text':
+                case 'password':
+                case 'TEXTAREA': return this.empty( tmp.val ) || messages.empty;
+            }
+        },
         // Empty check - it checks the value if it's empty or not
         empty : function( val ){
             return val !== '';
         },
         //  Mail check - it checks the value if it's a valid email address or not
-        mail : function( val ){
-            return  val === '' || regMail.test( val );
+        email : function( tmp ){
+            return  tmp.val === '' || regMail.test( tmp.val ) || messages.email;
         },
         // Number check
-        number : function( val ){
-            return val === '' || regNumber.test( val );
+        number : function( tmp ){
+            return tmp.val === '' || regNumber.test( tmp.val ) || messages.number;
         },
         // Minimum length check
-        minLength : function( val, arg ){
-            var _length = val.length;
-            return _length === 0 || _length >= arg;
+        minLength : function( tmp ){
+            var _length = tmp.val.length;
+            return _length === 0 || _length >= tmp.arg || messages.minLength.replace( '{count}', tmp.arg );
         },
         // Maximum lenght check
-        maxLength : function( val, arg ){
-            return val.length <= arg;
+        maxLength : function( tmp ){
+            return tmp.val.length <= tmp.arg || messages.maxLength.replace( '{count}', tmp.arg );
         },
         // equalTo check
-        equalTo : function( val, arg ){
-            return $( this.form ).find( 'input[name="'+ arg +'"]' ).val() === val;
+        equalTo : function( tmp, that ){
+            return $( that.form ).find( 'input[name="'+ tmp.arg +'"]' ).val() === tmp.val || messages.notEqual;
         },
         /**  
          * Credit Card Control
          * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers
          */
-        creditCard : function( val ){
+        creditCard : function( tmp ){
+            if ( tmp.val === '' ) return true; // allow empty because empty check does by required metheod
             var reg, cardNumber, pos, digit, i, sub_total, sum = 0, strlen;
             reg = new RegExp( /[^0-9]+/g );
-            cardNumber = val.replace( reg, '' );
+            cardNumber = tmp.val.replace( reg, '' );
             strlen = cardNumber.length;
-            if( strlen < 16 ){ return false; }
+            if( strlen < 16 ) return messages.creditCard;
             for( i=0 ; i < strlen ; i++ ){
                 pos = strlen - i;
                 digit = parseInt( cardNumber.substring( pos - 1, pos ), 10 );
@@ -136,43 +151,49 @@
             if( sum > 0 && sum % 10 === 0 ){
                 return true ;
             }
-            return false ;
+            return messages.creditCard;
         },
         //Checkbox check
-        checkbox : {
-            checked : function( _inp ){
-                return _inp.checked;
-            },
-            maxChecked : function( _inp, arg ){
-                var count =  $( this.form.querySelectorAll( 'input[type=checkbox][name="'+ _inp.name +'"]' ) ).filter( ':checked' ).length ;
-                return count <= arg;
-            },
-            minChecked : function( _inp, arg ){
-                var count =  $( this.form.querySelectorAll( 'input[type=checkbox][name="'+ _inp.name +'"]' ) ).filter( ':checked' ).length ;
-                return count >= arg;
-            }
+        checked : function( val ){
+            return val.checked;
+        },
+        maxChecked : function( tmp, that ){
+            var cont = $( that.form.querySelectorAll( 'input[type=checkbox][name="'+ tmp.el.name +'"]' ) );
+            // we dont want to open an error window for all checkboxes which have same "name"
+            if ( cont.index( tmp.el ) !== 0 ) return true;
+            var count =  cont.filter( ':checked' ).length ;
+            return count <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
+        },
+        minChecked : function( tmp, that ){
+            var cont = $( that.form.querySelectorAll( 'input[type=checkbox][name="'+ tmp.el.name +'"]' ) );
+            if ( cont.index( tmp.el ) !== 0 ) return true; // same as above
+            var count =  cont.filter( ':checked' ).length ;
+            return count >= tmp.arg || messages.minChecked.replace( '{count}', tmp.arg );
         },
         //Selectbox check
-        selectbox : {
-            selected : function( val ){
-                return val !== null && val !== '';
-            },
-            maxSelected : function( val, arg){
-                return val === null || val === '' || val.length <= arg;
-            },
-            minSelected : function( val, arg ){
-                return val === null || val === '' || val.length >= arg;
-            }
+        selected : function( val ){
+            return val !== null && val !== '';
+        },
+        maxSelected : function( tmp){
+            return tmp.val === null || tmp.val === '' || tmp.val.length <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
+        },
+        minSelected : function( tmp ){
+            return tmp.val === null || tmp.val === '' || tmp.val.length >= tmp.arg || messages.minSelected.replace( '{count}', tmp.arg );
         },
         // Radio
-        radio : function ( _inp ) {
-            var count = $( this.form.querySelectorAll( 'input[type=radio][name="'+ _inp.name +'"]' ) ).filter( ':checked' ).length ;
+        radio : function ( el ) {
+            var count = $( this.form.querySelectorAll( 'input[type=radio][name="'+ el.name +'"]' ) ).filter( ':checked' ).length ;
             return count === 1;
         },
         // Custom reg check
-        customReg : function( val, reg ){
-            var _reg = new RegExp( reg );
-            return val === '' || _reg.test( val );
+        customReg : function( tmp, that ){
+            var arg = that.options.customReg[ tmp.arg ],
+                _reg = new RegExp(  arg.method );
+            return tmp.val === '' || _reg.test( tmp.val ) || arg.errorMessage;
+        },
+        remote : function(tmp){
+            tmp.remote = tmp.arg;
+            return true;
         }
     };
 
@@ -270,82 +291,48 @@
                  * Declaring variables
                  *
                  * @params {object} _el : current field
-                 * @params {string} _errors : current field's errors
+                 * @params {string} errors : current field's errors
                  * @params {mixed} _val : current field's value
                  * @params {array} _methods : current field's control methods
                  */
                 var _el = fields[i],
-                    _errors = '',
-                    _remoteName,
+                    errors = '',
                     _val = trim ( $( _el ).val() ),
                     // get control methods
                     _methods = _el.getAttribute( 'data-validetta' ).split( ',' );
+                // Create tmp
+                this.tmp = {};
+                // store el and val variables in tmp
+                this.tmp = { el : _el, val : _val };
+
                 // start to check fields
-                // validator : Object Fields Control Method
+                // validator : Fields Control Object
                 for ( var j = _methods.length - 1; j >= 0; j-- ) {
-                    // Required Control
-                    if( _methods[j] === 'required' ){
-                        var _elType = _el.getAttribute( 'type' );
-                        if( _elType === 'checkbox' && !validator.checkbox.checked( _el ) ){ _errors += messages.checkbox+'<br />'; }
-                        else if ( _elType === 'radio' && !validator.radio.call( that, _el ) ) { _errors += messages.empty+'<br />'; }
-                        else if( _el.tagName ==='SELECT' && !validator.selectbox.selected( _val ) ){ _errors += messages.selectbox+'<br />'; }
-                        if( ( _elType ==='text' || _elType ==='password' || _el.tagName ==='TEXTAREA' ) && !validator.empty.call( that, _val ) ){ _errors += messages.empty+'<br />'; }
-                    }
-                    // Number Control
-                    if( _methods[j] === 'number' && !validator.number( _val ) ){
-                        _errors += messages.number+'<br />';
-                    }
-                    // Email Control
-                    if( _methods[j] === 'email' && !validator.mail( _val ) ){
-                        _errors += messages.email+'<br />';
-                    }
-                    // Credit Cart Control
-                    if( _methods[j] === 'creditCard' && _val !=='' && !validator.creditCard( _val ) ){
-                        _errors += messages.creditCard+'<br />';
-                    }
-                    // Rules Control (minChecked, maxChecked, minSelected etc.)
-                    var rules = _methods[j].match(reg);
-                    if( rules !== null ){
-                        // get rules
-                        // And start to check rules
-                        // {count} which used below is the specified maximum or minimum value
-                        // e.g if method is minLength and  rule is 2 ( minLength[2] ) 
-                        // Output error windows text will be : 'Please select minimum 2 options.'
-                        if( rules[1] === 'maxLength' && !validator.maxLength( _val, rules[2] ) ){
-                            _errors += messages.maxLength.replace( '{count}', rules[2] )+'<br />';
-                        }else if( rules[1] === 'minLength' && !validator.minLength( _val, rules[2] ) ){
-                            _errors += messages.minLength.replace( '{count}', rules[2] )+'<br />';
-                        }else if( rules[1] === 'maxChecked' && !validator.checkbox.maxChecked.call( that, _el, rules[2] ) ){
-                            // Redirect to the first checkbox
-                            // I want to see the error message on the first element of checkbox group
-                            _el = that.form.querySelectorAll( 'input[type=checkbox][data-validetta][name="'+ _el.name +'"]' )[0];
-                            _errors += messages.maxChecked.replace( '{count}', rules[2] )+'<br />';
-                        }else if( rules[1] === 'minChecked' && !validator.checkbox.minChecked.call( that, _el, rules[2] ) ){
-                            // Redirect to the first checkbox
-                            _el = that.form.querySelectorAll( 'input[type=checkbox][data-validetta][name="'+ _el.name +'"]' )[0];
-                            _errors += messages.minChecked.replace( '{count}', rules[2] )+'<br />';
-                        }else if( rules[1] === 'maxSelected' && !validator.selectbox.maxSelected( _val, rules[2] ) ){
-                            _errors += messages.maxSelected.replace( '{count}', rules[2] )+'<br />';
-                        }else if( rules[1] === 'minSelected' && !validator.selectbox.minSelected( _val, rules[2] ) ){
-                            _errors += messages.minSelected.replace( '{count}', rules[2] )+'<br />';
-                        }else if( rules[1] === 'equalTo' && !validator.equalTo.call( that, _val, rules[2] ) ){
-                            _errors += messages.notEqual+'<br />';
-                        }else if( rules[1] === 'customReg' && !validator.customReg( _val, that.options.customReg[ rules[2] ].method ) ){
-                            _errors += ( that.options.customReg[ rules[2] ].errorMessage || messages.empty )+'<br />';
-                        }else if( rules[1] === 'remote' && typeof that.options.remote[ rules[2] ] !== 'undefined' ){
-                            _remoteName = rules[2];
-                        }
+                    // Check Rule
+                    var rule = _methods[j].match( reg ),
+                        method;
+                    // Does it have rule?
+                    if( rule !== null ){
+                        // Does it hava argument ? 
+                        if( typeof rule[2] !== 'undefined' ) this.tmp.arg = rule[2];
+                        // Set method name
+                        method = rule[1];
+                    } else { method = _methods[j]; }
+                    // Is there a methot in validator ?
+                    if( validator.hasOwnProperty( method ) ) {
+                        var _check = validator[ method ]( that.tmp, that );
+                        if ( _check !== true ) errors += _check+'<br/>';
                     }
                 }
                 // Check the error
                 var _elParent = _el.parentNode; // stored parent element of current input
-                if( _errors !== '' ){
+                if( errors !== '' ){
                     // if parent element has valid class, remove and add error class
                     this.addErrorClass( _el );
                     // open error window
-                    this.window.open.call( this , _el, _errors );
+                    this.window.open.call( this , _el, errors );
                 // Check remote validation
-                } else if ( typeof _remoteName !== 'undefined' ) {
+                } else if ( typeof this.tmp.remote !== 'undefined' ) {
                     var ajaxOptions = {},
                     data = {},
                     fieldName = _el.name || _el.getAttribute('id');
@@ -356,7 +343,7 @@
 
                     ajaxOptions = $.extend( true, {}, { // exends ajax options
                         data: data
-                    }, this.options.remote[_remoteName] || {} );
+                    }, this.options.remote[this.tmp.remote] || {} );
 
                     // use $.param() function for generate specific cache key
                     var cacheKey = $.param( ajaxOptions );
