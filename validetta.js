@@ -236,7 +236,7 @@
             // handle <form> reset button to clear error messages
             $( this.form ).on( 'reset', function(){
                 $( that.form.querySelectorAll( '.'+that.options.errorClass+', .'+that.options.validClass ) )
-                    .removeClass( that.options.errorClass, that.options.validClass );
+                    .removeClass( that.options.errorClass+' '+that.options.validClass );
                 return that.reset();
             });
             // Error close button is active ?
