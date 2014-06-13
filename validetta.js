@@ -79,24 +79,21 @@
     },
 
     /**
-     * validator
+     * Validator
      *
      * {count} which used below is the specified maximum or minimum value
      * e.g if method is minLength and  rule is 2 ( minLength[2] ) 
      * Output error windows text will be : 'Please select minimum 2 options.'
      * 
-     * @namespace
      * @param {String} val : input value
      */
-    validator = {
+    Validator = {
         required : function( tmp, that ){
             switch ( tmp.el.getAttribute( 'type' ) || tmp.el.tagName ){
                 case 'checkbox' : return this.checked( tmp.el ) || messages.checkbox;
                 case 'radio' : return this.radio.call( that, tmp.el ) || messages.empty;
                 case 'SELECT' : return this.selected( tmp.val ) || messages.selectbox;
-                case 'text':
-                case 'password':
-                case 'TEXTAREA': return this.empty( tmp.val ) || messages.empty;
+                default : return this.empty( tmp.val ) || messages.empty;
             }
         },
         // Empty check - it checks the value if it's empty or not
@@ -148,9 +145,7 @@
                 }
                 sum += sub_total ;
             }
-            if( sum > 0 && sum % 10 === 0 ){
-                return true ;
-            }
+            if( sum > 0 && sum % 10 === 0 ) return true;
             return messages.creditCard;
         },
         //Checkbox check
@@ -174,7 +169,7 @@
         selected : function( val ){
             return val !== null && val !== '';
         },
-        maxSelected : function( tmp){
+        maxSelected : function( tmp ){
             return tmp.val === null || tmp.val === '' || tmp.val.length <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
         },
         minSelected : function( tmp ){
@@ -191,7 +186,7 @@
                 _reg = new RegExp(  arg.method );
             return tmp.val === '' || _reg.test( tmp.val ) || arg.errorMessage;
         },
-        remote : function(tmp){
+        remote : function( tmp ){
             tmp.remote = tmp.arg;
             return true;
         }
@@ -268,7 +263,7 @@
                     // We're checking the parent value of clicked element to avoid getting error
                     // if parent value is true, clear error window
                     var _errProp = this.parentNode;
-                    if( _errProp ){ that.window.close.call( that, _errProp ); }
+                    if( _errProp ) that.window.close.call( that, _errProp );
                     return false;
                 });
             }
@@ -306,7 +301,7 @@
                 this.tmp = { el : _el, val : _val };
 
                 // start to check fields
-                // validator : Fields Control Object
+                // Validator : Fields Control Object
                 for ( var j = _methods.length - 1; j >= 0; j-- ) {
                     // Check Rule
                     var rule = _methods[j].match( reg ),
@@ -318,9 +313,9 @@
                         // Set method name
                         method = rule[1];
                     } else { method = _methods[j]; }
-                    // Is there a methot in validator ?
-                    if( validator.hasOwnProperty( method ) ) {
-                        var _check = validator[ method ]( that.tmp, that );
+                    // Is there a methot in Validator ?
+                    if( Validator.hasOwnProperty( method ) ) {
+                        var _check = Validator[ method ]( that.tmp, that );
                         if ( _check !== true ) errors += _check+'<br/>';
                     }
                 }
@@ -404,9 +399,9 @@
             open : function( _inp, error ){
                 var _inpParent = _inp.parentNode ;
                 // If the parent element undefined, that means _inp is an object. So we need to transform to the element
-                if( typeof _inpParent === 'undefined' ){ _inpParent = _inp[0].parentNode ; }
+                if( typeof _inpParent === 'undefined' ) _inpParent = _inp[0].parentNode ;
                 // if there is an error window which previously opened for _inp, return
-                if( $( _inpParent ).find( '.'+this.options.errorTemplateClass ).length > 0 ){ return ; }
+                if( $( _inpParent ).find( '.'+this.options.errorTemplateClass ).length > 0 ) return;
                 // Create the error window object which will be appear
                 var errorObject = document.createElement( 'span' );
                 errorObject.className = this.options.errorTemplateClass;
@@ -465,30 +460,30 @@
 
             // cache xhr
             this.xhr[ fieldName ] = $.ajax( ajaxOptions )
-            .done( function( result ){
-                result = JSON.parse( result );
-                cache.state = 'resolved';
-                cache.result = result;
-                if ( cache.event === 'submit' ) {
-                    that.handler = false;
-                    $(that.form).trigger('submit');
-                }
-                else if( result.valid === false ) {
-                    that.addErrorClass( inp );
-                    that.window.open.call( that, inp, result.message );
-                } else {
-                    that.addValidClass( inp );
-                }
-            } )
-            .fail( function( jqXHR, textStatus ){
-                if ( textStatus !== 'abort') { // Dont throw error if request is aborted
-                    var _msg = 'Ajax request failed for field ('+fieldName+') : '+jqXHR.status+' '+jqXHR.statusText;
-                    cache.state = 'rejected';
-                    cache.result = { valid : false, message : _msg };
-                    throw new Error( _msg );
-                }
-            } )
-            .always( function( result ){ $( inp.parentNode ).removeClass('validetta-pending'); } );
+                .done( function( result ){
+                    result = JSON.parse( result );
+                    cache.state = 'resolved';
+                    cache.result = result;
+                    if ( cache.event === 'submit' ) {
+                        that.handler = false;
+                        $(that.form).trigger('submit');
+                    }
+                    else if( result.valid === false ) {
+                        that.addErrorClass( inp );
+                        that.window.open.call( that, inp, result.message );
+                    } else {
+                        that.addValidClass( inp );
+                    }
+                } )
+                .fail( function( jqXHR, textStatus ){
+                    if ( textStatus !== 'abort') { // Dont throw error if request is aborted
+                        var _msg = 'Ajax request failed for field ('+fieldName+') : '+jqXHR.status+' '+jqXHR.statusText;
+                        cache.state = 'rejected';
+                        cache.result = { valid : false, message : _msg };
+                        throw new Error( _msg );
+                    }
+                } )
+                .always( function( result ){ $( inp.parentNode ).removeClass('validetta-pending'); } );
 
             this.handler = 'pending';
         },
