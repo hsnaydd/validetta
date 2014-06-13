@@ -84,8 +84,10 @@
      * {count} which used below is the specified maximum or minimum value
      * e.g if method is minLength and  rule is 2 ( minLength[2] ) 
      * Output error windows text will be : 'Please select minimum 2 options.'
-     * 
-     * @param {String} val : input value
+     *
+     * @namespaces
+     * @param {object} tmp = this.tmp Tmp object for store current field and its value
+     * @param {String} tmp : input value
      */
     Validator = {
         required : function( tmp, that ){
@@ -204,10 +206,10 @@
     Validetta = function( form, options ){
         /**
          *  Public  Properties
-         *  @property {mixed} handler : It is used to stop or resume submit event handler
-         *  @property {object} options : Property is stored in plugin options
-         *  @property {object} xhr stores xhr requests
-         *  @property {object} form : Property is stored in <form> element
+         *  @property {mixed} handler It is used to stop or resume submit event handler
+         *  @property {object} options Property is stored in plugin options
+         *  @property {object} xhr Stores xhr requests
+         *  @property {object} form Property is stored in <form> element
          */
         this.handler = false;
         this.options = $.extend( true, {}, defaults, options );
@@ -285,26 +287,26 @@
                 /**
                  * Declaring variables
                  *
-                 * @params {object} _el : current field
+                 * @params {object} el : current field
                  * @params {string} errors : current field's errors
-                 * @params {mixed} _val : current field's value
-                 * @params {array} _methods : current field's control methods
+                 * @params {mixed} val : current field's value
+                 * @params {array} methods : current field's control methods
                  */
-                var _el = fields[i],
+                var el = fields[i],
                     errors = '',
-                    _val = trim ( $( _el ).val() ),
+                    val = trim ( $( el ).val() ),
                     // get control methods
-                    _methods = _el.getAttribute( 'data-validetta' ).split( ',' );
+                    methods = el.getAttribute( 'data-validetta' ).split( ',' );
                 // Create tmp
                 this.tmp = {};
                 // store el and val variables in tmp
-                this.tmp = { el : _el, val : _val };
+                this.tmp = { el : el, val : val };
 
-                // start to check fields
+                // Start to check fields
                 // Validator : Fields Control Object
-                for ( var j = _methods.length - 1; j >= 0; j-- ) {
+                for ( var j = methods.length - 1; j >= 0; j-- ) {
                     // Check Rule
-                    var rule = _methods[j].match( reg ),
+                    var rule = methods[j].match( reg ),
                         method;
                     // Does it have rule?
                     if( rule !== null ){
@@ -312,29 +314,29 @@
                         if( typeof rule[2] !== 'undefined' ) this.tmp.arg = rule[2];
                         // Set method name
                         method = rule[1];
-                    } else { method = _methods[j]; }
+                    } else { method = methods[j]; }
                     // Is there a methot in Validator ?
                     if( Validator.hasOwnProperty( method ) ) {
+                        // Validator returns error message if method invalid
                         var _check = Validator[ method ]( that.tmp, that );
                         if ( _check !== true ) errors += _check+'<br/>';
                     }
                 }
                 // Check the error
-                var _elParent = _el.parentNode; // stored parent element of current input
                 if( errors !== '' ){
                     // if parent element has valid class, remove and add error class
-                    this.addErrorClass( _el );
+                    this.addErrorClass( el );
                     // open error window
-                    this.window.open.call( this , _el, errors );
+                    this.window.open.call( this , el, errors );
                 // Check remote validation
                 } else if ( typeof this.tmp.remote !== 'undefined' ) {
                     var ajaxOptions = {},
                     data = {},
-                    fieldName = _el.name || _el.getAttribute('id');
+                    fieldName = el.name || el.getAttribute('id');
 
                     if ( typeof this.remoteCache === 'undefined' ) this.remoteCache = {};
 
-                    data[ fieldName ] = _val; // Set data
+                    data[ fieldName ] = val; // Set data
 
                     ajaxOptions = $.extend( true, {}, { // exends ajax options
                         data: data
@@ -344,21 +346,21 @@
                     var cacheKey = $.param( ajaxOptions );
 
                     // Check cache
-                    var _cache = this.remoteCache[ cacheKey ];
+                    var cache = this.remoteCache[ cacheKey ];
 
-                    if ( typeof _cache !== 'undefined' ) {
-                        switch( _cache.state ){
-                            case 'pending' :  _cache.event = e.type; break; // pending means remote request not finished yet, update event type
+                    if ( typeof cache !== 'undefined' ) {
+                        switch( cache.state ){
+                            case 'pending' :  cache.event = e.type; break; // pending means remote request not finished yet, update event type
                             case 'rejected' : // rejected means remote request could not be performed
                                 e.preventDefault(); // we have to break submit because of throw error
-                                throw new Error( _cache.result.message );
+                                throw new Error( cache.result.message );
                             case 'resolved' : // resolved means remote request has done
-                                // Check to cache, if result is not valid open an error window
-                                if ( _cache.result.valid === false ) {
-                                    this.addErrorClass( _el );
-                                    this.window.open.call( this, _el, _cache.result.message );
+                                // Check to cache, if result is invalid, open an error window
+                                if ( cache.result.valid === false ) {
+                                    this.addErrorClass( el );
+                                    this.window.open.call( this, el, cache.result.message );
                                 } else {
-                                    this.addValidClass( _el );
+                                    this.addValidClass( el );
                                 }
                                 break;
                         }
@@ -368,12 +370,12 @@
                             this.xhr[ fieldName ].abort();
                         }
                         // Start caching
-                        _cache = this.remoteCache[ cacheKey ] = { state : 'pending', event : e.type };
+                        cache = this.remoteCache[ cacheKey ] = { state : 'pending', event : e.type };
                         // make a remote request
-                        this.remoteRequest( ajaxOptions, _cache, _el, fieldName );
+                        this.remoteRequest( ajaxOptions, cache, el, fieldName );
                     }
                 } else { // Nice, there are no error
-                    this.addValidClass( _el );
+                    this.addValidClass( el );
                 }
             }
             if( e.type !== 'submit' ) return; // if event type is not submit, break
@@ -381,18 +383,17 @@
             else if ( this.handler === 'pending' ) return false;
             // if event type is submit and handler is true, break submit and call onError() function
             else if( this.handler === true ){ this.options.onError.call( this, e ); return false; }
-            else { return this.options.onValid.call( this, e ); } // if form is valid call onValid() function
+            else return this.options.onValid.call( this, e ); // if form is valid call onValid() function
         },
  
         /**
          * This the section which opening or closing error windows process is done
          * 
-         * @method window
-         * @return {Void}
+         * @namespace window
          */
         window : {
             /**
-             * @property open
+             * @method open
              * @params _inp{object} : element which has an error ( it can be native element or jQuery object )
              * @params error : error message
              */
@@ -432,7 +433,7 @@
                 this.handler = true;
             },
             /**
-             * @property : close
+             * @method : close
              * @params _inp : the error message window which will be disappear
              */
             close : function( _inp ){
@@ -454,6 +455,7 @@
          * @param  {object} e Event object
          */
         remoteRequest : function( ajaxOptions, cache, inp, fieldName, e ){
+
             var that = this;
 
             $( inp.parentNode ).addClass('validetta-pending');
