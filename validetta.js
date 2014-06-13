@@ -350,7 +350,10 @@
 
                     if ( typeof cache !== 'undefined' ) {
                         switch( cache.state ){
-                            case 'pending' :  cache.event = e.type; break; // pending means remote request not finished yet, update event type
+                            case 'pending' : // pending means remote request not finished yet
+                                this.handler = 'pending'; // update handler and cache event type
+                                cache.event = e.type;
+                                break;
                             case 'rejected' : // rejected means remote request could not be performed
                                 e.preventDefault(); // we have to break submit because of throw error
                                 throw new Error( cache.result.message );
