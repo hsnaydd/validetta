@@ -89,16 +89,12 @@
      */
     Validator = {
         required : function( tmp, that ){
-            switch ( tmp.el.getAttribute( 'type' ) || tmp.el.tagName ){
-                case 'checkbox' : return this.checked( tmp.el ) || messages.checkbox;
+            switch ( tmp.el.type ){
+                case 'checkbox' : return tmp.el.checked || messages.checkbox;
                 case 'radio' : return this.radio.call( that, tmp.el ) || messages.empty;
-                case 'SELECT' : return this.selected( tmp.val ) || messages.selectbox;
-                default : return this.empty( tmp.val ) || messages.empty;
+                case 'select-multiple' : return tmp.val !== null || messages.selectbox;
+                default : return tmp.val !== '' || messages.empty;
             }
-        },
-        // Empty check - it checks the value if it's empty or not
-        empty : function( val ){
-            return val !== '';
         },
         //  Mail check - it checks the value if it's a valid email address or not
         email : function( tmp ){
@@ -149,9 +145,6 @@
             return messages.creditCard;
         },
         //Checkbox check
-        checked : function( val ){
-            return val.checked;
-        },
         maxChecked : function( tmp, that ){
             var cont = $( that.form.querySelectorAll( 'input[type=checkbox][name="'+ tmp.el.name +'"]' ) );
             // we dont want to open an error window for all checkboxes which have same "name"
@@ -166,9 +159,6 @@
             return count >= tmp.arg || messages.minChecked.replace( '{count}', tmp.arg );
         },
         //Selectbox check
-        selected : function( val ){
-            return val !== null && val !== '';
-        },
         maxSelected : function( tmp ){
             return tmp.val === null || tmp.val === '' || tmp.val.length <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
         },
