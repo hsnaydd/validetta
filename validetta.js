@@ -20,7 +20,7 @@
      *  Declare variables
      */
     var Validetta = {}, // Plugin Class
-        fields = {}, // Current fields/fieldss
+        fields = {}, // Current fields/fields
         // RegExp for input validate rules
         reg = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|customReg|remote)\[(\w{1,15})\]/i ),
         // RegExp for mail control method
@@ -85,7 +85,7 @@
      *
      * @namespace
      * @param {object} tmp = this.tmp Tmp object for store current field and its value
-     * @param {String} tmp : input value
+     * @param {String} val : field value
      */
     Validator = {
         required : function( tmp, that ){
@@ -305,7 +305,7 @@
                 // Create tmp
                 this.tmp = {};
                 // store el and val variables in tmp
-                this.tmp = { el : el, val : val };
+                this.tmp = { el : el, val : val, parent : el.parentNode };
 
                 // Start to check fields
                 // Validator : Fields Control Object
@@ -330,14 +330,14 @@
                 // Check the errors
                 if( errors !== '' ){
                     // if parent element has valid class, remove and add error class
-                    this.addErrorClass( el );
+                    this.addErrorClass( this.tmp.parent );
                     // open error window
                     this.window.open.call( this , el, errors );
                 // Check remote validation
                 } else if ( typeof this.tmp.remote !== 'undefined' ) {
                     this.checkRemote( el, e );
                 } else { // Nice, there are no error
-                    this.addValidClass( el );
+                    this.addValidClass( this.tmp.parent );
                 }
             }
         },
@@ -361,7 +361,7 @@
 
             ajaxOptions = $.extend( true, {}, { // exends ajax options
                 data: data
-            }, this.options.remote[this.tmp.remote] || {} );
+            }, this.options.remote[ this.tmp.remote ] || {} );
 
             // use $.param() function for generate specific cache key
             var cacheKey = $.param( ajaxOptions );
@@ -381,10 +381,10 @@
                     case 'resolved' : // resolved means remote request has done
                         // Check to cache, if result is invalid, open an error window
                         if ( cache.result.valid === false ) {
-                            this.addErrorClass( el );
+                            this.addErrorClass( this.tmp.parent );
                             this.window.open.call( this, el, cache.result.message );
                         } else {
-                            this.addValidClass( el );
+                            this.addValidClass( this.tmp.parent );
                         }
                         break;
                 }
@@ -404,15 +404,15 @@
          *
          * @param  {object} ajaxOptions Ajax options
          * @param  {object} cache Cache object
-         * @param  {object} inp processing element
+         * @param  {object} el processing element
          * @param  {string} fieldName Field name for make specific caching
          * @param  {object} e Event object
          */
-        remoteRequest : function( ajaxOptions, cache, inp, fieldName, e ){
+        remoteRequest : function( ajaxOptions, cache, el, fieldName, e ){
 
             var that = this;
 
-            $( inp.parentNode ).addClass('validetta-pending');
+            $( this.tmp.parent ).addClass( 'validetta-pending' );
 
             // cache xhr
             this.xhr[ fieldName ] = $.ajax( ajaxOptions )
@@ -422,13 +422,13 @@
                     cache.result = result;
                     if ( cache.event === 'submit' ) {
                         that.handler = false;
-                        $(that.form).trigger('submit');
+                        $( that.form ).trigger( 'submit' );
                     }
                     else if( result.valid === false ) {
-                        that.addErrorClass( inp );
-                        that.window.open.call( that, inp, result.message );
+                        that.addErrorClass( that.tmp.parent );
+                        that.window.open.call( that, el, result.message );
                     } else {
-                        that.addValidClass( inp );
+                        that.addValidClass( that.tmp.parent );
                     }
                 } )
                 .fail( function( jqXHR, textStatus ){
@@ -439,7 +439,7 @@
                         throw new Error( _msg );
                     }
                 } )
-                .always( function( result ){ $( inp.parentNode ).removeClass('validetta-pending'); } );
+                .always( function( result ){ $( that.tmp.parent ).removeClass('validetta-pending'); } );
 
             this.handler = 'pending';
         },
@@ -453,8 +453,8 @@
             /**
              * Error window opens
              * 
-             * @params el{object} : element which has an error ( it can be native element or jQuery object )
-             * @params error : error message
+             * @params {object} el : element which has an error ( it can be native element or jQuery object )
+             * @params {string} error : error messages
              */
             open : function( el, error ){
                 var elParent = el.parentNode ;
@@ -529,23 +529,22 @@
         /**
          * Adds error class and removes valid class if exist
          *
-         * @param {object} inp element
+         * @param {object} el element
          */
-        addErrorClass : function( inp ){
-            $( inp.parentNode ).removeClass( this.options.validClass ).addClass( this.options.errorClass );
+        addErrorClass : function( el ){
+            $( el ).removeClass( this.options.validClass ).addClass( this.options.errorClass );
         },
 
         /**
          * Adds valid class and removes error class if exist
          * if error class not exist, do not add valid class
          *
-         * @param {object} inp element
+         * @param {object} el element
          */
-        addValidClass : function( inp ){
+        addValidClass : function( el ){
             // if parent elemenet has error class, remove and add valid class
-            var _parent = inp.parentNode;
-            if( $( _parent ).hasClass( this.options.errorClass ) ) {
-                $( _parent ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
+            if( $( el ).hasClass( this.options.errorClass ) ) {
+                $( el ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
             }
         }
     };
