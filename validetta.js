@@ -70,7 +70,6 @@
      * This is the function for string parameter !
      * If parameter is an array, function will return the parameter without trimed
      *
-     * @function
      * @param {string} value
      * @return {mixed}
      */
@@ -80,12 +79,11 @@
 
     /**
      * Validator
-     *
      * {count} which used below is the specified maximum or minimum value
      * e.g if method is minLength and  rule is 2 ( minLength[2] ) 
      * Output error windows text will be : 'Please select minimum 2 options.'
      *
-     * @namespaces
+     * @namespace
      * @param {object} tmp = this.tmp Tmp object for store current field and its value
      * @param {String} tmp : input value
      */
@@ -197,7 +195,6 @@
     /**
      * Plugin Class
      *
-     * @class  Validetta
      * @constructor
      * @param {object} form : <form> element which being controlled
      * @param {object} options : User-specified settings
@@ -225,7 +222,6 @@
         /**
          * This is the method of handling events
          * 
-         * @method events
          * @return {mixed}
          */
         events : function(){
@@ -274,29 +270,38 @@
         /**
          * In this method, fields are validated
          * 
-         * @method init
-         * @params {Object} e : event object
-         * @return {Function} or {Boolen}
+         * @params {object} e : event object
+         * @return {mixed}
          */
         init : function( e ){
-            var that = this; // stored this
             // Reset error windows from all elements
             this.reset( fields );
             // Start control each elements
+            this.checkFields( e );
+            if( e.type !== 'submit' ) return; // if event type is not submit, break
+            // This is for when running remote request, return false and wait request response
+            else if ( this.handler === 'pending' ) return false;
+            // if event type is submit and handler is true, break submit and call onError() function
+            else if( this.handler === true ){ this.options.onError.call( this, e ); return false; }
+            else return this.options.onValid.call( this, e ); // if form is valid call onValid() function
+        },
+
+        /**
+         * Checks Fields
+         * 
+         * @param  {object} e event object
+         * @return {void}
+         */
+        checkFields : function( e ){
+
+            var that = this; // stored this
+
             for ( var i = fields.length - 1; i >= 0; i-- ) {
-                /**
-                 * Declaring variables
-                 *
-                 * @params {object} el : current field
-                 * @params {string} errors : current field's errors
-                 * @params {mixed} val : current field's value
-                 * @params {array} methods : current field's control methods
-                 */
-                var el = fields[i],
-                    errors = '',
-                    val = trim ( $( el ).val() ),
-                    // get control methods
-                    methods = el.getAttribute( 'data-validetta' ).split( ',' );
+
+                var el = fields[i], //current field
+                    errors = '', //current field's errors
+                    val = trim ( $( el ).val() ), //current field's value
+                    methods = el.getAttribute( 'data-validetta' ).split( ',' ); //current field's control methods
                 // Create tmp
                 this.tmp = {};
                 // store el and val variables in tmp
@@ -322,7 +327,7 @@
                         if ( _check !== true ) errors += _check+'<br/>';
                     }
                 }
-                // Check the error
+                // Check the errors
                 if( errors !== '' ){
                     // if parent element has valid class, remove and add error class
                     this.addErrorClass( el );
@@ -330,127 +335,73 @@
                     this.window.open.call( this , el, errors );
                 // Check remote validation
                 } else if ( typeof this.tmp.remote !== 'undefined' ) {
-                    var ajaxOptions = {},
-                    data = {},
-                    fieldName = el.name || el.getAttribute('id');
-
-                    if ( typeof this.remoteCache === 'undefined' ) this.remoteCache = {};
-
-                    data[ fieldName ] = val; // Set data
-
-                    ajaxOptions = $.extend( true, {}, { // exends ajax options
-                        data: data
-                    }, this.options.remote[this.tmp.remote] || {} );
-
-                    // use $.param() function for generate specific cache key
-                    var cacheKey = $.param( ajaxOptions );
-
-                    // Check cache
-                    var cache = this.remoteCache[ cacheKey ];
-
-                    if ( typeof cache !== 'undefined' ) {
-                        switch( cache.state ){
-                            case 'pending' : // pending means remote request not finished yet
-                                this.handler = 'pending'; // update handler and cache event type
-                                cache.event = e.type;
-                                break;
-                            case 'rejected' : // rejected means remote request could not be performed
-                                e.preventDefault(); // we have to break submit because of throw error
-                                throw new Error( cache.result.message );
-                            case 'resolved' : // resolved means remote request has done
-                                // Check to cache, if result is invalid, open an error window
-                                if ( cache.result.valid === false ) {
-                                    this.addErrorClass( el );
-                                    this.window.open.call( this, el, cache.result.message );
-                                } else {
-                                    this.addValidClass( el );
-                                }
-                                break;
-                        }
-                    } else {
-                        // Abort if previous ajax request still running
-                        if ( typeof this.xhr[ fieldName ] !== 'undefined' && this.xhr[ fieldName ].state() === 'pending' ) {
-                            this.xhr[ fieldName ].abort();
-                        }
-                        // Start caching
-                        cache = this.remoteCache[ cacheKey ] = { state : 'pending', event : e.type };
-                        // make a remote request
-                        this.remoteRequest( ajaxOptions, cache, el, fieldName );
-                    }
+                    this.checkRemote( el, e );
                 } else { // Nice, there are no error
                     this.addValidClass( el );
                 }
             }
-            if( e.type !== 'submit' ) return; // if event type is not submit, break
-            // This is for when running remote request, return false and wait request response
-            else if ( this.handler === 'pending' ) return false;
-            // if event type is submit and handler is true, break submit and call onError() function
-            else if( this.handler === true ){ this.options.onError.call( this, e ); return false; }
-            else return this.options.onValid.call( this, e ); // if form is valid call onValid() function
-        },
- 
-        /**
-         * This the section which opening or closing error windows process is done
-         * 
-         * @namespace window
-         */
-        window : {
-            /**
-             * @method open
-             * @params _inp{object} : element which has an error ( it can be native element or jQuery object )
-             * @params error : error message
-             */
-            open : function( _inp, error ){
-                var _inpParent = _inp.parentNode ;
-                // If the parent element undefined, that means _inp is an object. So we need to transform to the element
-                if( typeof _inpParent === 'undefined' ) _inpParent = _inp[0].parentNode ;
-                // if there is an error window which previously opened for _inp, return
-                if( $( _inpParent ).find( '.'+this.options.errorTemplateClass ).length > 0 ) return;
-                // Create the error window object which will be appear
-                var errorObject = document.createElement( 'span' );
-                errorObject.className = this.options.errorTemplateClass;
-                // if error display is bubble, calculate to positions
-                if( this.options.display === 'bubble' ){
-                    var pos, W, H, T;
-                    // !! Here, JQuery functions are using to support the IE8
-                    pos = $( _inp ).position();
-                    W = $( _inp ).width();
-                    H = $( _inp ).height();
-                    T= pos.top ;
-                    $( errorObject ).empty().css({
-                        'left':pos.left+W+30+'px',
-                        'top' :T+'px'
-                    });
-                }
-                _inpParent.appendChild( errorObject );
-                errorObject.innerHTML = error ;
-                // if errorClose is activated, create the element which use to close the error window
-                if( this.options.errorClose ){
-                    var errorCloseObject = document.createElement( 'span' );
-                    errorCloseObject.innerHTML = 'x';
-                    errorCloseObject.className = this.options.errorCloseClass ;
-                    errorObject.appendChild( errorCloseObject );
-                }
-                // we have an error so we need to break submit
-                // set to handler true
-                this.handler = true;
-            },
-            /**
-             * @method : close
-             * @params _inp : the error message window which will be disappear
-             */
-            close : function( _inp ){
-                _inp.parentNode.removeChild( _inp );
-                // set to handler false
-                // otherwise at the next validation attempt, submit will not continue even the validation is successful
-                this.handler = false ;
-            }
         },
 
         /**
+         * Checks remote validations
+         *
+         * @param  {object} el current field
+         * @param  {object} e event object
+         * @throws {error} If previous remote request for same value has rejected
+         * @return {void}
+         */
+        checkRemote : function( el, e ){
+            var ajaxOptions = {},
+                data = {},
+                fieldName = el.name || el.getAttribute('id');
+
+            if ( typeof this.remoteCache === 'undefined' ) this.remoteCache = {};
+
+            data[ fieldName ] = this.tmp.val; // Set data
+
+            ajaxOptions = $.extend( true, {}, { // exends ajax options
+                data: data
+            }, this.options.remote[this.tmp.remote] || {} );
+
+            // use $.param() function for generate specific cache key
+            var cacheKey = $.param( ajaxOptions );
+
+            // Check cache
+            var cache = this.remoteCache[ cacheKey ];
+
+            if ( typeof cache !== 'undefined' ) {
+                switch( cache.state ){
+                    case 'pending' : // pending means remote request not finished yet
+                        this.handler = 'pending'; // update handler and cache event type
+                        cache.event = e.type;
+                        break;
+                    case 'rejected' : // rejected means remote request could not be performed
+                        e.preventDefault(); // we have to break submit because of throw error
+                        throw new Error( cache.result.message );
+                    case 'resolved' : // resolved means remote request has done
+                        // Check to cache, if result is invalid, open an error window
+                        if ( cache.result.valid === false ) {
+                            this.addErrorClass( el );
+                            this.window.open.call( this, el, cache.result.message );
+                        } else {
+                            this.addValidClass( el );
+                        }
+                        break;
+                }
+            } else {
+                // Abort if previous ajax request still running
+                var _xhr = this.xhr[ fieldName ];
+                if ( typeof _xhr !== 'undefined' && _xhr.state() === 'pending' ) _xhr.abort();
+                // Start caching
+                cache = this.remoteCache[ cacheKey ] = { state : 'pending', event : e.type };
+                // make a remote request
+                this.remoteRequest( ajaxOptions, cache, el, fieldName );
+            }
+        },
+ 
+        /**
          * Calls ajax request for remote validations
          *
-         * @method remoteRequest
          * @param  {object} ajaxOptions Ajax options
          * @param  {object} cache Cache object
          * @param  {object} inp processing element
@@ -494,21 +445,81 @@
         },
 
         /**
+         * This the section which opening or closing error windows process is done
+         * 
+         * @namespace
+         */
+        window : {
+            /**
+             * Error window opens
+             * 
+             * @params el{object} : element which has an error ( it can be native element or jQuery object )
+             * @params error : error message
+             */
+            open : function( el, error ){
+                var elParent = el.parentNode ;
+                // If the parent element undefined, that means el is an object. So we need to transform to the element
+                if( typeof elParent === 'undefined' ) elParent = el[0].parentNode;
+                // if there is an error window which previously opened for el, return
+                if( $( elParent ).find( '.'+this.options.errorTemplateClass ).length > 0 ) return;
+                // Create the error window object which will be appear
+                var errorObject = document.createElement( 'span' );
+                errorObject.className = this.options.errorTemplateClass;
+                // if error display is bubble, calculate to positions
+                if( this.options.display === 'bubble' ){
+                    var pos, W, H, T;
+                    // !! Here, JQuery functions are using to support the IE8
+                    pos = $( el ).position();
+                    W = $( el ).width();
+                    H = $( el ).height();
+                    T= pos.top ;
+                    $( errorObject ).empty().css({
+                        'left':pos.left+W+30+'px',
+                        'top' :T+'px'
+                    });
+                }
+                elParent.appendChild( errorObject );
+                errorObject.innerHTML = error ;
+                // if errorClose is activated, create the element which use to close the error window
+                if( this.options.errorClose ){
+                    var errorCloseObject = document.createElement( 'span' );
+                    errorCloseObject.innerHTML = 'x';
+                    errorCloseObject.className = this.options.errorCloseClass ;
+                    errorObject.appendChild( errorCloseObject );
+                }
+                // we have an error so we need to break submit
+                // set to handler true
+                this.handler = true;
+            },
+            /**
+             * Error window closes
+             * 
+             * @params el : the error message window which will be disappear
+             */
+            close : function( el ){
+                el.parentNode.removeChild( el );
+                // set to handler false
+                // otherwise at the next validation attempt, submit will not continue even the validation is successful
+                this.handler = false ;
+            }
+        },
+
+
+        /**
          * Removes all error messages windows
          * 
-         * @method reset
-         * @param {object} or {void} _inp : form elements which have an error message window
+         * @param {object} or {void} el : form elements which have an error message window
          */
-        reset : function( _inp ){
+        reset : function( el ){
             var _errorMessages = {} ;
-            // if _inp is undefined ( This is the process of resetting all <form> )
-            // or _inp is an object that has element more than one
+            // if el is undefined ( This is the process of resetting all <form> )
+            // or el is an object that has element more than one
             // and these elements are not checkbox
-            if( typeof _inp === 'undefined' || ( _inp.length > 1 && _inp[0].getAttribute( 'type' ) !== 'checkbox' ) ){
+            if( typeof el === 'undefined' || ( el.length > 1 && el[0].getAttribute( 'type' ) !== 'checkbox' ) ){
                 _errorMessages = $( this.form ).find( '.'+ this.options.errorTemplateClass );
             }
             else {
-                _errorMessages = $( _inp[0].parentNode ).find( '.'+this.options.errorTemplateClass );
+                _errorMessages = $( el[0].parentNode ).find( '.'+this.options.errorTemplateClass );
             }
             for ( var i = _errorMessages.length -1; i >= 0; i-- ){
                 this.window.close.call( this, _errorMessages[i] );
@@ -518,7 +529,6 @@
         /**
          * Adds error class and removes valid class if exist
          *
-         * @method addErrorClass
          * @param {object} inp element
          */
         addErrorClass : function( inp ){
@@ -529,20 +539,20 @@
          * Adds valid class and removes error class if exist
          * if error class not exist, do not add valid class
          *
-         * @method addValidClass
          * @param {object} inp element
          */
         addValidClass : function( inp ){
             // if parent elemenet has error class, remove and add valid class
-            var parent = inp.parentNode;
-            if( $( parent ).hasClass( this.options.errorClass ) ) {
-                $( parent ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
+            var _parent = inp.parentNode;
+            if( $( _parent ).hasClass( this.options.errorClass ) ) {
+                $( _parent ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
             }
         }
     };
 
     /**
      * Plugin Validetta
+     * 
      * @param {object} options : User-specified settings
      * @return {object} this
      */
