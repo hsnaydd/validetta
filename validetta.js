@@ -98,11 +98,11 @@
         },
         //  Mail check - it checks the value if it's a valid email address or not
         email : function( tmp ){
-            return  tmp.val === '' || REGMAIL.test( tmp.val ) || messages.email;
+            return REGMAIL.test( tmp.val ) || messages.email;
         },
         // Number check
         number : function( tmp ){
-            return tmp.val === '' || REGNUMBER.test( tmp.val ) || messages.number;
+            return REGNUMBER.test( tmp.val ) || messages.number;
         },
         // Minimum length check
         minLength : function( tmp ){
@@ -160,10 +160,10 @@
         },
         //Selectbox check
         maxSelected : function( tmp ){
-            return tmp.val === null || tmp.val === '' || tmp.val.length <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
+            return tmp.val === null || tmp.val.length <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
         },
         minSelected : function( tmp ){
-            return tmp.val === null || tmp.val === '' || tmp.val.length >= tmp.arg || messages.minSelected.replace( '{count}', tmp.arg );
+            return tmp.val === null || tmp.val.length >= tmp.arg || messages.minSelected.replace( '{count}', tmp.arg );
         },
         // Radio
         radio : function ( el ) {
@@ -174,7 +174,7 @@
         customReg : function( tmp, that ){
             var arg = that.options.customReg[ tmp.arg ],
                 _reg = new RegExp(  arg.method );
-            return tmp.val === '' || _reg.test( tmp.val ) || arg.errorMessage;
+            return _reg.test( tmp.val ) || arg.errorMessage;
         },
         remote : function( tmp ){
             tmp.remote = tmp.arg;
@@ -300,12 +300,14 @@
                 // Start to check fields
                 // Validator : Fields Control Object
                 for ( var j = methods.length - 1; j >= 0; j-- ) {
+                    // prevent empty validation if method is not required
+                    if ( val === '' && methods[j] !== 'required' ) continue;
                     // Check Rule
                     var rule = methods[j].match( REG ),
                         method;
                     // Does it have rule?
                     if( rule !== null ){
-                        // Does it hava argument ? 
+                        // Does it have any argument ? 
                         if( typeof rule[2] !== 'undefined' ) this.tmp.arg = rule[2];
                         // Set method name
                         method = rule[1];
@@ -532,10 +534,7 @@
          * @param {object} el element
          */
         addValidClass : function( el ){
-            // if parent elemenet has error class, remove and add valid class
-            if( $( el ).hasClass( this.options.errorClass ) ) {
-                $( el ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
-            }
+            $( el ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
         }
     };
 
