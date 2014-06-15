@@ -20,14 +20,14 @@
      *  Declare variables
      */
     var Validetta = {}, // Plugin Class
-        fields = {}, // Current fields/fields
+        FIELDS = {}, // Current fields/fields
         // RegExp for input validate rules
-        reg = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|customReg|remote)\[(\w{1,15})\]/i ),
+        REG = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|customReg|remote)\[(\w{1,15})\]/i ),
         // RegExp for mail control method
         // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
-        regMail = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
+        REGMAIL = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
         //RegExp for input number control method
-        regNumber = new RegExp( /^[\-\+]?\d+\.?\d+$/ ),
+        REGNUMBER = new RegExp( /^[\-\+]?\d+\.?\d+$/ ),
     /**
      *  Form validate error messages
      */
@@ -98,11 +98,11 @@
         },
         //  Mail check - it checks the value if it's a valid email address or not
         email : function( tmp ){
-            return  tmp.val === '' || regMail.test( tmp.val ) || messages.email;
+            return  tmp.val === '' || REGMAIL.test( tmp.val ) || messages.email;
         },
         // Number check
         number : function( tmp ){
-            return tmp.val === '' || regNumber.test( tmp.val ) || messages.number;
+            return tmp.val === '' || REGNUMBER.test( tmp.val ) || messages.number;
         },
         // Minimum length check
         minLength : function( tmp ){
@@ -219,7 +219,7 @@
             // Handle submit event
             $( this.form ).submit( function( e ){
                 // fields to be controlled transferred to global variable
-                fields = this.querySelectorAll( '[data-validetta]' );
+                FIELDS = this.querySelectorAll( '[data-validetta]' );
                 return that.init( e );
             });
             // real-time option control
@@ -227,13 +227,13 @@
                 // handle change event for form elements (without checkbox)
                 $( this.form ).find( '[data-validetta]' ).not( '[type=checkbox]' ).on( 'change', function( e ){
                     // field to be controlled transferred to global variable
-                    fields = $( this );
+                    FIELDS = $( this );
                     return that.init( e );
                 });
                 // handle click event for checkboxes
                 $( this.form ).find( '[data-validetta][type=checkbox]' ).on( 'click', function( e ){
                     // fields to be controlled transferred to global variable
-                    fields = that.form.querySelectorAll( '[data-validetta][type=checkbox][name="'+ this.name +'"]' );
+                    FIELDS = that.form.querySelectorAll( '[data-validetta][type=checkbox][name="'+ this.name +'"]' );
                     return that.init( e );
                 });
             }
@@ -265,7 +265,7 @@
          */
         init : function( e ){
             // Reset error windows from all elements
-            this.reset( fields );
+            this.reset( FIELDS );
             // Start control each elements
             this.checkFields( e );
             if( e.type !== 'submit' ) return; // if event type is not submit, break
@@ -286,9 +286,9 @@
 
             var that = this; // stored this
 
-            for ( var i = fields.length - 1; i >= 0; i-- ) {
+            for ( var i = FIELDS.length - 1; i >= 0; i-- ) {
 
-                var el = fields[i], //current field
+                var el = FIELDS[i], //current field
                     errors = '', //current field's errors
                     val = trim ( $( el ).val() ), //current field's value
                     methods = el.getAttribute( 'data-validetta' ).split( ',' ); //current field's control methods
@@ -301,7 +301,7 @@
                 // Validator : Fields Control Object
                 for ( var j = methods.length - 1; j >= 0; j-- ) {
                     // Check Rule
-                    var rule = methods[j].match( reg ),
+                    var rule = methods[j].match( REG ),
                         method;
                     // Does it have rule?
                     if( rule !== null ){
