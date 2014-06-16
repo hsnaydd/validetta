@@ -32,15 +32,13 @@
      *  Form validate error messages
      */
     messages = {
-        empty     : 'This field is required. Please be sure to check.',
+        required  : 'This field is required. Please be sure to check.',
         email     : 'Your E-mail address appears to be invalid. Please be sure to check.',
         number    : 'You can enter only numbers in this field.',
         maxLength : 'Maximum {count} characters allowed!',
         minLength : 'Minimum {count} characters allowed!',
-        checkbox  : 'This checkbox is required. Please be sure to check.',
         maxChecked  : 'Maximum {count} options allowed. Please be sure to check.',
         minChecked  : 'Please select minimum {count} options.',
-        selectbox   : 'Please select an option.',
         maxSelected : 'Maximum {count} selection allowed. Please be sure to check.',
         minSelected : 'Minimum {count} selection allowed. Please be sure to check.',
         notEqual    : 'Fields do not match. Please be sure to check.',
@@ -90,10 +88,10 @@
     Validator = {
         required : function( tmp, that ){
             switch ( tmp.el.type ){
-                case 'checkbox' : return tmp.el.checked || messages.checkbox;
-                case 'radio' : return this.radio.call( that, tmp.el ) || messages.empty;
-                case 'select-multiple' : return tmp.val !== null || messages.selectbox;
-                default : return tmp.val !== '' || messages.empty;
+                case 'checkbox' : return tmp.el.checked || messages.required;
+                case 'radio' : return this.radio.call( that, tmp.el ) || messages.required;
+                case 'select-multiple' : return tmp.val !== null || messages.required;
+                default : return tmp.val !== '' || messages.required;
             }
         },
         //  Mail check - it checks the value if it's a valid email address or not
