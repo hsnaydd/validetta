@@ -151,7 +151,7 @@
             if ( cont.index( tmp.el ) !== 0 ) return;
             var count =  cont.filter( ':checked' ).length;
             if ( count === 0 ) return;
-            return count <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
+            return count <= tmp.arg || messages.maxChecked.replace( '{count}', tmp.arg );
         },
         minChecked : function( tmp, that ){
             var cont = $( that.form.querySelectorAll( 'input[type=checkbox][name="'+ tmp.el.name +'"]' ) );
