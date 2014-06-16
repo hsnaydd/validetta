@@ -95,9 +95,9 @@
         <li><label>Credit Cart</label><input type="text" name="creditCard" data-validetta="creditCard" /></li>
          <li><label>CustomReg</label><input type="text" name="costum" data-validetta="customReg[regname]" /></li>
 	    <li>
-            <label for="exm-cb" class="ilblock">Checkbox 1</label><input type="checkbox" data-validetta="maxChecked[2]" name="exm-cb" class="ilblock"/><br />
-            <label for="exm-cb" class="ilblock">Checkbox 2</label><input type="checkbox" data-validetta="maxChecked[2]" name="exm-cb" class="ilblock"/><br />
-            <label for="exm-cb" class="ilblock">Checkbox 3</label><input type="checkbox" data-validetta="maxChecked[2]" name="exm-cb" class="ilblock"/> <br />
+            <label for="exm-cb" class="ilblock">Checkbox 1</label><input type="checkbox" data-validetta="minChecked[1],maxChecked[2]" name="exm-cb" class="ilblock"/><br />
+            <label for="exm-cb" class="ilblock">Checkbox 2</label><input type="checkbox" data-validetta="minChecked[1],maxChecked[2]" name="exm-cb" class="ilblock"/><br />
+            <label for="exm-cb" class="ilblock">Checkbox 3</label><input type="checkbox" data-validetta="minChecked[1],maxChecked[2]" name="exm-cb" class="ilblock"/> <br />
         <li><label for="exm-sb" class="ilblock">Select Box</label>
         	<select name="exm-sb" data-validetta="required">
             	<option value="">select one</option>
@@ -105,7 +105,7 @@
             </select>
         </li>
         <li><label for="exm-msb" class="ilblock">Seçim Kutusu Multiple</label>
-        	<select name="exm-msb" multiple="multiple" data-validetta="required,minSelected[2],maxSelected[2]">
+        	<select name="exm-msb" multiple="multiple" data-validetta="minSelected[2],maxSelected[2]">
             	<option value="">select one</option>
                 <option value="1">option 1</option>
                 <option value="2">option 2</option>

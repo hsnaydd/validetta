@@ -148,22 +148,24 @@
         maxChecked : function( tmp, that ){
             var cont = $( that.form.querySelectorAll( 'input[type=checkbox][name="'+ tmp.el.name +'"]' ) );
             // we dont want to open an error window for all checkboxes which have same "name"
-            if ( cont.index( tmp.el ) !== 0 ) return true;
-            var count =  cont.filter( ':checked' ).length ;
+            if ( cont.index( tmp.el ) !== 0 ) return;
+            var count =  cont.filter( ':checked' ).length;
+            if ( count === 0 ) return;
             return count <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
         },
         minChecked : function( tmp, that ){
             var cont = $( that.form.querySelectorAll( 'input[type=checkbox][name="'+ tmp.el.name +'"]' ) );
-            if ( cont.index( tmp.el ) !== 0 ) return true; // same as above
+            if ( cont.index( tmp.el ) !== 0 ) return; // same as above
             var count =  cont.filter( ':checked' ).length ;
             return count >= tmp.arg || messages.minChecked.replace( '{count}', tmp.arg );
         },
         //Selectbox check
         maxSelected : function( tmp ){
-            return tmp.val === null || tmp.val.length <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
+            if( tmp.val === null ) return;
+            return tmp.val.length <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
         },
         minSelected : function( tmp ){
-            return tmp.val === null || tmp.val.length >= tmp.arg || messages.minSelected.replace( '{count}', tmp.arg );
+            return ( tmp.val !== null && tmp.val.length >= tmp.arg ) || messages.minSelected.replace( '{count}', tmp.arg );
         },
         // Radio
         radio : function ( el ) {
@@ -178,7 +180,7 @@
         },
         remote : function( tmp ){
             tmp.remote = tmp.arg;
-            return true;
+            return;
         }
     };
 
@@ -291,12 +293,12 @@
                 var el = FIELDS[i], //current field
                     errors = '', //current field's errors
                     val = trim ( $( el ).val() ), //current field's value
-                    methods = el.getAttribute( 'data-validetta' ).split( ',' ); //current field's control methods
+                    methods = el.getAttribute( 'data-validetta' ).split( ',' ), //current field's control methods
+                    state; // Validation state
                 // Create tmp
                 this.tmp = {};
                 // store el and val variables in tmp
                 this.tmp = { el : el, val : val, parent : el.parentNode };
-
                 // Start to check fields
                 // Validator : Fields Control Object
                 for ( var j = methods.length - 1; j >= 0; j-- ) {
@@ -315,8 +317,8 @@
                     // Is there a methot in Validator ?
                     if( Validator.hasOwnProperty( method ) ) {
                         // Validator returns error message if method invalid
-                        var _check = Validator[ method ]( that.tmp, that );
-                        if ( _check !== true ) errors += _check+'<br/>';
+                        state = Validator[ method ]( that.tmp, that );
+                        if ( typeof state !== 'undefined' && state !== true ) errors += state+'<br/>';
                     }
                 }
                 // Check the errors
@@ -329,7 +331,8 @@
                 } else if ( typeof this.tmp.remote !== 'undefined' ) {
                     this.checkRemote( el, e );
                 } else { // Nice, there are no error
-                    this.addValidClass( this.tmp.parent );
+                    if( typeof check !== 'undefined' ) this.addValidClass( this.tmp.parent );
+                    else $( this.tmp.parent ).removeClass( this.options.errorClass+' '+this.options.validClass );
                 }
             }
         },
