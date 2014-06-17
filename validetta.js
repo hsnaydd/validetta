@@ -154,7 +154,7 @@
         minChecked : function( tmp, self ) {
             var cont = $( self.form.querySelectorAll('input[type=checkbox][name="'+ tmp.el.name +'"]') );
             if ( cont.index( tmp.el ) !== 0 ) return; // same as above
-            var count =  cont.filter(':checked').length ;
+            var count =  cont.filter(':checked').length;
             return count >= tmp.arg || messages.minChecked.replace( '{count}', tmp.arg );
         },
         //Selectbox check
@@ -326,7 +326,7 @@
                 } else if ( typeof this.tmp.remote !== 'undefined' ) {
                     this.checkRemote( el, e );
                 } else { // Nice, there are no error
-                    if( typeof check !== 'undefined' ) this.addValidClass( this.tmp.parent );
+                    if( typeof state !== 'undefined' ) this.addValidClass( this.tmp.parent );
                     else $( this.tmp.parent ).removeClass( this.options.errorClass +' '+ this.options.validClass );
                 }
             }
