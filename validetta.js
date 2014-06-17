@@ -14,7 +14,7 @@
  *
  * Special Comment : I'm sorry for my english translation errors :)
  */
-;( function ( $ ) {
+;(function( $ ) {
     "use strict";
     /**
      *  Declare variables
@@ -22,12 +22,12 @@
     var Validetta = {}, // Plugin Class
         FIELDS = {}, // Current fields/fields
         // RegExp for input validate rules
-        REG = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|customReg|remote)\[(\w{1,15})\]/i ),
+        RRULE = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|customReg|remote)\[(\w{1,15})\]/i ),
         // RegExp for mail control method
         // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
-        REGMAIL = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
+        RMAIL = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
         //RegExp for input number control method
-        REGNUMBER = new RegExp( /^[\-\+]?\d+\.?\d+$/ ),
+        RNUMBER = new RegExp( /^[\-\+]?\d+\.?\d+$/ ),
     /**
      *  Form validate error messages
      */
@@ -71,7 +71,7 @@
      * @param {string} value
      * @return {mixed}
      */
-    trim = function( value ){
+    trim = function( value ) {
        return typeof value === 'string' ? value.replace( /^\s+|\s+$/g, '' ) : value;
     },
 
@@ -86,52 +86,52 @@
      * @param {String} val : field value
      */
     Validator = {
-        required : function( tmp, that ){
-            switch ( tmp.el.type ){
+        required : function( tmp, self ) {
+            switch ( tmp.el.type ) {
                 case 'checkbox' : return tmp.el.checked || messages.required;
-                case 'radio' : return this.radio.call( that, tmp.el ) || messages.required;
+                case 'radio' : return this.radio.call( self, tmp.el ) || messages.required;
                 case 'select-multiple' : return tmp.val !== null || messages.required;
                 default : return tmp.val !== '' || messages.required;
             }
         },
         //  Mail check - it checks the value if it's a valid email address or not
-        email : function( tmp ){
-            return REGMAIL.test( tmp.val ) || messages.email;
+        email : function( tmp ) {
+            return RMAIL.test( tmp.val ) || messages.email;
         },
         // Number check
-        number : function( tmp ){
-            return REGNUMBER.test( tmp.val ) || messages.number;
+        number : function( tmp ) {
+            return RNUMBER.test( tmp.val ) || messages.number;
         },
         // Minimum length check
-        minLength : function( tmp ){
+        minLength : function( tmp ) {
             var _length = tmp.val.length;
             return _length === 0 || _length >= tmp.arg || messages.minLength.replace( '{count}', tmp.arg );
         },
         // Maximum lenght check
-        maxLength : function( tmp ){
+        maxLength : function( tmp ) {
             return tmp.val.length <= tmp.arg || messages.maxLength.replace( '{count}', tmp.arg );
         },
         // equalTo check
-        equalTo : function( tmp, that ){
-            return $( that.form ).find( 'input[name="'+ tmp.arg +'"]' ).val() === tmp.val || messages.notEqual;
+        equalTo : function( tmp, self ) {
+            return $( self.form ).find('input[name="'+ tmp.arg +'"]').val() === tmp.val || messages.notEqual;
         },
         /**  
          * Credit Card Control
          * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers
          */
-        creditCard : function( tmp ){
+        creditCard : function( tmp ) {
             if ( tmp.val === '' ) return true; // allow empty because empty check does by required metheod
             var reg, cardNumber, pos, digit, i, sub_total, sum = 0, strlen;
             reg = new RegExp( /[^0-9]+/g );
             cardNumber = tmp.val.replace( reg, '' );
             strlen = cardNumber.length;
             if( strlen < 16 ) return messages.creditCard;
-            for( i=0 ; i < strlen ; i++ ){
+            for( i=0 ; i < strlen ; i++ ) {
                 pos = strlen - i;
                 digit = parseInt( cardNumber.substring( pos - 1, pos ), 10 );
-                if( i % 2 === 1 ){
+                if( i % 2 === 1 ) {
                     sub_total = digit * 2 ;
-                    if( sub_total > 9 ){
+                    if( sub_total > 9 ) {
                         sub_total = 1 + ( sub_total - 10 );
                     }
                 } else {
@@ -143,40 +143,40 @@
             return messages.creditCard;
         },
         //Checkbox check
-        maxChecked : function( tmp, that ){
-            var cont = $( that.form.querySelectorAll( 'input[type=checkbox][name="'+ tmp.el.name +'"]' ) );
+        maxChecked : function( tmp, self ) {
+            var cont = $( self.form.querySelectorAll('input[type=checkbox][name="'+ tmp.el.name +'"]') );
             // we dont want to open an error window for all checkboxes which have same "name"
             if ( cont.index( tmp.el ) !== 0 ) return;
-            var count =  cont.filter( ':checked' ).length;
+            var count =  cont.filter(':checked').length;
             if ( count === 0 ) return;
             return count <= tmp.arg || messages.maxChecked.replace( '{count}', tmp.arg );
         },
-        minChecked : function( tmp, that ){
-            var cont = $( that.form.querySelectorAll( 'input[type=checkbox][name="'+ tmp.el.name +'"]' ) );
+        minChecked : function( tmp, self ) {
+            var cont = $( self.form.querySelectorAll('input[type=checkbox][name="'+ tmp.el.name +'"]') );
             if ( cont.index( tmp.el ) !== 0 ) return; // same as above
-            var count =  cont.filter( ':checked' ).length ;
+            var count =  cont.filter(':checked').length ;
             return count >= tmp.arg || messages.minChecked.replace( '{count}', tmp.arg );
         },
         //Selectbox check
-        maxSelected : function( tmp ){
+        maxSelected : function( tmp ) {
             if( tmp.val === null ) return;
             return tmp.val.length <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
         },
-        minSelected : function( tmp ){
+        minSelected : function( tmp ) {
             return ( tmp.val !== null && tmp.val.length >= tmp.arg ) || messages.minSelected.replace( '{count}', tmp.arg );
         },
         // Radio
-        radio : function ( el ) {
-            var count = $( this.form.querySelectorAll( 'input[type=radio][name="'+ el.name +'"]' ) ).filter( ':checked' ).length ;
+        radio : function( el ) {
+            var count = $( this.form.querySelectorAll('input[type=radio][name="'+ el.name +'"]') ).filter(':checked').length ;
             return count === 1;
         },
         // Custom reg check
-        customReg : function( tmp, that ){
-            var arg = that.options.customReg[ tmp.arg ],
-                _reg = new RegExp(  arg.method );
-            return _reg.test( tmp.val ) || arg.errorMessage;
+        customReg : function( tmp, self ) {
+            var _arg = self.options.customReg[ tmp.arg ],
+                _reg = new RegExp(  _arg.method );
+            return _reg.test( tmp.val ) || _arg.errorMessage;
         },
-        remote : function( tmp ){
+        remote : function( tmp ) {
             tmp.remote = tmp.arg;
             return;
         }
@@ -190,7 +190,7 @@
      * @param {object} options : User-specified settings
      * @return {method} events
      */
-    Validetta = function( form, options ){
+    Validetta = function( form, options ) {
         /**
          *  Public  Properties
          *  @property {mixed} handler It is used to stop or resume submit event handler
@@ -215,43 +215,43 @@
          * @return {mixed}
          */
         events : function(){
-            var that = this; // stored this
+            var self = this; // stored this
             // Handle submit event
-            $( this.form ).submit( function( e ){
+            $( this.form ).submit( function( e ) {
                 // fields to be controlled transferred to global variable
-                FIELDS = this.querySelectorAll( '[data-validetta]' );
-                return that.init( e );
+                FIELDS = this.querySelectorAll('[data-validetta]');
+                return self.init( e );
             });
             // real-time option control
-            if( this.options.realTime === true ){
+            if( this.options.realTime === true ) {
                 // handle change event for form elements (without checkbox)
-                $( this.form ).find( '[data-validetta]' ).not( '[type=checkbox]' ).on( 'change', function( e ){
+                $( this.form ).find('[data-validetta]').not('[type=checkbox]').on( 'change', function( e ) {
                     // field to be controlled transferred to global variable
                     FIELDS = $( this );
-                    return that.init( e );
+                    return self.init( e );
                 });
                 // handle click event for checkboxes
-                $( this.form ).find( '[data-validetta][type=checkbox]' ).on( 'click', function( e ){
+                $( this.form ).find('[data-validetta][type=checkbox]').on( 'click', function( e ) {
                     // fields to be controlled transferred to global variable
-                    FIELDS = that.form.querySelectorAll( '[data-validetta][type=checkbox][name="'+ this.name +'"]' );
-                    return that.init( e );
+                    FIELDS = self.form.querySelectorAll('[data-validetta][type=checkbox][name="'+ this.name +'"]');
+                    return self.init( e );
                 });
             }
             // handle <form> reset button to clear error messages
-            $( this.form ).on( 'reset', function(){
-                $( that.form.querySelectorAll( '.'+that.options.errorClass+', .'+that.options.validClass ) )
-                    .removeClass( that.options.errorClass+' '+that.options.validClass );
-                return that.reset();
+            $( this.form ).on( 'reset', function() {
+                $( self.form.querySelectorAll( '.'+ self.options.errorClass +', .'+ self.options.validClass ) )
+                    .removeClass( self.options.errorClass +' '+ self.options.validClass );
+                return self.reset();
             });
             // Error close button is active ?
             if( this.options.errorClose ) {
                 // error messages manually cleaning function
                 // handle error close button to manually clearing error messages
-                $( this.form ).on( 'click', '.'+this.options.errorCloseClass, function(){
+                $( this.form ).on( 'click', '.'+ this.options.errorCloseClass, function() {
                     // We're checking the parent value of clicked element to avoid getting error
                     // if parent value is true, clear error window
                     var _errProp = this.parentNode;
-                    if( _errProp ) that.window.close.call( that, _errProp );
+                    if( _errProp ) self.window.close.call( self, _errProp );
                     return false;
                 });
             }
@@ -263,7 +263,7 @@
          * @params {object} e : event object
          * @return {mixed}
          */
-        init : function( e ){
+        init : function( e ) {
             // Reset error windows from all elements
             this.reset( FIELDS );
             // Start control each elements
@@ -272,7 +272,7 @@
             // This is for when running remote request, return false and wait request response
             else if ( this.handler === 'pending' ) return false;
             // if event type is submit and handler is true, break submit and call onError() function
-            else if( this.handler === true ){ this.options.onError.call( this, e ); return false; }
+            else if( this.handler === true ) { this.options.onError.call( this, e ); return false; }
             else return this.options.onValid.call( this, e ); // if form is valid call onValid() function
         },
 
@@ -282,16 +282,13 @@
          * @param  {object} e event object
          * @return {void}
          */
-        checkFields : function( e ){
-
-            var that = this; // stored this
-
+        checkFields : function( e ) {
+            var self = this; // stored this
             for ( var i = FIELDS.length - 1; i >= 0; i-- ) {
-
-                var el = FIELDS[i], //current field
+                var el = FIELDS[ i ], //current field
                     errors = '', //current field's errors
                     val = trim ( $( el ).val() ), //current field's value
-                    methods = el.getAttribute( 'data-validetta' ).split( ',' ), //current field's control methods
+                    methods = el.getAttribute('data-validetta').split(','), //current field's control methods
                     state; // Validation state
                 // Create tmp
                 this.tmp = {};
@@ -301,26 +298,26 @@
                 // Validator : Fields Control Object
                 for ( var j = methods.length - 1; j >= 0; j-- ) {
                     // prevent empty validation if method is not required
-                    if ( val === '' && methods[j] !== 'required' ) continue;
+                    if ( val === '' && methods[ j ] !== 'required' ) continue;
                     // Check Rule
-                    var rule = methods[j].match( REG ),
+                    var rule = methods[ j ].match( RRULE ),
                         method;
                     // Does it have rule?
-                    if( rule !== null ){
+                    if( rule !== null ) {
                         // Does it have any argument ? 
                         if( typeof rule[2] !== 'undefined' ) this.tmp.arg = rule[2];
                         // Set method name
                         method = rule[1];
-                    } else { method = methods[j]; }
+                    } else { method = methods[ j ]; }
                     // Is there a methot in Validator ?
                     if( Validator.hasOwnProperty( method ) ) {
                         // Validator returns error message if method invalid
-                        state = Validator[ method ]( that.tmp, that );
-                        if ( typeof state !== 'undefined' && state !== true ) errors += state+'<br/>';
+                        state = Validator[ method ]( self.tmp, self );
+                        if ( typeof state !== 'undefined' && state !== true ) errors += state +'<br/>';
                     }
                 }
                 // Check the errors
-                if( errors !== '' ){
+                if( errors !== '' ) {
                     // if parent element has valid class, remove and add error class
                     this.addErrorClass( this.tmp.parent );
                     // open error window
@@ -330,7 +327,7 @@
                     this.checkRemote( el, e );
                 } else { // Nice, there are no error
                     if( typeof check !== 'undefined' ) this.addValidClass( this.tmp.parent );
-                    else $( this.tmp.parent ).removeClass( this.options.errorClass+' '+this.options.validClass );
+                    else $( this.tmp.parent ).removeClass( this.options.errorClass +' '+ this.options.validClass );
                 }
             }
         },
@@ -343,7 +340,7 @@
          * @throws {error} If previous remote request for same value has rejected
          * @return {void}
          */
-        checkRemote : function( el, e ){
+        checkRemote : function( el, e ) {
             var ajaxOptions = {},
                 data = {},
                 fieldName = el.name || el.getAttribute('id');
@@ -351,8 +348,8 @@
             if ( typeof this.remoteCache === 'undefined' ) this.remoteCache = {};
 
             data[ fieldName ] = this.tmp.val; // Set data
-
-            ajaxOptions = $.extend( true, {}, { // exends ajax options
+            // exends ajax options
+            ajaxOptions = $.extend( true, {}, {
                 data: data
             }, this.options.remote[ this.tmp.remote ] || {} );
 
@@ -363,7 +360,7 @@
             var cache = this.remoteCache[ cacheKey ];
 
             if ( typeof cache !== 'undefined' ) {
-                switch( cache.state ){
+                switch( cache.state ) {
                     case 'pending' : // pending means remote request not finished yet
                         this.handler = 'pending'; // update handler and cache event type
                         cache.event = e.type;
@@ -379,7 +376,6 @@
                         } else {
                             this.addValidClass( this.tmp.parent );
                         }
-                        break;
                 }
             } else {
                 // Abort if previous ajax request still running
@@ -401,38 +397,38 @@
          * @param  {string} fieldName Field name for make specific caching
          * @param  {object} e Event object
          */
-        remoteRequest : function( ajaxOptions, cache, el, fieldName, e ){
+        remoteRequest : function( ajaxOptions, cache, el, fieldName, e ) {
 
-            var that = this;
+            var self = this;
 
-            $( this.tmp.parent ).addClass( 'validetta-pending' );
+            $( this.tmp.parent ).addClass('validetta-pending');
 
             // cache xhr
             this.xhr[ fieldName ] = $.ajax( ajaxOptions )
-                .done( function( result ){
+                .done( function( result ) {
                     result = JSON.parse( result );
                     cache.state = 'resolved';
                     cache.result = result;
                     if ( cache.event === 'submit' ) {
-                        that.handler = false;
-                        $( that.form ).trigger( 'submit' );
+                        self.handler = false;
+                        $( self.form ).trigger('submit');
                     }
                     else if( result.valid === false ) {
-                        that.addErrorClass( that.tmp.parent );
-                        that.window.open.call( that, el, result.message );
+                        self.addErrorClass( self.tmp.parent );
+                        self.window.open.call( self, el, result.message );
                     } else {
-                        that.addValidClass( that.tmp.parent );
+                        self.addValidClass( self.tmp.parent );
                     }
                 } )
-                .fail( function( jqXHR, textStatus ){
-                    if ( textStatus !== 'abort') { // Dont throw error if request is aborted
-                        var _msg = 'Ajax request failed for field ('+fieldName+') : '+jqXHR.status+' '+jqXHR.statusText;
+                .fail( function( jqXHR, textStatus ) {
+                    if ( textStatus !== 'abort' ) { // Dont throw error if request is aborted
+                        var _msg = 'Ajax request failed for field ('+ fieldName +') : '+ jqXHR.status +' '+ jqXHR.statusText;
                         cache.state = 'rejected';
                         cache.result = { valid : false, message : _msg };
                         throw new Error( _msg );
                     }
                 } )
-                .always( function( result ){ $( that.tmp.parent ).removeClass('validetta-pending'); } );
+                .always( function( result ) { $( self.tmp.parent ).removeClass('validetta-pending'); } );
 
             this.handler = 'pending';
         },
@@ -449,17 +445,17 @@
              * @params {object} el : element which has an error ( it can be native element or jQuery object )
              * @params {string} error : error messages
              */
-            open : function( el, error ){
+            open : function( el, error ) {
                 var elParent = el.parentNode ;
                 // If the parent element undefined, that means el is an object. So we need to transform to the element
                 if( typeof elParent === 'undefined' ) elParent = el[0].parentNode;
                 // if there is an error window which previously opened for el, return
-                if( $( elParent ).find( '.'+this.options.errorTemplateClass ).length > 0 ) return;
+                if( $( elParent ).find( '.'+ this.options.errorTemplateClass ).length ) return;
                 // Create the error window object which will be appear
-                var errorObject = document.createElement( 'span' );
+                var errorObject = document.createElement('span');
                 errorObject.className = this.options.errorTemplateClass;
                 // if error display is bubble, calculate to positions
-                if( this.options.display === 'bubble' ){
+                if( this.options.display === 'bubble' ) {
                     var pos, W, H, T;
                     // !! Here, JQuery functions are using to support the IE8
                     pos = $( el ).position();
@@ -467,15 +463,15 @@
                     H = $( el ).height();
                     T= pos.top ;
                     $( errorObject ).empty().css({
-                        'left':pos.left+W+30+'px',
-                        'top' :T+'px'
+                        'left' : pos.left + W + 30 +'px',
+                        'top'  : T +'px'
                     });
                 }
                 elParent.appendChild( errorObject );
                 errorObject.innerHTML = error ;
                 // if errorClose is activated, create the element which use to close the error window
-                if( this.options.errorClose ){
-                    var errorCloseObject = document.createElement( 'span' );
+                if( this.options.errorClose ) {
+                    var errorCloseObject = document.createElement('span');
                     errorCloseObject.innerHTML = 'x';
                     errorCloseObject.className = this.options.errorCloseClass ;
                     errorObject.appendChild( errorCloseObject );
@@ -489,7 +485,7 @@
              * 
              * @params el : the error message window which will be disappear
              */
-            close : function( el ){
+            close : function( el ) {
                 el.parentNode.removeChild( el );
                 // set to handler false
                 // otherwise at the next validation attempt, submit will not continue even the validation is successful
@@ -503,19 +499,19 @@
          * 
          * @param {object} or {void} el : form elements which have an error message window
          */
-        reset : function( el ){
-            var _errorMessages = {} ;
+        reset : function( el ) {
+            var _errorMessages = {};
             // if el is undefined ( This is the process of resetting all <form> )
             // or el is an object that has element more than one
             // and these elements are not checkbox
-            if( typeof el === 'undefined' || ( el.length > 1 && el[0].getAttribute( 'type' ) !== 'checkbox' ) ){
+            if( typeof el === 'undefined' || ( el.length > 1 && el[0].getAttribute('type') !== 'checkbox' ) ) {
                 _errorMessages = $( this.form ).find( '.'+ this.options.errorTemplateClass );
             }
             else {
-                _errorMessages = $( el[0].parentNode ).find( '.'+this.options.errorTemplateClass );
+                _errorMessages = $( el[0].parentNode ).find( '.'+ this.options.errorTemplateClass );
             }
-            for ( var i = _errorMessages.length -1; i >= 0; i-- ){
-                this.window.close.call( this, _errorMessages[i] );
+            for ( var i = _errorMessages.length -1; i >= 0; i-- ) {
+                this.window.close.call( this, _errorMessages[ i ] );
             }
         },
 
@@ -524,7 +520,7 @@
          *
          * @param {object} el element
          */
-        addErrorClass : function( el ){
+        addErrorClass : function( el ) {
             $( el ).removeClass( this.options.validClass ).addClass( this.options.errorClass );
         },
 
@@ -534,7 +530,7 @@
          *
          * @param {object} el element
          */
-        addValidClass : function( el ){
+        addValidClass : function( el ) {
             $( el ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
         }
     };
@@ -545,11 +541,11 @@
      * @param {object} options : User-specified settings
      * @return {object} this
      */
-    $.fn.validetta = function (options){
-        if( $.validettaLanguage ){
+    $.fn.validetta = function( options ) {
+        if( $.validettaLanguage ) {
             messages = $.extend( true, {}, messages, $.validettaLanguage.messages );
         }
-        return this.each( function(){
+        return this.each(function() {
             new Validetta( this, options );
         });
     };
