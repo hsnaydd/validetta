@@ -1,0 +1,35 @@
+{
+  "name": "validetta",
+  "version": "0.9.0",
+  "homepage": "http://lab.hasanaydogdu.com/validetta/",
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/hsnayd/validetta/blob/master/LICENCE"
+  },
+  "description": "A tiny jquery plugin for validate your forms",
+  "main": "./dist/validetta.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hsnayd/validetta.git"
+  },
+  "keywords": [
+    "form",
+    "validetta",
+    "validate",
+    "validation",
+    "validator"
+  ],
+  "author": {
+    "name": "Hasan Aydoğdu",
+    "email": "hasan_aydogdu@windowslive.com",
+    "url": "http://www.hasanaydogdu.com"
+  },
+  "bugs": "http://github.com/hsnayd/validetta/issues",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-cssmin": "~0.10.0",
+    "grunt-contrib-uglify": "~0.5.0",
+  }
+}

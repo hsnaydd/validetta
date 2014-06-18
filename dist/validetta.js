@@ -1,3 +1,10 @@
+/*!
+ * Validetta (http://lab.hasanaydogdu.com/validetta/)
+ * Version 0.9.0 ( 18-06-2014 )
+ * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
+ * Copyright 2013-2014 Hasan Aydoğdu - http://www.hasanaydogdu.com 
+ */
+
 ;(function( $ ) {
     "use strict";
     /**
