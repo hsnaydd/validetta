@@ -14,6 +14,16 @@ module.exports = function(grunt) {
           dist: 'dist'
         },
 
+        sync: {
+            all: {
+                    options: {
+                    sync: ['version'],
+                    from: 'package.json',
+                    to: 'bower.json'
+                }
+            }
+        },
+
         concat: {
             css: {
                 options: {
@@ -56,10 +66,11 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('default', 'build');
-    grunt.registerTask('build', ['clean', 'concat', 'cssmin', 'uglify']);
+    grunt.registerTask('build', ['clean', 'sync', 'concat', 'cssmin', 'uglify']);
 
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-npm2bower-sync');
 };
