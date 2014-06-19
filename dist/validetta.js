@@ -1,6 +1,6 @@
 /*!
  * Validetta (http://lab.hasanaydogdu.com/validetta/)
- * Version 0.9.0 ( 18-06-2014 )
+ * Version 0.9.0 ( 19-06-2014 )
  * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
  * Copyright 2013-2014 Hasan Aydoğdu - http://www.hasanaydogdu.com 
  */
@@ -18,7 +18,7 @@
         // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
         RMAIL = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
         //RegExp for input number control method
-        RNUMBER = new RegExp( /^[\-\+]?\d+\.?\d+$/ ),
+        RNUMBER = new RegExp( /^[\-\+]?(\d+|\d+\.?\d+)$/ ),
     /**
      *  Form validate error messages
      */

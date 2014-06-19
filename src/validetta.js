@@ -11,7 +11,7 @@
         // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
         RMAIL = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
         //RegExp for input number control method
-        RNUMBER = new RegExp( /^[\-\+]?\d+\.?\d+$/ ),
+        RNUMBER = new RegExp( /^[\-\+]?(\d+|\d+\.?\d+)$/ ),
     /**
      *  Form validate error messages
      */
