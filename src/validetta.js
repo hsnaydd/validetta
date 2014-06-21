@@ -440,15 +440,13 @@
                 errorObject.className = this.options.errorTemplateClass;
                 // if error display is bubble, calculate to positions
                 if( this.options.display === 'bubble' ) {
-                    var pos, W, H, T;
+                    var pos, W;
                     // !! Here, JQuery functions are using to support the IE8
                     pos = $( el ).position();
-                    W = $( el ).width();
-                    H = $( el ).height();
-                    T= pos.top ;
+                    W = $( el ).outerWidth();
                     $( errorObject ).empty().css({
-                        'left' : pos.left + W + 30 +'px',
-                        'top'  : T +'px'
+                        'left' : pos.left + W + 15 +'px',
+                        'top'  : pos.top +'px'
                     });
                 }
                 elParent.appendChild( errorObject );
