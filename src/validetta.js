@@ -6,7 +6,7 @@
     var Validetta = {}, // Plugin Class
         FIELDS = {}, // Current fields/fields
         // RegExp for input validate rules
-        RRULE = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|customReg|remote)\[(\w{1,15})\]/i ),
+        RRULE = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|custom|remote)\[(\w{1,15})\]/i ),
         // RegExp for mail control method
         // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
         RMAIL = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
@@ -43,7 +43,7 @@
         realTime : false, // To enable real-time form control, set this option true.
         onValid : function(){}, // This function to be called when the user submits the form and there is no error.
         onError : function(){}, // This function to be called when the user submits the form and there are some errors
-        customReg : {}, // Costum reg method variable
+        custom : {}, // Costum reg method variable
         remote : {}
     },
 
@@ -155,9 +155,9 @@
             return count === 1;
         },
         // Custom reg check
-        customReg : function( tmp, self ) {
-            var _arg = self.options.customReg[ tmp.arg ],
-                _reg = new RegExp(  _arg.method );
+        custom : function( tmp, self ) {
+            var _arg = self.options.custom[ tmp.arg ],
+                _reg = new RegExp(  _arg.pattern );
             return _reg.test( tmp.val ) || _arg.errorMessage;
         },
         remote : function( tmp ) {
