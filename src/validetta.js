@@ -281,8 +281,6 @@
                 // Start to check fields
                 // Validator : Fields Control Object
                 for ( var j = methods.length - 1; j >= 0; j-- ) {
-                    // prevent empty validation if method is not required
-                    if ( val === '' && methods[ j ] !== 'required' ) continue;
                     // Check Rule
                     var rule = methods[ j ].match( RRULE ),
                         method;
@@ -293,6 +291,8 @@
                         // Set method name
                         method = rule[1];
                     } else { method = methods[ j ]; }
+                    // prevent empty validation if method is not required
+                    if ( val === '' && method !== 'required' && method !== 'equalTo' ) continue;
                     // Is there a methot in Validator ?
                     if( Validator.hasOwnProperty( method ) ) {
                         // Validator returns error message if method invalid
