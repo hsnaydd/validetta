@@ -443,7 +443,7 @@
                     var pos, W;
                     // !! Here, JQuery functions are using to support the IE8
                     pos = $( el ).position();
-                    W = $( el ).outerWidth();
+                    W = $( el ).outerWidth(true);
                     $( errorObject ).empty().css({
                         'left' : pos.left + W + 15 +'px',
                         'top'  : pos.top +'px'
