@@ -312,6 +312,7 @@
                 } else { // Nice, there are no error
                     if( typeof state !== 'undefined' ) this.addValidClass( this.tmp.parent );
                     else $( this.tmp.parent ).removeClass( this.options.errorClass +' '+ this.options.validClass );
+                    state = undefined; // Reset state variable
                 }
             }
         },
