@@ -11,7 +11,7 @@ module.exports = function(grunt) {
                 ' * Copyright 2013-<%= grunt.template.today("yyyy") %> <%= pkg.author.name %> - <%= pkg.author.url %> \n' +
                 ' */\n',
         clean: {
-          dist: 'dist'
+          dist: '<%= buildDir %>'
         },
 
         sync: {
@@ -21,6 +21,19 @@ module.exports = function(grunt) {
                     from: 'package.json',
                     to: 'bower.json'
                 }
+            }
+        },
+
+        replace: {
+            dist: {
+                options: {
+                    patterns: [
+                        { match: 'version', replacement: '<%= pkg.version %>' }
+                    ]
+                },
+                files: [
+                    { expand: true, flatten: true, src: ['untracked/validetta.jquery.json'], dest: '' }
+                ]
             }
         },
 
@@ -66,11 +79,12 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('default', 'build');
-    grunt.registerTask('build', ['clean', 'sync', 'concat', 'cssmin', 'uglify']);
+    grunt.registerTask('build', ['clean', 'sync', 'replace', 'concat', 'cssmin', 'uglify']);
 
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-npm2bower-sync');
+    grunt.loadNpmTasks('grunt-replace');
 };
