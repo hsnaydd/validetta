@@ -1,7 +1,7 @@
 {
   "name": "validetta",
   "description": "A tiny jquery plugin for validate your forms",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "homepage": "http://lab.hasanaydogdu.com/validetta/",
   "author": {
     "name": "Hasan Aydoğdu",

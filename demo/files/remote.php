@@ -1,5 +1,4 @@
 <?php
-sleep(3);
 $response = array( 'valid' => false, 'message' => 'Sorry, Something went wrong!');
 if( isset($_POST['exm3-name']) ) {
 

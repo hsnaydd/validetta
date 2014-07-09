@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Form Validator - Examples</title>
-    <link rel="stylesheet" type="text/css" href="../src/validetta.css">
+    <link rel="stylesheet" type="text/css" href="../dist/validetta.css">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="jquery.js?v1.10.2"><\/script>')</script>
-    <script type="text/javascript" src="../src/validetta.js"></script>
+    <script>window.jQuery || document.write('<script src="files/jquery.js?v1.10.2"><\/script>')</script>
+    <script type="text/javascript" src="../dist/validetta.js"></script>
     <!-- 
         <script type="text/javascript" src="../localization/validettaLang-tr-TR.js"></script> 
     -->
@@ -36,7 +36,7 @@
                 // this -> form object
                 // this.form is form element
                 $.ajax({
-                    url : 'ajax.json',
+                    url : 'files/ajax.json',
                     data : $(this.form).serialize(),
                     dataType : 'json',
                     beforeSend : function(){
@@ -66,7 +66,7 @@
             remote : {
                 check_username : {
                     type : 'POST',
-                    url : 'remote.php',
+                    url : 'files/remote.php',
                     datatype : 'json'
                 }
             }

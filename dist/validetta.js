@@ -1,6 +1,6 @@
 /*!
  * Validetta (http://lab.hasanaydogdu.com/validetta/)
- * Version 0.9.0 ( 19-06-2014 )
+ * Version 1.0.0 ( 09-07-2014 )
  * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
  * Copyright 2013-2014 Hasan Aydoğdu - http://www.hasanaydogdu.com 
  */
@@ -13,7 +13,7 @@
     var Validetta = {}, // Plugin Class
         FIELDS = {}, // Current fields/fields
         // RegExp for input validate rules
-        RRULE = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|customReg|remote)\[(\w{1,15})\]/i ),
+        RRULE = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|custom|remote)\[(\w{1,15})\]/i ),
         // RegExp for mail control method
         // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
         RMAIL = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
@@ -50,7 +50,7 @@
         realTime : false, // To enable real-time form control, set this option true.
         onValid : function(){}, // This function to be called when the user submits the form and there is no error.
         onError : function(){}, // This function to be called when the user submits the form and there are some errors
-        customReg : {}, // Costum reg method variable
+        custom : {}, // Costum reg method variable
         remote : {}
     },
 
@@ -162,9 +162,9 @@
             return count === 1;
         },
         // Custom reg check
-        customReg : function( tmp, self ) {
-            var _arg = self.options.customReg[ tmp.arg ],
-                _reg = new RegExp(  _arg.method );
+        custom : function( tmp, self ) {
+            var _arg = self.options.custom[ tmp.arg ],
+                _reg = new RegExp(  _arg.pattern );
             return _reg.test( tmp.val ) || _arg.errorMessage;
         },
         remote : function( tmp ) {
@@ -288,8 +288,6 @@
                 // Start to check fields
                 // Validator : Fields Control Object
                 for ( var j = methods.length - 1; j >= 0; j-- ) {
-                    // prevent empty validation if method is not required
-                    if ( val === '' && methods[ j ] !== 'required' ) continue;
                     // Check Rule
                     var rule = methods[ j ].match( RRULE ),
                         method;
@@ -300,6 +298,8 @@
                         // Set method name
                         method = rule[1];
                     } else { method = methods[ j ]; }
+                    // prevent empty validation if method is not required
+                    if ( val === '' && method !== 'required' && method !== 'equalTo' ) continue;
                     // Is there a methot in Validator ?
                     if( Validator.hasOwnProperty( method ) ) {
                         // Validator returns error message if method invalid
@@ -319,6 +319,7 @@
                 } else { // Nice, there are no error
                     if( typeof state !== 'undefined' ) this.addValidClass( this.tmp.parent );
                     else $( this.tmp.parent ).removeClass( this.options.errorClass +' '+ this.options.validClass );
+                    state = undefined; // Reset state variable
                 }
             }
         },
@@ -447,15 +448,13 @@
                 errorObject.className = this.options.errorTemplateClass;
                 // if error display is bubble, calculate to positions
                 if( this.options.display === 'bubble' ) {
-                    var pos, W, H, T;
+                    var pos, W;
                     // !! Here, JQuery functions are using to support the IE8
                     pos = $( el ).position();
-                    W = $( el ).width();
-                    H = $( el ).height();
-                    T= pos.top ;
+                    W = $( el ).outerWidth(true);
                     $( errorObject ).empty().css({
-                        'left' : pos.left + W + 30 +'px',
-                        'top'  : T +'px'
+                        'left' : pos.left + W + 15 +'px',
+                        'top'  : pos.top +'px'
                     });
                 }
                 elParent.appendChild( errorObject );
