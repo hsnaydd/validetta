@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Form Validator - Examples</title>
+    <link rel="stylesheet" type="text/css" href="../src/validetta.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="jquery.js?v1.10.2"><\/script>')</script>
+    <script type="text/javascript" src="../src/validetta.js"></script>
+    <!-- 
+        <script type="text/javascript" src="../localization/validettaLang-tr-TR.js"></script> 
+    -->
+    <script type="text/javascript">
+    $(function(){
+    	$('#exm1').validetta({
+    		custom : {
+    			regname : {
+    				pattern : /^[\+][0-9]+?$|^[0-9]+?$/,
+    				errorMessage : 'Custom Reg Error Message !'
+    			},
+                // you can add more
+    			example : { 
+    				pattern : /^[\+][0-9]+?$|^[0-9]+?$/,
+    				errorMessage : 'Lan mal !'
+    			}
+    		},
+            realTime : true
+    	});
+    	$('#exm2').validetta({
+            display : 'inline',
+            errorTemplateClass : 'validetta-inline',
+            errorClose : false,
+    		onValid : function( event ) {
+                event.preventDefault();
+                // this -> form object
+                // this.form is form element
+                $.ajax({
+                    url : 'ajax.json',
+                    data : $(this.form).serialize(),
+                    dataType : 'json',
+                    beforeSend : function(){
+                        console.log('start');
+                    }
+                })
+                .done( function( data ){
+                    alert('Student Name : '+data.student[0].name+' Student No :'+data.student[0].no);
+                })
+                .fail( function( jqXHR, textStatus ){
+                    console.log(textStatus+':'+jqXHR.status+' : '+jqXHR.statusText);
+                })
+                .always( function( result ){ console.log('Finish him!!'); } );
+    		},
+            onError : function(){
+                console.log( 'Stop bro !! There are some errors.');
+            }
+    	});
+        $('#exm3').validetta({
+            realTime : true,
+            onValid : function( event ){
+                event.preventDefault(); // if you dont break submit and if form doesnt have error, page will post
+                var _inp = $('#exm3').find('input[name=exm3-name]');
+                this.window.open.call( this, _inp, 'This is an example about how you can focus an input after completion of form validation.');
+                event.preventDefault();
+            },
+            remote : {
+                check_username : {
+                    type : 'POST',
+                    url : 'remote.php',
+                    datatype : 'json'
+                }
+            }
+        });
+    });
+    </script>
+    <style type="text/css">
+    body{ margin:0; padding:0;}
+    a{text-decoration:none;}
+    ul{list-style:none;}
+    li{padding:5px 10px; position:relative;}
+    input{}
+    label{width:300px; display:block;}
+    label[for]{width:100px}
+    .ilblock{display:inline-block;}
+    </style>
+</head>
+<body>
+<h2>Example 1</h2>
+<form id="exm1" action="ajax.php" method="post">
+	<ul>
+		<li><label>Name</label><input type="text" name="name" data-validetta="required,minLength[2],maxLength[3]" class="required" /></li>
+	    <li><label>Number</label><input type="text" name="number" data-validetta="number,required" /></li>
+		<li><label>Number equal</label><input type="text" name="numberEq" data-validetta="equalTo[number]" /></li>
+	    <li><label>Email</label><input type="text" name="email" data-validetta="email" /></li>
+        <li><label>Credit Cart</label><input type="text" name="creditCard" data-validetta="creditCard" /></li>
+         <li><label>CustomReg</label><input type="text" name="costum" data-validetta="custom[regname]" /></li>
+	    <li>
+            <label for="exm-cb" class="ilblock">Checkbox 1</label><input type="checkbox" data-validetta="minChecked[1],maxChecked[2]" name="exm-cb" class="ilblock"/><br />
+            <label for="exm-cb" class="ilblock">Checkbox 2</label><input type="checkbox" data-validetta="minChecked[1],maxChecked[2]" name="exm-cb" class="ilblock"/><br />
+            <label for="exm-cb" class="ilblock">Checkbox 3</label><input type="checkbox" data-validetta="minChecked[1],maxChecked[2]" name="exm-cb" class="ilblock"/> <br />
+        <li><label for="exm-sb" class="ilblock">Select Box</label>
+        	<select name="exm-sb" data-validetta="required">
+            	<option value="">select one</option>
+                <option value="1">option 1</option>
+            </select>
+        </li>
+        <li><label for="exm-msb" class="ilblock">Seçim Kutusu Multiple</label>
+        	<select name="exm-msb" multiple="multiple" data-validetta="minSelected[2],maxSelected[2]">
+            	<option value="">select one</option>
+                <option value="1">option 1</option>
+                <option value="2">option 2</option>
+                <option value="3">option 3</option>
+            </select>
+        </li>
+        <li><label for="exm-rd" class="ilblock"> Radio </label>
+            <input type="radio" name="exm-rd" data-validetta="required" class="ilblock" />
+            <input type="radio" name="exm-rd" data-validetta="required" class="ilblock" />
+            <input type="radio" name="exm-rd" data-validetta="required" class="ilblock" />
+        </li>
+	    <li><label>Text Area</label><textarea name="textarea" data-validetta="required"></textarea></li>
+        <li><label for="exm2-cb" class="ilblock">Checkbox 1</label><input type="checkbox" data-validetta="required" name="exm2-cb" class="ilblock"/></li>
+        <li><input type="submit" value="Kaydet" /><input type="reset"/></li>
+	</ul>
+</form>
+<hr />
+<h2>Example 2</h2>
+<form  id="exm2" method="POST">
+	<ul>
+		<li><label>Password</label><input type="password" name='passworda' data-validetta="required,minLength[3],maxLength[6]" class="required" /> <br /></li>
+		<li><label >Re-type Password</label> <input type="password" name="ex2-eq" data-validetta="equalTo[passworda]"> <br /></li>
+		<li><label>Email</label><input type="text" name="exm2-email" data-validetta="email" /></li>
+		<li><input type="submit" value="Kaydet" /><input type="reset"/></li>
+	</ul>
+</form>
+<hr />
+<h2>Example 3</h2>
+<form  id="exm3" method="POST">
+    <ul>
+        <li><label>Username</label><input type="text" name='exm3-name' data-validetta="required,remote[check_username]"/><br /></li>
+        <li><label>Password</label><input type="password" name='password' data-validetta="required"/> <br /></li>
+        <li><input type="submit" value="Save" /><input type="reset"/></li>
+    </ul>
+</form>
+</body>
+</html>

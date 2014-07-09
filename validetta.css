@@ -1,5 +1,0 @@
-.validetta-bubble { position:absolute; background-color:#CD2E26; max-width:325px; border-radius:5px; color:white; padding:5px 12px; }
-.validetta-bubble:before { content:''; display:block; position:absolute; top:7px; left:-5px; width:0; height:0; border-right:5px solid #CD2E26; border-bottom: 5px solid transparent; border-top:5px solid transparent; }
-.validetta-bubbleClose { display:block; cursor:pointer; position:absolute; top:-1px; right:3px; color:white; font-weight:bold; }
-.validetta-inline, .validetta-bubble { display:block; font:12px/14px Arial, Helvetica, sans-serif; }
-.validetta-inline { color:#CD2E26; }
