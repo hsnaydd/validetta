@@ -391,7 +391,7 @@
             // cache xhr
             this.xhr[ fieldName ] = $.ajax( ajaxOptions )
                 .done( function( result ) {
-                    result = JSON.parse( result );
+                    if( typeof result !== 'object' ) result = JSON.parse( result );
                     cache.state = 'resolved';
                     cache.result = result;
                     if ( cache.event === 'submit' ) {
