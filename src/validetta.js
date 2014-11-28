@@ -62,7 +62,7 @@
     /**
      * Validator
      * {count} which used below is the specified maximum or minimum value
-     * e.g if method is minLength and  rule is 2 ( minLength[2] ) 
+     * e.g if method is minLength and  rule is 2 ( minLength[2] )
      * Output error windows text will be : 'Please select minimum 2 options.'
      *
      * @namespace
@@ -99,7 +99,7 @@
         equalTo : function( tmp, self ) {
             return $( self.form ).find('input[name="'+ tmp.arg +'"]').val() === tmp.val || messages.notEqual;
         },
-        /**  
+        /**
          * Credit Card Control
          * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers
          */
@@ -195,7 +195,7 @@
 
         /**
          * This is the method of handling events
-         * 
+         *
          * @return {mixed}
          */
         events : function(){
@@ -243,7 +243,7 @@
 
         /**
          * In this method, fields are validated
-         * 
+         *
          * @params {object} e : event object
          * @return {mixed}
          */
@@ -262,7 +262,7 @@
 
         /**
          * Checks Fields
-         * 
+         *
          * @param  {object} e event object
          * @return {void}
          */
@@ -286,7 +286,7 @@
                         method;
                     // Does it have rule?
                     if( rule !== null ) {
-                        // Does it have any argument ? 
+                        // Does it have any argument ?
                         if( typeof rule[2] !== 'undefined' ) this.tmp.arg = rule[2];
                         // Set method name
                         method = rule[1];
@@ -372,7 +372,7 @@
                 this.remoteRequest( ajaxOptions, cache, el, fieldName );
             }
         },
- 
+
         /**
          * Calls ajax request for remote validations
          *
@@ -420,13 +420,13 @@
 
         /**
          * This the section which opening or closing error windows process is done
-         * 
+         *
          * @namespace
          */
         window : {
             /**
              * Error window opens
-             * 
+             *
              * @params {object} el : element which has an error ( it can be native element or jQuery object )
              * @params {string} error : error messages
              */
@@ -465,7 +465,7 @@
             },
             /**
              * Error window closes
-             * 
+             *
              * @params el : the error message window which will be disappear
              */
             close : function( el ) {
@@ -479,7 +479,7 @@
 
         /**
          * Removes all error messages windows
-         * 
+         *
          * @param {object} or {void} el : form elements which have an error message window
          */
         reset : function( el ) {
@@ -520,7 +520,7 @@
 
     /**
      * Plugin Validetta
-     * 
+     *
      * @param {object} options : User-specified settings
      * @return {object} this
      */
