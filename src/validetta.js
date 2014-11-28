@@ -38,8 +38,6 @@
         errorTemplateClass : 'validetta-bubble', // Class of the element that would receive error message
         errorClass : 'validetta-error', // Class that would be added on every failing validation field
         validClass : 'validetta-valid', // Same for valid validation
-        errorClose : true, // Error windows close button. if you want to active it, set is true
-        errorCloseClass : 'validetta-bubbleClose', // The html class that will add on element of HTML which is closing the error message window
         realTime : false, // To enable real-time form control, set this option true.
         onValid : function(){}, // This function to be called when the user submits the form and there is no error.
         onError : function(){}, // This function to be called when the user submits the form and there are some errors
@@ -227,18 +225,6 @@
                     .removeClass( self.options.errorClass +' '+ self.options.validClass );
                 return self.reset();
             });
-            // Error close button is active ?
-            if( this.options.errorClose ) {
-                // error messages manually cleaning function
-                // handle error close button to manually clearing error messages
-                $( this.form ).on( 'click', '.'+ this.options.errorCloseClass, function() {
-                    // We're checking the parent value of clicked element to avoid getting error
-                    // if parent value is true, clear error window
-                    var _errProp = this.parentNode;
-                    if( _errProp ) self.window.close.call( self, _errProp );
-                    return false;
-                });
-            }
         },
 
         /**
@@ -452,13 +438,7 @@
                 }
                 elParent.appendChild( errorObject );
                 errorObject.innerHTML = error ;
-                // if errorClose is activated, create the element which use to close the error window
-                if( this.options.errorClose ) {
-                    var errorCloseObject = document.createElement('span');
-                    errorCloseObject.innerHTML = 'x';
-                    errorCloseObject.className = this.options.errorCloseClass ;
-                    errorObject.appendChild( errorCloseObject );
-                }
+
                 // we have an error so we need to break submit
                 // set to handler true
                 this.handler = true;

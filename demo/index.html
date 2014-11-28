@@ -8,8 +8,8 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="files/jquery.js?v1.10.2"><\/script>')</script>
     <script type="text/javascript" src="../dist/validetta.js"></script>
-    <!-- 
-        <script type="text/javascript" src="../localization/validettaLang-tr-TR.js"></script> 
+    <!--
+        <script type="text/javascript" src="../localization/validettaLang-tr-TR.js"></script>
     -->
     <script type="text/javascript">
     $(function(){
@@ -20,7 +20,7 @@
     				errorMessage : 'Custom Reg Error Message !'
     			},
                 // you can add more
-    			example : { 
+    			example : {
     				pattern : /^[\+][0-9]+?$|^[0-9]+?$/,
     				errorMessage : 'Lan mal !'
     			}
@@ -30,7 +30,6 @@
     	$('#exm2').validetta({
             display : 'inline',
             errorTemplateClass : 'validetta-inline',
-            errorClose : false,
     		onValid : function( event ) {
                 event.preventDefault();
                 // this -> form object
