@@ -33,6 +33,7 @@
      *  Plugin defaults
      */
     defaults = {
+        showErrorMessages : true, // If you dont want to display error messages set this options false
         // Error Template : <span class="errorTemplateClass">Error messages will be here !</span>
         display : 'bubble', // Error display options, // bubble / inline
         errorTemplateClass : 'validetta-bubble', // Class of the element that would receive error message
@@ -417,6 +418,12 @@
              * @params {string} error : error messages
              */
             open : function( el, error ) {
+                // We want display errors ?
+                if ( !this.options.showErrorMessages ) {
+                    // because of form not valid, set handler true for break submit
+                    this.handler = true;
+                    return;
+                }
                 var elParent = el.parentNode ;
                 // If the parent element undefined, that means el is an object. So we need to transform to the element
                 if( typeof elParent === 'undefined' ) elParent = el[0].parentNode;
