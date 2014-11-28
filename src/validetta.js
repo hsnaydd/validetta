@@ -261,7 +261,7 @@
       this.getInvalidFields = function(){
         return invalidFields;
       }
-      for ( var i = FIELDS.length - 1; i >= 0; i-- ) {
+      for ( var i = 0, _lengthFields = FIELDS.length; i < _lengthFields; i++ ) {
         var el = FIELDS[ i ], //current field
           errors = '', //current field's errors
           val = trim ( $( el ).val() ), //current field's value
@@ -273,7 +273,7 @@
         this.tmp = { el : el, val : val, parent : el.parentNode };
         // Start to check fields
         // Validator : Fields Control Object
-        for ( var j = methods.length - 1; j >= 0; j-- ) {
+        for ( var j = 0, _lengthMethods = methods.length; j < _lengthMethods; j++ ) {
           // Check Rule
           var rule = methods[ j ].match( RRULE ),
             method;
@@ -490,7 +490,7 @@
       else {
         _errorMessages = $( el[0].parentNode ).find( '.'+ this.options.errorTemplateClass );
       }
-      for ( var i = _errorMessages.length -1; i >= 0; i-- ) {
+      for ( var i = 0, _lengthErrorMessages = _errorMessages.length; i < _lengthErrorMessages; i++ ) {
         this.window.close.call( this, _errorMessages[ i ] );
       }
     },
