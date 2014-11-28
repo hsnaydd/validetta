@@ -12,6 +12,7 @@
     RMAIL = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
     //RegExp for input number control method
     RNUMBER = new RegExp( /^[\-\+]?(\d+|\d+\.?\d+)$/ ),
+
   /**
    *  Form validate error messages
    */
@@ -254,7 +255,12 @@
      * @return {void}
      */
     checkFields : function( e ) {
-      var self = this; // stored this
+      var self = this, // stored this
+          invalidFields = [];
+      // Make invalidFields accessible
+      this.getInvalidFields = function(){
+        return invalidFields;
+      }
       for ( var i = FIELDS.length - 1; i >= 0; i-- ) {
         var el = FIELDS[ i ], //current field
           errors = '', //current field's errors
@@ -289,6 +295,10 @@
         }
         // Check the errors
         if( errors !== '' ) {
+          invalidFields.push({
+            field: el,
+            errors: errors
+          });
           // if parent element has valid class, remove and add error class
           this.addErrorClass( this.tmp.parent );
           // open error window
