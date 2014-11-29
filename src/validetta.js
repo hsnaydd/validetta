@@ -290,7 +290,11 @@
           if( Validator.hasOwnProperty( method ) ) {
             // Validator returns error message if method invalid
             state = Validator[ method ]( self.tmp, self );
-            if ( typeof state !== 'undefined' && state !== true ) errors += state +'<br/>';
+            if ( typeof state !== 'undefined' && state !== true ) {
+              var _dataMsg = el.getAttribute( 'data-vd-message-' + method );
+              if ( _dataMsg !== null ) state = _dataMsg;
+              errors += state +'<br/>';
+            }
           }
         }
         // Check the errors
