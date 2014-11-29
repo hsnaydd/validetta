@@ -18,15 +18,6 @@
   border-bottom: 5px solid transparent;
   border-top:5px solid transparent;
 }
-.validetta-bubbleClose {
-  display:block;
-  cursor:pointer;
-  position:absolute;
-  top:-1px;
-  right:3px;
-  color:white;
-  font-weight:bold;
-}
 .validetta-inline,
 .validetta-bubble {
   display:block;
