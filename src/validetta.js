@@ -521,9 +521,12 @@
    * @param {object} options : User-specified settings
    * @return {object} this
    */
-  $.fn.validetta = function( options ) {
+  $.fn.validetta = function( options, _messages ) {
     if( $.validettaLanguage ) {
       messages = $.extend( true, {}, messages, $.validettaLanguage.messages );
+    }
+    if( typeof _messages !== 'undefined' ) {
+      messages = $.extend( true, {}, messages, _messages );
     }
     return this.each(function() {
       new Validetta( this, options );
