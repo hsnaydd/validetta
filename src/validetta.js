@@ -156,7 +156,7 @@
     },
     // Custom reg check
     regExp : function( tmp, self ) {
-      var _arg = self.options.regExp[ tmp.arg ],
+      var _arg = self.options.validators.regExp[ tmp.arg ],
         _reg = new RegExp( _arg.pattern );
       return _reg.test( tmp.val ) || _arg.errorMessage;
     },
@@ -167,7 +167,7 @@
     },
     // Callback
     callback : function( tmp, self ) {
-      var _cb = self.options.callback[ tmp.arg ];
+      var _cb = self.options.validators.callback[ tmp.arg ];
       return _cb.callback( tmp.el, tmp.val ) || _cb.errorMessage;
     }
   };
@@ -343,7 +343,7 @@
       // exends ajax options
       ajaxOptions = $.extend( true, {}, {
         data: data
-      }, this.options.remote[ this.tmp.remote ] || {} );
+      }, this.options.validators.remote[ this.tmp.remote ] || {} );
 
       // use $.param() function for generate specific cache key
       var cacheKey = $.param( ajaxOptions );
