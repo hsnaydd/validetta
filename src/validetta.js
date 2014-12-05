@@ -6,7 +6,7 @@
   var Validetta = {}, // Plugin Class
     FIELDS = {}, // Current fields/fields
     // RegExp for input validate rules
-    RRULE = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|regExp|remote|callback)\[(\w{1,15})\]/i ),
+    RRULE = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|different|regExp|remote|callback)\[(\w{1,15})\]/i ),
     // RegExp for mail control method
     // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
     RMAIL = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
@@ -27,6 +27,7 @@
     maxSelected : 'Maximum {count} selection allowed. Please be sure to check.',
     minSelected : 'Minimum {count} selection allowed. Please be sure to check.',
     notEqual    : 'Fields do not match. Please be sure to check.',
+    different   : 'Fields cannot be the same as each other',
     creditCard  : 'Invalid credit card number. Please be sure to check.'
   },
 
@@ -98,6 +99,9 @@
     // equalTo check
     equalTo : function( tmp, self ) {
       return $( self.form ).find('input[name="'+ tmp.arg +'"]').val() === tmp.val || messages.notEqual;
+    },
+    different: function( tmp, self ) {
+      return $( self.form ).find('input[name="'+ tmp.arg +'"]').val() !== tmp.val || messages.different;
     },
     /**
      * Credit Card Control

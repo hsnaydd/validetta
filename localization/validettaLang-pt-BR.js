@@ -13,6 +13,7 @@
 				maxSelected : 'Selecione no máximo {count} itens',
 				minSelected : 'Selecione no mínimo {count} itens',
 				notEqual	: 'Os campos não são iguais.',
+				different   : 'Fields cannot be the same as each other',
 				creditCard	: 'Número do cartão de crédito inválido.'
 			};
 		}
