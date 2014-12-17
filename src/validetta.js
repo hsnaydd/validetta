@@ -280,7 +280,7 @@
         // Create tmp
         this.tmp = {};
         // store el and val variables in tmp
-        this.tmp = { el : el, val : val, parent : el.parentNode };
+        this.tmp = { el : el, val : val, parent : this.parents( el ) };
         // Start to check fields
         // Validator : Fields Control Object
         for ( var j = 0, _lengthMethods = methods.length; j < _lengthMethods; j++ ) {
@@ -448,7 +448,7 @@
           this.handler = true;
           return;
         }
-        var elParent = el.parentNode ;
+        var elParent = this.parents( el );
         // If the parent element undefined, that means el is an object. So we need to transform to the element
         if( typeof elParent === 'undefined' ) elParent = el[0].parentNode;
         // if there is an error window which previously opened for el, return
@@ -499,10 +499,10 @@
       // or el is an object that has element more than one
       // and these elements are not checkbox
       if( typeof el === 'undefined' || ( el.length > 1 && el[0].getAttribute('type') !== 'checkbox' ) ) {
-        _errorMessages = $( this.form ).find( '.'+ this.options.errorTemplateClass );
+        _errorMessages = this.form.querySelectorAll( '.'+ this.options.errorTemplateClass );
       }
       else {
-        _errorMessages = $( el[0].parentNode ).find( '.'+ this.options.errorTemplateClass );
+        _errorMessages = this.parents( el[0] ).querySelectorAll( '.'+ this.options.errorTemplateClass );
       }
       for ( var i = 0, _lengthErrorMessages = _errorMessages.length; i < _lengthErrorMessages; i++ ) {
         this.window.close.call( this, _errorMessages[ i ] );
@@ -526,6 +526,20 @@
      */
     addValidClass : function( el ) {
       $( el ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
+    },
+
+    /**
+     * Finds parent element
+     *
+     * @param  {object} el element
+     * @return {object} el parent element
+     */
+    parents : function( el ) {
+      var upLength = parseInt( el.getAttribute( 'data-vd-parent-up' ), 10 ) || 0;
+      for ( var i = 0; i <= upLength ; i++ ) {
+        el = el.parentNode;
+      }
+      return el;
     }
   };
 
