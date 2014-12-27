@@ -481,9 +481,6 @@
        */
       close : function( el ) {
         el.parentNode.removeChild( el );
-        // set to handler false
-        // otherwise at the next validation attempt, submit will not continue even the validation is successful
-        this.handler = false ;
       }
     },
 
@@ -507,6 +504,9 @@
       for ( var i = 0, _lengthErrorMessages = _errorMessages.length; i < _lengthErrorMessages; i++ ) {
         this.window.close.call( this, _errorMessages[ i ] );
       }
+      // set to handler false
+      // otherwise at the next validation attempt, submit will not continue even the validation is successful
+      this.handler = false;
     },
 
     /**
