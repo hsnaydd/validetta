@@ -272,6 +272,8 @@
         return invalidFields;
       }
       for ( var i = 0, _lengthFields = FIELDS.length; i < _lengthFields; i++ ) {
+        // if field is disabled, do not check
+        if ( FIELDS[ i ].disabled ) continue;
         var el = FIELDS[ i ], //current field
           errors = '', //current field's errors
           val = trim ( $( el ).val() ), //current field's value
