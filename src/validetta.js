@@ -454,7 +454,7 @@
         // If the parent element undefined, that means el is an object. So we need to transform to the element
         if( typeof elParent === 'undefined' ) elParent = el[0].parentNode;
         // if there is an error window which previously opened for el, return
-        if( $( elParent ).find( '.'+ this.options.errorTemplateClass ).length ) return;
+        if ( elParent.querySelectorAll( '.'+ this.options.errorTemplateClass ).length ) return;
         // Create the error window object which will be appear
         var errorObject = document.createElement('span');
         errorObject.className = this.options.errorTemplateClass + ' '+this.options.errorTemplateClass + '--' + this.options.bubblePosition;
