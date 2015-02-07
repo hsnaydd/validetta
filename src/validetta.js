@@ -45,8 +45,7 @@
     realTime : false, // To enable real-time form control, set this option true.
     onValid : function(){}, // This function to be called when the user submits the form and there is no error.
     onError : function(){}, // This function to be called when the user submits the form and there are some errors
-    custom : {}, // Costum reg method variable
-    remote : {}
+    validators: {} // Custom validators stored in this variable
   },
 
   /**
