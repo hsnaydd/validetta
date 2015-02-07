@@ -4,19 +4,25 @@
   max-width: 325px;
   border-radius: 5px;
   color: white;
-  padding: 5px 12px; }
+  padding: 5px 12px;
+  z-index: 9; }
+  .validetta-bubble--right:before {
+    top: 7px;
+    left: -10px;
+    border-color: transparent #cd2e26 transparent transparent; }
+  .validetta-bubble--bottom:before {
+    top: -10px;
+    left: 10px;
+    border-color: transparent transparent #cd2e26 transparent; }
 
 .validetta-bubble:before {
   content: '';
   position: absolute;
-  top: 7px;
-  left: -10px;
   display: block;
   height: 0;
   width: 0;
   border-width: 5px;
-  border-style: solid;
-  border-color: transparent #cd2e26 transparent transparent; }
+  border-style: solid; }
 
 .validetta-inline,
 .validetta-bubble {
