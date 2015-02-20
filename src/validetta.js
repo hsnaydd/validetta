@@ -41,7 +41,9 @@
     errorTemplateClass : 'validetta-bubble', // Class of the element that would receive error message
     errorClass : 'validetta-error', // Class that would be added on every failing validation field
     validClass : 'validetta-valid', // Same for valid validation
-    bubblePosition: 'right',
+    bubblePosition: 'right', // Bubble position // right / bottom
+    bubbleGapLeft: 15, // Right gap of bubble
+    bubbleGapTop: 0, // Top gap of bubble
     realTime : false, // To enable real-time form control, set this option true.
     onValid : function(){}, // This function to be called when the user submits the form and there is no error.
     onError : function(){}, // This function to be called when the user submits the form and there are some errors
@@ -460,22 +462,19 @@
         errorObject.className = this.options.errorTemplateClass + ' '+this.options.errorTemplateClass + '--' + this.options.bubblePosition;
         // if error display is bubble, calculate to positions
         if( this.options.display === 'bubble' ) {
-          var pos, W, H;
+          var pos, W = 0, H = 0;
           // !! Here, JQuery functions are using to support the IE8
           pos = $( el ).position();
 
           if ( this.options.bubblePosition === 'bottom' ){
             H = el.offsetHeight;
-            pos.top += H + 10;
-            pos.left -= 5;
           }
           else {
             W = el.offsetWidth;
-            pos.left += W + 15;
           }
           errorObject.innerHTML = '';
-          errorObject.style.top = pos.top +'px';
-          errorObject.style.left = pos.left +'px'
+          errorObject.style.top = pos.top + H + this.options.bubbleGapTop +'px';
+          errorObject.style.left = pos.left + W + this.options.bubbleGapLeft +'px'
         }
         elParent.appendChild( errorObject );
         errorObject.innerHTML = error ;
