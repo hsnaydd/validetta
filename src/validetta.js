@@ -100,10 +100,10 @@
     },
     // equalTo check
     equalTo : function( tmp, self ) {
-      return $( self.form ).find('input[name="'+ tmp.arg +'"]').val() === tmp.val || messages.notEqual;
+      return self.form.querySelector('input[name="'+ tmp.arg +'"]').value === tmp.val || messages.notEqual;
     },
     different: function( tmp, self ) {
-      return $( self.form ).find('input[name="'+ tmp.arg +'"]').val() !== tmp.val || messages.different;
+      return self.form.querySelector('input[name="'+ tmp.arg +'"]').value !== tmp.val || messages.different;
     },
     /**
      * Credit Card Control
