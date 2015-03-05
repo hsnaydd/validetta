@@ -157,7 +157,7 @@
     },
     // Radio
     radio : function( el ) {
-      var count = $( this.form.querySelectorAll('input[type=radio][name="'+ el.name +'"]') ).filter(':checked').length ;
+      var count = this.form.querySelectorAll('input[type=radio][name="'+ el.name +'"]:checked').length;
       return count === 1;
     },
     // Custom reg check
@@ -343,7 +343,7 @@
     checkRemote : function( el, e ) {
       var ajaxOptions = {},
         data = {},
-        fieldName = el.name || el.getAttribute('id');
+        fieldName = el.name || el.id;
 
       if ( typeof this.remoteCache === 'undefined' ) this.remoteCache = {};
 
@@ -504,7 +504,7 @@
       // if el is undefined ( This is the process of resetting all <form> )
       // or el is an object that has element more than one
       // and these elements are not checkbox
-      if( typeof el === 'undefined' || ( el.length > 1 && el[0].getAttribute('type') !== 'checkbox' ) ) {
+      if( typeof el === 'undefined' || ( el.length > 1 && el[0].type !== 'checkbox' ) ) {
         _errorMessages = this.form.querySelectorAll( '.'+ this.options.errorTemplateClass );
       }
       else {
