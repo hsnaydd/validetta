@@ -23,6 +23,16 @@ $validetta-inline-color           : $validetta-bubble-bg-color !default;
   padding: $validetta-bubble-pad-vertical $validetta-bubble-pad-horizontal;
   z-index: 9;
 
+  &:before {
+    content: '';
+    position: absolute;
+    display: block;
+    height: 0;
+    width: 0;
+    border-width: $validetta-bubble-caret-size;
+    border-style: solid;
+  }
+
   &--right {
     &:before {
       top: ceil( ( $validetta-line-height +  ( $validetta-bubble-pad-vertical * 2 ) -  ( $validetta-bubble-caret-size * 2 ) ) / 2 );
@@ -38,16 +48,6 @@ $validetta-inline-color           : $validetta-bubble-bg-color !default;
       border-color: transparent transparent $validetta-bubble-bg-color transparent;
     }
   }
-}
-
-.validetta-bubble:before {
-  content: '';
-  position: absolute;
-  display: block;
-  height: 0;
-  width: 0;
-  border-width: $validetta-bubble-caret-size;
-  border-style: solid;
 }
 
 .validetta-inline,
