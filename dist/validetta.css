@@ -1,6 +1,6 @@
 /*!
  * Validetta (http://lab.hasanaydogdu.com/validetta/)
- * Version 1.0.0 ( 04-02-2015 )
+ * Version 1.0.1 ( 16-08-2015 )
  * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
  * Copyright 2013-2015 Hasan Aydoğdu - http://www.hasanaydogdu.com 
  */
@@ -13,6 +13,14 @@
   color: white;
   padding: 5px 12px;
   z-index: 9; }
+  .validetta-bubble:before {
+    content: '';
+    position: absolute;
+    display: block;
+    height: 0;
+    width: 0;
+    border-width: 5px;
+    border-style: solid; }
   .validetta-bubble--right:before {
     top: 7px;
     left: -10px;
@@ -21,15 +29,6 @@
     top: -10px;
     left: 10px;
     border-color: transparent transparent #cd2e26 transparent; }
-
-.validetta-bubble:before {
-  content: '';
-  position: absolute;
-  display: block;
-  height: 0;
-  width: 0;
-  border-width: 5px;
-  border-style: solid; }
 
 .validetta-inline,
 .validetta-bubble {

@@ -1,6 +1,6 @@
 /*!
  * Validetta (http://lab.hasanaydogdu.com/validetta/)
- * Version 1.0.0 ( 04-02-2015 )
+ * Version 1.0.1 ( 16-08-2015 )
  * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
  * Copyright 2013-2015 Hasan Aydoğdu - http://www.hasanaydogdu.com 
  */
@@ -48,12 +48,13 @@
     errorTemplateClass : 'validetta-bubble', // Class of the element that would receive error message
     errorClass : 'validetta-error', // Class that would be added on every failing validation field
     validClass : 'validetta-valid', // Same for valid validation
-    bubblePosition: 'right',
+    bubblePosition: 'right', // Bubble position // right / bottom
+    bubbleGapLeft: 15, // Right gap of bubble
+    bubbleGapTop: 0, // Top gap of bubble
     realTime : false, // To enable real-time form control, set this option true.
     onValid : function(){}, // This function to be called when the user submits the form and there is no error.
     onError : function(){}, // This function to be called when the user submits the form and there are some errors
-    custom : {}, // Costum reg method variable
-    remote : {}
+    validators: {} // Custom validators stored in this variable
   },
 
   /**
@@ -106,10 +107,10 @@
     },
     // equalTo check
     equalTo : function( tmp, self ) {
-      return $( self.form ).find('input[name="'+ tmp.arg +'"]').val() === tmp.val || messages.notEqual;
+      return self.form.querySelector('input[name="'+ tmp.arg +'"]').value === tmp.val || messages.notEqual;
     },
     different: function( tmp, self ) {
-      return $( self.form ).find('input[name="'+ tmp.arg +'"]').val() !== tmp.val || messages.different;
+      return self.form.querySelector('input[name="'+ tmp.arg +'"]').value !== tmp.val || messages.different;
     },
     /**
      * Credit Card Control
@@ -163,7 +164,7 @@
     },
     // Radio
     radio : function( el ) {
-      var count = $( this.form.querySelectorAll('input[type=radio][name="'+ el.name +'"]') ).filter(':checked').length ;
+      var count = this.form.querySelectorAll('input[type=radio][name="'+ el.name +'"]:checked').length;
       return count === 1;
     },
     // Custom reg check
@@ -349,7 +350,7 @@
     checkRemote : function( el, e ) {
       var ajaxOptions = {},
         data = {},
-        fieldName = el.name || el.getAttribute('id');
+        fieldName = el.name || el.id;
 
       if ( typeof this.remoteCache === 'undefined' ) this.remoteCache = {};
 
@@ -462,34 +463,25 @@
         // If the parent element undefined, that means el is an object. So we need to transform to the element
         if( typeof elParent === 'undefined' ) elParent = el[0].parentNode;
         // if there is an error window which previously opened for el, return
-        if( $( elParent ).find( '.'+ this.options.errorTemplateClass ).length ) return;
+        if ( elParent.querySelectorAll( '.'+ this.options.errorTemplateClass ).length ) return;
         // Create the error window object which will be appear
         var errorObject = document.createElement('span');
         errorObject.className = this.options.errorTemplateClass + ' '+this.options.errorTemplateClass + '--' + this.options.bubblePosition;
         // if error display is bubble, calculate to positions
         if( this.options.display === 'bubble' ) {
-          var pos, W, H;
+          var pos, W = 0, H = 0;
           // !! Here, JQuery functions are using to support the IE8
           pos = $( el ).position();
 
           if ( this.options.bubblePosition === 'bottom' ){
-            H = el.clientHeight;
-            if ( H === 0 ) {
-              pos = $(el.parentNode).position();
-              H = el.parentNode.clientHeight;
-            }
-            pos.top += H +10;
-            pos.left -= 5;
+            H = el.offsetHeight;
           }
           else {
-            W = $( el ).outerWidth(true);
-            pos.left += W + 15;
+            W = el.offsetWidth;
           }
-
-          $( errorObject ).empty().css({
-            'left' : pos.left +'px',
-            'top'  : pos.top +'px'
-          });
+          errorObject.innerHTML = '';
+          errorObject.style.top = pos.top + H + this.options.bubbleGapTop +'px';
+          errorObject.style.left = pos.left + W + this.options.bubbleGapLeft +'px'
         }
         elParent.appendChild( errorObject );
         errorObject.innerHTML = error ;
@@ -519,7 +511,7 @@
       // if el is undefined ( This is the process of resetting all <form> )
       // or el is an object that has element more than one
       // and these elements are not checkbox
-      if( typeof el === 'undefined' || ( el.length > 1 && el[0].getAttribute('type') !== 'checkbox' ) ) {
+      if( typeof el === 'undefined' || ( el.length > 1 && el[0].type !== 'checkbox' ) ) {
         _errorMessages = this.form.querySelectorAll( '.'+ this.options.errorTemplateClass );
       }
       else {
