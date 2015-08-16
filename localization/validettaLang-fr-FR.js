@@ -13,6 +13,7 @@
 				maxSelected : 'Vous ne pouvez sélectionner plus de {count} options.',
 				minSelected : 'Vous devez sélectionner au moins {count} options.',
 				notEqual	: 'Les valeurs ne correspondent pas.',
+				different   : 'Fields cannot be the same as each other',
 				creditCard  : 'Numéro de carte de crédit pas valide.'
 			};
 		}

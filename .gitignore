@@ -3,3 +3,5 @@ node_modules/
 bower_components/
 npm-debug.log
 untracked/
+.sass-cache/
+src/validetta.css.map

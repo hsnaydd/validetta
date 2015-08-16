@@ -1,0 +1,61 @@
+
+//
+// Validetta Defaults
+//
+
+$validetta-font-size              : 12px !default;
+$validetta-line-height            : 14px !default;
+$validetta-font-family            : Arial, Helvetica, sans-serif !default;
+$validetta-bubble-color           : white;
+$validetta-bubble-bg-color        : #cd2e26 !default;
+$validetta-bubble-radius          : 5px !default;
+$validetta-bubble-caret-size      : 5px !default;
+$validetta-bubble-pad-vertical    : 5px !default;
+$validetta-bubble-pad-horizontal  : 12px !default;
+$validetta-inline-color           : $validetta-bubble-bg-color !default;
+
+.validetta-bubble {
+  position: absolute;
+  background-color: $validetta-bubble-bg-color;
+  max-width: 325px;
+  border-radius: $validetta-bubble-radius;
+  color: $validetta-bubble-color;
+  padding: $validetta-bubble-pad-vertical $validetta-bubble-pad-horizontal;
+  z-index: 9;
+
+  &:before {
+    content: '';
+    position: absolute;
+    display: block;
+    height: 0;
+    width: 0;
+    border-width: $validetta-bubble-caret-size;
+    border-style: solid;
+  }
+
+  &--right {
+    &:before {
+      top: ceil( ( $validetta-line-height +  ( $validetta-bubble-pad-vertical * 2 ) -  ( $validetta-bubble-caret-size * 2 ) ) / 2 );
+      left: - $validetta-bubble-caret-size * 2;
+      border-color: transparent $validetta-bubble-bg-color transparent transparent;
+    }
+  }
+
+  &--bottom {
+    &:before {
+      top: - $validetta-bubble-caret-size * 2;
+      left: 10px;
+      border-color: transparent transparent $validetta-bubble-bg-color transparent;
+    }
+  }
+}
+
+.validetta-inline,
+.validetta-bubble {
+  display: block;
+  font: #{$validetta-font-size}/#{$validetta-line-height} $validetta-font-family ;
+}
+
+.validetta-inline {
+  color: $validetta-inline-color;
+}

@@ -13,6 +13,7 @@
 				maxSelected : 'En fazla {count} seçim yapabilirsiniz. Lütfen kontrol ediniz.',
 				minSelected : 'En az {count} seçim yapmalısınız. Lütfen kontrol ediniz.',
 				notEqual	: 'Alanlar birbiriyle oyuşmuyor. Lütfen kontrol ediniz',
+				different   : 'Alanlar birbirlerinden farklı olmalı.',
 				creditCard	: 'Kredi kartı numarası geçersiz. Lütfen kontrol ediniz.'
 			};
 		}
