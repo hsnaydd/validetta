@@ -1,10 +1,9 @@
 /*!
  * Validetta (http://lab.hasanaydogdu.com/validetta/)
- * Version 1.0.1 ( 16-08-2015 )
+ * Version 1.0.1
  * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
  * Copyright 2013-2015 Hasan Aydoğdu - http://www.hasanaydogdu.com 
  */
-
 ;(function( $ ) {
   "use strict";
   /**
@@ -222,21 +221,21 @@
       // Handle submit event
       $( this.form ).submit( function( e ) {
         // fields to be controlled transferred to global variable
-        FIELDS = this.querySelectorAll('[data-validetta]');
+        FIELDS = this.querySelectorAll('[data-validates]');
         return self.init( e );
       });
       // real-time option control
       if( this.options.realTime === true ) {
         // handle change event for form elements (without checkbox)
-        $( this.form ).find('[data-validetta]').not('[type=checkbox]').on( 'change', function( e ) {
+        $( this.form ).find('[data-validates]').not('[type=checkbox]').on( 'change', function( e ) {
           // field to be controlled transferred to global variable
           FIELDS = $( this );
           return self.init( e );
         });
         // handle click event for checkboxes
-        $( this.form ).find('[data-validetta][type=checkbox]').on( 'click', function( e ) {
+        $( this.form ).find('[data-validates][type=checkbox]').on( 'click', function( e ) {
           // fields to be controlled transferred to global variable
-          FIELDS = self.form.querySelectorAll('[data-validetta][type=checkbox][name="'+ this.name +'"]');
+          FIELDS = self.form.querySelectorAll('[data-validates][type=checkbox][name="'+ this.name +'"]');
           return self.init( e );
         });
       }
@@ -286,7 +285,7 @@
         var el = FIELDS[ i ], //current field
           errors = '', //current field's errors
           val = trim ( $( el ).val() ), //current field's value
-          methods = el.getAttribute('data-validetta').split(','), //current field's control methods
+          methods = el.getAttribute('data-validates').split(','), //current field's control methods
           state; // Validation state
         // Create tmp
         this.tmp = {};
