@@ -37,13 +37,9 @@
   defaults = {
     showErrorMessages : true, // If you dont want to display error messages set this options false
     // Error Template : <span class="errorTemplateClass">Error messages will be here !</span>
-    display : 'bubble', // Error display options, // bubble / inline
-    errorTemplateClass : 'validetta-bubble', // Class of the element that would receive error message
-    errorClass : 'validetta-error', // Class that would be added on every failing validation field
-    validClass : 'validetta-valid', // Same for valid validation
-    bubblePosition: 'right', // Bubble position // right / bottom
-    bubbleGapLeft: 15, // Right gap of bubble
-    bubbleGapTop: 0, // Top gap of bubble
+    errorTemplateClass : 'form-inline-message', // Class of the element that would receive error message
+    errorClass : 'form-input-error', // Class that would be added on every failing validation field
+    validClass : 'form-input-valid', // Same for valid validation
     realTime : false, // To enable real-time form control, set this option true.
     onValid : function(){}, // This function to be called when the user submits the form and there is no error.
     onError : function(){}, // This function to be called when the user submits the form and there are some errors
@@ -459,23 +455,7 @@
         if ( elParent.querySelectorAll( '.'+ this.options.errorTemplateClass ).length ) return;
         // Create the error window object which will be appear
         var errorObject = document.createElement('span');
-        errorObject.className = this.options.errorTemplateClass + ' '+this.options.errorTemplateClass + '--' + this.options.bubblePosition;
-        // if error display is bubble, calculate to positions
-        if( this.options.display === 'bubble' ) {
-          var pos, W = 0, H = 0;
-          // !! Here, JQuery functions are using to support the IE8
-          pos = $( el ).position();
-
-          if ( this.options.bubblePosition === 'bottom' ){
-            H = el.offsetHeight;
-          }
-          else {
-            W = el.offsetWidth;
-          }
-          errorObject.innerHTML = '';
-          errorObject.style.top = pos.top + H + this.options.bubbleGapTop +'px';
-          errorObject.style.left = pos.left + W + this.options.bubbleGapLeft +'px'
-        }
+        errorObject.className = this.options.errorTemplateClass;
         elParent.appendChild( errorObject );
         errorObject.innerHTML = error ;
 
