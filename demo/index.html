@@ -28,7 +28,7 @@
           <div class="form-label-text form-input-title">
             Text Input Required
           </div>
-          <input class="form-input" id="required" name="required" type="text" placeholder="I need to be filled out!" value="" required>
+          <input class="form-input" id="required" name="required" type="text" placeholder="I need to be filled out!" value="" required data-validates="required">
         </label>
       </div>
 
@@ -37,7 +37,7 @@
           <div class="form-label-text form-input-title">
             Email Input
           </div>
-          <input class="form-input" id="email" name="email" type="email" placeholder="test@example.com" value="" required>
+          <input class="form-input" id="email" name="email" type="email" placeholder="test@example.com" value="" required data-validates="email,required">
         </label>
       </div>
 
@@ -46,7 +46,7 @@
           <div class="form-label-text form-input-title">
             Password
           </div>
-          <input class="form-input" id="password" name="password" type="password" placeholder="text" value="" required>
+          <input class="form-input" id="password" name="password" type="password" placeholder="text" value="" required data-validates="required">
         </label>
       </div>
 
@@ -55,13 +55,13 @@
           <div class="form-label-text form-input-title">
             Password Match w/ above
           </div>
-          <input class="form-input" id="password-match" name="password-match" type="password" placeholder="text" value="" required>
+          <input class="form-input" id="password-match" name="password-match" type="password" placeholder="text" value="" required data-validates="equalTo[password]">
         </label>
       </div>
 
       <div class="form-field form-inline required">
         <label class="form-label" for="checkbox-requd">
-          <input class="form-input input-checkbox" id="checkbox-requd" type="checkbox" name="checkbox-requd" value="" required>
+          <input class="form-input input-checkbox" id="checkbox-requd" type="checkbox" name="checkbox-requd" value="" required data-validates="required">
           <div class="form-label-text form-input-title">
             Checkbox
           </div>
@@ -74,19 +74,19 @@
         </div>
         <div class="form-inline">
           <label class="form-label radio">
-            <input type="radio" class="form-input" name="radio-group-single" value="1">
+            <input type="radio" class="form-input" name="radio-group-single" value="1" data-validates="required">
             <span class="form-label-text">One</span>
           </label>
           <label class="form-label radio">
-            <input type="radio" class="form-input" name="radio-group-single" value="1">
+            <input type="radio" class="form-input" name="radio-group-single" value="2" data-validates="required">
             <span class="form-label-text">Two</span>
           </label>
           <label class="form-label radio">
-            <input type="radio" class="form-input" name="radio-group-single" value="1">
+            <input type="radio" class="form-input" name="radio-group-single" value="3" data-validates="required">
             <span class="form-label-text">Three</span>
           </label>
           <label class="form-label radio">
-            <input type="radio" class="form-input" name="radio-group-single" value="1">
+            <input type="radio" class="form-input" name="radio-group-single" value="4" data-validates="required">
             <span class="form-label-text">Four</span>
           </label>
         </div>
@@ -112,7 +112,7 @@
           <div class="form-label-text form-input-title">
             Number
           </div>
-          <input class="form-input" id="required" name="required" type="number" placeholder="any number" value="" required>
+          <input class="form-input" id="required" name="required" type="number" placeholder="any number" value="" required data-validates="required">
         </label>
       </div>
 
@@ -121,7 +121,7 @@
           <div class="form-label-text form-input-title">
             Number (with range)
           </div>
-          <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1000 please" min="3" max="1200" value="" required>
+          <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1000 please" min="3" max="1200" value="" required data-validates="required">
         </label>
       </div>
 
@@ -130,12 +130,11 @@
           <div class="form-label-text form-input-title">
             Number (only max)
           </div>
-          <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1000 please" max="100" value="" required>
+          <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1000 please" max="100" value="" required data-validates="required">
         </label>
       </div>
 
       <button class="submit-button">Submit</button>
-
     </form>
   </main>
 
