@@ -112,7 +112,7 @@
           <div class="form-label-text form-input-title">
             Number
           </div>
-          <input class="form-input" id="required" name="required" type="number" placeholder="any number" value="" required data-validates="required">
+          <input class="form-input" id="required" name="required" type="number" placeholder="any number" value="" required data-validates="required,number">
         </label>
       </div>
 
@@ -121,7 +121,7 @@
           <div class="form-label-text form-input-title">
             Number (with range)
           </div>
-          <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1000 please" min="3" max="1200" value="" required data-validates="required">
+          <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1200 please" min="3" max="1200" value="" required data-validates="required,number">
         </label>
       </div>
 
@@ -130,7 +130,25 @@
           <div class="form-label-text form-input-title">
             Number (only max)
           </div>
-          <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1000 please" max="100" value="" required data-validates="required">
+          <input class="form-input" id="required" name="required" type="number" placeholder="under 100 please" max="100" value="" required data-validates="required,number">
+        </label>
+      </div>
+
+      <div class="form-field required">
+        <label class="form-label" for="required">
+          <div class="form-label-text form-input-title">
+            Number (only min)
+          </div>
+          <input class="form-input" id="required" name="required" type="number" placeholder="over 60 please" min="60" value="" required data-validates="required,number">
+        </label>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="nothing">
+          <div class="form-label-text form-input-title">
+            Required input with custom error message
+          </div>
+          <input class="form-input" id="nothing" name="nothing" type="text" placeholder="text" value="" required data-validates="required" data-vd-message-required="Please please fill out this field.">
         </label>
       </div>
 

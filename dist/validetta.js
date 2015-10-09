@@ -27,8 +27,11 @@
     required  : 'This field is required.',
     email     : 'Your E-mail address appears to be invalid.',
     number    : 'You can enter only numbers in this field.',
-    maxLength : 'Maximum {count} characters allowed!',
-    minLength : 'Minimum {count} characters allowed!',
+    numMax    : 'Please enter a number less than {max}.',
+    numMin    : 'Please enter a number greater than {min}.',
+    numRange  : 'Please enter a number greater than {min} and less than {max}.',
+    maxLength : 'Maximum {count} characters allowed.',
+    minLength : 'Minimum {count} characters allowed.',
     maxChecked  : 'Maximum {count} options allowed.',
     minChecked  : 'Please select minimum {count} options.',
     maxSelected : 'Maximum {count} selection allowed.',
@@ -92,7 +95,28 @@
 
     // Number check
     number: function(tmp) {
-      return RNUMBER.test(tmp.val) || messages.number;
+      if (RNUMBER.test(tmp.val)) {
+        var message;
+        var val = parseInt(tmp.val, 10);
+        var max = tmp.el.max ? parseInt(tmp.el.max, 10) : Infinity;
+        var min = tmp.el.min ? parseInt(tmp.el.min, 10) : -Infinity;
+
+        // check attributes and assign error messages, auto-validate if neither is applied to element
+        if (tmp.el.max && tmp.el.min) {
+          message = messages.numRange.replace('{min}', tmp.el.min).replace('{max}', tmp.el.max);
+        } else if (tmp.el.max) {
+          message = messages.numMax.replace('{max}', tmp.el.max);
+        } else if (tmp.el.min) {
+          message = messages.numMin.replace('{min}', tmp.el.min);
+        } else {
+          return true;
+        }
+
+        return (val >= min && val <= max) ? true : message;
+
+      } else {
+        return messages.number;
+      }
     },
 
     // Minimum length check
@@ -273,7 +297,6 @@
      * @return {mixed}
      */
     init: function(event) {
-      event.preventDefault();
       // Reset error messages from all elements
       this.reset(FIELDS);
       // Start control each elements

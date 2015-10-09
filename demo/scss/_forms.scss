@@ -88,7 +88,6 @@ textarea.form-input { resize: vertical; }
   font-size: 12px;
   margin-top: 6px;
 
-  .form-input-error & {
-    color: firebrick;
-  }
+  .form-field-invalid & { color: firebrick; }
+  .form-field-valid   & { color: olivedrab; }
 }
