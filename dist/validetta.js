@@ -2,7 +2,7 @@
  * Validetta (http://lab.hasanaydogdu.com/validetta/)
  * Version 1.0.1
  * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
- * Copyright 2013-2015 Hasan Aydoğdu - http://www.hasanaydogdu.com 
+ * Copyright 2013-2015 Hasan Aydoğdu - http://www.hasanaydogdu.com
  */
 /*eslint-env es6:false*/
 
@@ -45,8 +45,8 @@
     showErrorMessages : true, // If you dont want to display error messages set this options false
     inputWrapperClass : 'form-field', // Class of the parent container we want to append the error message to
     errorTemplateClass : 'form-inline-message', // Class of the error message string
-    errorClass : 'form-input-error', // Class added to parent of each failing validation field
-    validClass : 'form-input-valid', // Same for valid validation
+    errorClass : 'form-field-invalid', // Class added to parent of each failing validation field
+    validClass : 'form-field-valid', // Same for valid validation
     realTime: false, // To enable real-time form control, set this option true.
     onValid: function(){}, // This function to be called when the user submits the form and there is no error.
     onError: function(){}, // This function to be called when the user submits the form and there are some errors
