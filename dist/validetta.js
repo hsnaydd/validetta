@@ -23,18 +23,18 @@
    *  Form validate error messages
    */
   var messages = {
-    required  : 'This field is required. Please be sure to check.',
-    email     : 'Your E-mail address appears to be invalid. Please be sure to check.',
+    required  : 'This field is required.',
+    email     : 'Your E-mail address appears to be invalid.',
     number    : 'You can enter only numbers in this field.',
     maxLength : 'Maximum {count} characters allowed!',
     minLength : 'Minimum {count} characters allowed!',
-    maxChecked  : 'Maximum {count} options allowed. Please be sure to check.',
+    maxChecked  : 'Maximum {count} options allowed.',
     minChecked  : 'Please select minimum {count} options.',
-    maxSelected : 'Maximum {count} selection allowed. Please be sure to check.',
-    minSelected : 'Minimum {count} selection allowed. Please be sure to check.',
-    notEqual    : 'Fields do not match. Please be sure to check.',
+    maxSelected : 'Maximum {count} selection allowed.',
+    minSelected : 'Minimum {count} selection allowed.',
+    notEqual    : 'Fields do not match.',
     different   : 'Fields cannot be the same as each other',
-    creditCard  : 'Invalid credit card number. Please be sure to check.'
+    creditCard  : 'Invalid credit card number.'
   };
 
   /**
@@ -68,7 +68,7 @@
    * Validator
    * {count} which used below is the specified maximum or minimum value
    * e.g if method is minLength and  rule is 2 (minLength[2])
-   * Output error windows text will be : 'Please select minimum 2 options.'
+   * Output error messages text will be : 'Please select minimum 2 options.'
    *
    * @namespace
    * @param {object} tmp = this.tmp Tmp object for store current field and its value
@@ -107,6 +107,7 @@
     different: function(tmp, self) {
       return self.form.querySelector('input[name="'+ tmp.arg +'"]').value !== tmp.val || messages.different;
     },
+
     /**
      * Credit Card Control
      * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers
@@ -134,45 +135,53 @@
       if (sum > 0 && sum % 10 === 0) return true;
       return messages.creditCard;
     },
+
     //Checkbox check
     maxChecked: function(tmp, self) {
       var cont = $(self.form.querySelectorAll('input[type=checkbox][name="'+ tmp.el.name +'"]'));
-      // we dont want to open an error window for all checkboxes which have same "name"
+      // we dont want to show an error message for all checkboxes which have same "name"
       if (cont.index(tmp.el) !== 0) return;
       var count =  cont.filter(':checked').length;
       if (count === 0) return;
       return count <= tmp.arg || messages.maxChecked.replace('{count}', tmp.arg);
     },
+
     minChecked: function(tmp, self) {
       var cont = $(self.form.querySelectorAll('input[type=checkbox][name="'+ tmp.el.name +'"]'));
       if (cont.index(tmp.el) !== 0) return; // same as above
       var count =  cont.filter(':checked').length;
       return count >= tmp.arg || messages.minChecked.replace('{count}', tmp.arg);
     },
+
     //Selectbox check
     maxSelected: function(tmp) {
       if (tmp.val === null) return;
       return tmp.val.length <= tmp.arg || messages.maxSelected.replace('{count}', tmp.arg);
     },
+
     minSelected: function(tmp) {
       return (tmp.val !== null && tmp.val.length >= tmp.arg) || messages.minSelected.replace('{count}', tmp.arg);
     },
+
     // Radio
     radio: function(el) {
       var count = this.form.querySelectorAll('input[type=radio][name="'+ el.name +'"]:checked').length;
       return count === 1;
     },
+
     // Custom reg check
     regExp: function(tmp, self) {
       var _arg = self.options.validators.regExp[tmp.arg],
         _reg = new RegExp(_arg.pattern);
       return _reg.test(tmp.val) || _arg.errorMessage;
     },
+
     // Remote
     remote: function(tmp) {
       tmp.remote = tmp.arg;
       return;
     },
+
     // Callback
     callback: function(tmp, self) {
       var _cb = self.options.validators.callback[tmp.arg];
@@ -250,7 +259,7 @@
      * @return {mixed}
      */
     init: function(e) {
-      // Reset error windows from all elements
+      // Reset error messages from all elements
       this.reset(FIELDS);
       // Start control each elements
       this.checkFields(e);
@@ -321,8 +330,8 @@
           });
           // if parent element has valid class, remove and add error class
           this.addErrorClass(this.tmp.parent);
-          // open error window
-          this.window.open.call(this , el, errors);
+          // show error message
+          this.notify.show.call(this , el, errors);
         // Check remote validation
         } else if (typeof this.tmp.remote !== 'undefined') {
           this.checkRemote(el, e);
@@ -371,10 +380,10 @@
             e.preventDefault(); // we have to break submit because of throw error
             throw new Error(cache.result.message);
           case 'resolved' : // resolved means remote request has done
-            // Check to cache, if result is invalid, open an error window
+            // Check to cache, if result is invalid, show an error message
             if (cache.result.valid === false) {
               this.addErrorClass(this.tmp.parent);
-              this.window.open.call(this, el, cache.result.message);
+              this.notify.show.call(this, el, cache.result.message);
             } else {
               this.addValidClass(this.tmp.parent);
             }
@@ -417,7 +426,7 @@
           }
           else if (result.valid === false) {
             self.addErrorClass(self.tmp.parent);
-            self.window.open.call(self, el, result.message);
+            self.notify.show.call(self, el, result.message);
           } else {
             self.addValidClass(self.tmp.parent);
           }
@@ -436,18 +445,18 @@
     },
 
     /**
-     * This the section which opening or closing error windows process is done
+     * Showing or hiding error messages
      *
      * @namespace
      */
-    window: {
+    notify: {
       /**
-       * Error window opens
+       * Error message shows
        *
        * @params {object} el : element which has an error (it can be native element or jQuery object)
        * @params {string} error : error messages
        */
-      open: function(el, error) {
+      show: function(el, error) {
         // We want display errors ?
         if (!this.options.showErrorMessages) {
           // because of form not valid, set handler true for break submit
@@ -457,9 +466,9 @@
         var elParent = this.parents(el);
         // If the parent element undefined, that means el is an object. So we need to transform to the element
         if (typeof elParent === 'undefined') elParent = el[0].parentNode;
-        // if there is an error window which previously opened for el, return
+        // if there is an error message which previously shown for el, return
         if (elParent.querySelectorAll('.'+ this.options.errorTemplateClass).length) return;
-        // Create the error window object which will be appear
+        // Create the error message object
         var errorObject = document.createElement('span');
         errorObject.className = this.options.errorTemplateClass;
         elParent.appendChild(errorObject);
@@ -470,20 +479,20 @@
         this.handler = true;
       },
       /**
-       * Error window closes
+       * Error message hides
        *
-       * @params el : the error message window which will be disappear
+       * @params el : the error message which will be disappear
        */
-      close: function(el) {
+      hide: function(el) {
         el.parentNode.removeChild(el);
       }
     },
 
 
     /**
-     * Removes all error messages windows
+     * Removes all error messages
      *
-     * @param {object} or {void} el : form elements which have an error message window
+     * @param {object} or {void} el : form elements which have an error message
      */
     reset: function(el) {
       var _errorMessages = {};
@@ -497,7 +506,7 @@
         _errorMessages = this.parents(el[0]).querySelectorAll('.'+ this.options.errorTemplateClass);
       }
       for (var i = 0, _lengthErrorMessages = _errorMessages.length; i < _lengthErrorMessages; i++) {
-        this.window.close.call(this, _errorMessages[i]);
+        this.notofy.hide.call(this, _errorMessages[i]);
       }
       // set to handler false
       // otherwise at the next validation attempt, submit will not continue even the validation is successful
