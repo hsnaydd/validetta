@@ -36,6 +36,7 @@
    */
   var defaults = {
     showErrorMessages : true, // If you dont want to display error messages set this options false
+    inputWrapperClass : 'form-field', // Class of the parent container we want to append the error message to
     errorTemplateClass : 'form-inline-message', // Class of the error message string
     errorClass : 'form-input-error', // Class added to parent of each failing validation field
     validClass : 'form-input-valid', // Same for valid validation
@@ -270,8 +271,8 @@
       }
       for (var i = 0, _lengthFields = FIELDS.length; i < _lengthFields; i++) {
         // if field is disabled, do not check
-        if (FIELDS[i ].disabled) continue;
-        var el = FIELDS[i ], //current field
+        if (FIELDS[i].disabled) continue;
+        var el = FIELDS[i], //current field
           errors = '', //current field's errors
           val = trim ($(el).val()), //current field's value
           methods = el.getAttribute('data-validates').split(','), //current field's control methods
@@ -284,7 +285,7 @@
         // Validator : Fields Control Object
         for (var j = 0, _lengthMethods = methods.length; j < _lengthMethods; j++) {
           // Check Rule
-          var rule = methods[j ].match(RRULE),
+          var rule = methods[j].match(RRULE),
             method;
           // Does it have rule?
           if (rule !== null) {
@@ -292,13 +293,13 @@
             if (typeof rule[2] !== 'undefined') this.tmp.arg = rule[2];
             // Set method name
             method = rule[1];
-          } else { method = methods[j ]; }
+          } else { method = methods[j]; }
           // prevent empty validation if method is not required
           if (val === '' && method !== 'required' && method !== 'equalTo') continue;
-          // Is there a methot in Validator ?
+          // Is there a method in Validator ?
           if (Validator.hasOwnProperty(method)) {
             // Validator returns error message if method invalid
-            state = Validator[method ](self.tmp, self);
+            state = Validator[method](self.tmp, self);
             if (typeof state !== 'undefined' && state !== true) {
               var _dataMsg = el.getAttribute('data-vd-message-' + method);
               if (_dataMsg !== null) state = _dataMsg;
@@ -342,17 +343,17 @@
 
       if (typeof this.remoteCache === 'undefined') this.remoteCache = {};
 
-      data[fieldName ] = this.tmp.val; // Set data
+      data[fieldName] = this.tmp.val; // Set data
       // exends ajax options
       ajaxOptions = $.extend(true, {}, {
         data: data
-      }, this.options.validators.remote[this.tmp.remote ] || {});
+      }, this.options.validators.remote[this.tmp.remote] || {});
 
       // use $.param() function for generate specific cache key
       var cacheKey = $.param(ajaxOptions);
 
       // Check cache
-      var cache = this.remoteCache[cacheKey ];
+      var cache = this.remoteCache[cacheKey];
 
       if (typeof cache !== 'undefined') {
         switch(cache.state) {
@@ -374,10 +375,10 @@
         }
       } else {
         // Abort if previous ajax request still running
-        var _xhr = this.xhr[fieldName ];
+        var _xhr = this.xhr[fieldName];
         if (typeof _xhr !== 'undefined' && _xhr.state() === 'pending') _xhr.abort();
         // Start caching
-        cache = this.remoteCache[cacheKey ] = { state : 'pending', event : e.type };
+        cache = this.remoteCache[cacheKey] = { state : 'pending', event : e.type };
         // make a remote request
         this.remoteRequest(ajaxOptions, cache, el, fieldName);
       }
@@ -399,7 +400,7 @@
       $(this.tmp.parent).addClass('validetta-pending');
 
       // cache xhr
-      this.xhr[fieldName ] = $.ajax(ajaxOptions)
+      this.xhr[fieldName] = $.ajax(ajaxOptions)
         .done(function(result) {
           if (typeof result !== 'object') result = JSON.parse(result);
           cache.state = 'resolved';
@@ -490,7 +491,7 @@
         _errorMessages = this.parents(el[0]).querySelectorAll('.'+ this.options.errorTemplateClass);
       }
       for (var i = 0, _lengthErrorMessages = _errorMessages.length; i < _lengthErrorMessages; i++) {
-        this.window.close.call(this, _errorMessages[i ]);
+        this.window.close.call(this, _errorMessages[i]);
       }
       // set to handler false
       // otherwise at the next validation attempt, submit will not continue even the validation is successful
@@ -523,11 +524,7 @@
      * @return {object} el parent element
      */
     parents: function(el) {
-      var upLength = parseInt(el.getAttribute('data-vd-parent-up'), 10) || 0;
-      for (var i = 0; i <= upLength ; i++) {
-        el = el.parentNode;
-      }
-      return el;
+      return $(el).parents('.' + this.options.inputWrapperClass)[0];
     }
   };
 
