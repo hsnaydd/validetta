@@ -3,5 +3,5 @@ $(function() {
 
   $form.attr('novalidate', true);
 
-  $('#validate-me').validetta({});
+  $('#validate-me').validetta();
 });
