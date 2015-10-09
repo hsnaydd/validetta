@@ -17,10 +17,7 @@
     "url": "https://github.com/hsnayd/validetta.git"
   },
   "bugs": "http://github.com/hsnayd/validetta/issues",
-  "main": [
-    "dist/validetta.css",
-    "dist/validetta.js"
-  ],
+  "main": "dist/validetta",
   "keywords": [
     "form",
     "lightweight",
@@ -39,5 +36,13 @@
     "gulp-rename": "^1.2.2",
     "gulp-ruby-sass": "^2.0.4",
     "gulp-uglify": "^1.4.1"
+  },
+  "jspm": {
+    "shim": {
+      "dist/validetta": {
+        "deps": ["jquery"],
+        "exports": "$"
+      }
+    }
   }
 }
