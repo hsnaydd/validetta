@@ -2,7 +2,7 @@
  * Validetta (http://lab.hasanaydogdu.com/validetta/)
  * Version 1.0.1
  * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
- * Copyright 2013-2015 Hasan Aydoğdu - http://www.hasanaydogdu.com
+ * Copyright 2013-2015 Hasan Aydoğdu - http://www.hasanaydogdu.com 
  */
 /*eslint-env es6:false*/
 
@@ -95,7 +95,7 @@
     },
 
     // Number check
-    number: function(tmp) {
+    number: function(tmp, self) {
       if (RNUMBER.test(tmp.val)) {
         var message;
         var val = parseInt(tmp.val, 10);
@@ -104,17 +104,20 @@
 
         // check attributes and assign error messages, auto-validate if neither is applied to element
         if (tmp.el.max && tmp.el.min) {
-          message = messages.numRange.replace('{min}', tmp.el.min).replace('{max}', tmp.el.max);
+          message = messages.numRange;
         } else if (tmp.el.max) {
-          message = messages.numMax.replace('{max}', tmp.el.max);
+          message = messages.numMax;
         } else if (tmp.el.min) {
-          message = messages.numMin.replace('{min}', tmp.el.min);
+          message = messages.numMin;
         } else {
           return true;
         }
 
-        return (val >= min && val <= max) ? true : message;
-
+        if (val >= min && val <= max) {
+          return true;
+        } else {
+          return self.processNumberMessage(message, tmp.el.min, tmp.el.max);
+        }
       } else {
         return messages.number;
       }
@@ -358,7 +361,14 @@
             state = Validator[method](self.tmp, self);
             if (typeof state !== 'undefined' && state !== true) {
               var _dataMsg = el.getAttribute('data-vd-message-' + method);
-              if (_dataMsg !== null) state = _dataMsg;
+              // is there a custom message?
+              if (_dataMsg !== null) {
+                state = _dataMsg;
+                // add our min and max values if it's a number input
+                if (method === 'number') {
+                  state = this.processNumberMessage(state, this.tmp.el.min, this.tmp.el.max);
+                }
+              }
               errors += state + '<br>';
             }
           }
@@ -579,6 +589,21 @@
      */
     parents: function(el) {
       return $(el).parents('.' + this.options.inputWrapperClass)[0];
+    },
+
+    /**
+     * Replaces min & ma placeholders in number inputs
+     *
+     * @param {string} message - raw error message
+     * @param {string} min - the input's min range (can be null)
+     * @param {string} max - the input's max range (can be null)
+     * @return {string} message - processed message
+     */
+    processNumberMessage: function(message, min, max) {
+      console.log('processing...');
+      if (min) message = message.replace('{min}', min);
+      if (max) message = message.replace('{max}', max);
+      return message;
     },
   };
 

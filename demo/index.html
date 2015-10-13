@@ -34,6 +34,15 @@
         </div>
 
         <div class="form-field required">
+          <label class="form-label" for="required">
+            <div class="form-label-text form-input-title">
+              Text Input With custom message
+            </div>
+            <input class="form-input" id="required" name="required" type="text" placeholder="I need to be filled out!" value="" required data-validates="required" data-vd-message-required="This field needs to be filled out!">
+          </label>
+        </div>
+
+        <div class="form-field required">
           <label class="form-label" for="email">
             <div class="form-label-text form-input-title">
               Email Input
@@ -122,7 +131,7 @@
             <div class="form-label-text form-input-title">
               Number (with range)
             </div>
-            <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1000 please" min="3" max="1200" value="" required data-validates="required">
+            <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1200 please" min="3" max="1200" value="" required data-validates="required,number">
           </label>
         </div>
 
@@ -131,7 +140,16 @@
             <div class="form-label-text form-input-title">
               Number (only max)
             </div>
-            <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1000 please" max="100" value="" required data-validates="required">
+            <input class="form-input" id="required" name="required" type="number" placeholder="under 100 please" max="100" value="" required data-validates="required,number">
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="required">
+            <div class="form-label-text form-input-title">
+              Number Input (with range and custom message)
+            </div>
+            <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 100 please" min="3" max="100" value="" required data-validates="required,number" data-vd-message-number="min: {min} and max: {max}">
           </label>
         </div>
 
