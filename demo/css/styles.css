@@ -41,6 +41,10 @@
   .form-input:focus {
     border-color: #919191;
     outline: none; }
+  .form-field-invalid .form-input {
+    border-color: firebrick; }
+  .form-field-valid .form-input {
+    border-color: olivedrab; }
 
 .form-input[type="text"], .form-input[type="email"], .form-input[type="number"], .form-input[type="password"], .form-input[type="tel"], .form-input.form-select {
   padding-top: 9px;
@@ -69,8 +73,6 @@ textarea.form-input {
   margin-top: 6px; }
   .form-field-invalid .form-inline-message {
     color: firebrick; }
-  .form-field-valid .form-inline-message {
-    color: olivedrab; }
 
 html {
   box-sizing: border-box; }

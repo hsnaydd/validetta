@@ -51,6 +51,9 @@
     border-color: darken(#ddd, 30%);
     outline: none;
   }
+
+  .form-field-invalid & { border-color: firebrick; }
+  .form-field-valid   & { border-color: olivedrab; }
 }
 
 .form-input {
@@ -89,5 +92,4 @@ textarea.form-input { resize: vertical; }
   margin-top: 6px;
 
   .form-field-invalid & { color: firebrick; }
-  .form-field-valid   & { color: olivedrab; }
 }
