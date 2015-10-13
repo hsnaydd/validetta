@@ -84,6 +84,7 @@
         case 'checkbox' : return tmp.el.checked || messages.required;
         case 'radio' : return this.radio.call(self, tmp.el) || messages.required;
         case 'select-multiple' : return tmp.val !== null || messages.required;
+        case 'select-one' : return tmp.val !== null || messages.required;
         default : return tmp.val !== '' || messages.required;
       }
     },
