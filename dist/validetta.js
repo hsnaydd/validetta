@@ -45,7 +45,8 @@
    *  Plugin defaults
    */
   var defaults = {
-    showErrorMessages : true, // If you dont want to display error messages set this options false
+    showErrorMessage : true, // If you dont want to display error messages set this options false
+    showMultiple: false, // whether or not to show all errors on an input at once
     inputWrapperClass : 'form-field', // Class of the parent container we want to append the error message to
     errorTemplateClass : 'form-inline-message', // Class of the error message string
     errorClass : 'form-field-invalid', // Class added to parent of each failing validation field
@@ -332,10 +333,9 @@
         // if field is disabled, do not check
         if (FIELDS[i].disabled) continue;
         var el = FIELDS[i]; //current field
-        var errors = ''; //current field's errors
+        var errorMessages = ''; //current field's errors
         var val = trim($(el).val()); //current field's value
         var methods = self.getInputValidators(el); //current field's control methods
-        console.log(el, methods);
         var state; // Validation state
         // Create tmp
         this.tmp = {};
@@ -370,21 +370,27 @@
                   state = this.processNumberMessage(state, this.tmp.el.min, this.tmp.el.max);
                 }
               }
-              errors += state + '<br>';
+              if (this.options.showMultiple) {
+                // show all states that return invalid
+                errorMessages += state + '<br>';
+              } else {
+                // just show the last one
+                errorMessages = state;
+              }
             }
           }
         }
 
         // Check the errors
-        if (errors !== '') {
+        if (errorMessages !== '') {
           invalidFields.push({
             field: el,
-            errors: errors,
+            errors: errorMessages,
           });
           // if parent element has valid class, remove and add error class
           this.addErrorClass(this.tmp.parent);
           // show error message
-          this.notify.show.call(this , el, errors);
+          this.notify.show.call(this , el, errorMessages);
         // Check remote validation
         } else if (typeof this.tmp.remote !== 'undefined') {
           this.checkRemote(el, event);
@@ -406,17 +412,9 @@
       // validators defined outside of native html5 attrs
       var validators = el.hasAttribute('data-validates') ? el.getAttribute('data-validates').split(',') : [];
 
-      if (el.required && validators.indexOf('required') === -1) {
-        validators.push('required');
-      }
-
-      if (el.type === 'number' && validators.indexOf('number') === -1) {
-        validators.push('number');
-      }
-
-      if (el.type === 'email' && validators.indexOf('email') === -1) {
-        validators.push('email');
-      }
+      if (el.required && validators.indexOf('required') === -1) validators.push('required');
+      if (el.type === 'number' && validators.indexOf('number') === -1) validators.push('number');
+      if (el.type === 'email' && validators.indexOf('email') === -1) validators.push('email');
 
       return validators;
     },
@@ -534,7 +532,7 @@
        */
       show: function(el, error) {
         // We want display errors ?
-        if (!this.options.showErrorMessages) {
+        if (!this.options.showErrorMessage) {
           // because of form not valid, set handler true for break submit
           this.handler = true;
           return;
