@@ -41,6 +41,7 @@
   var defaults = {
     showErrorMessage : true, // If you dont want to display error messages set this options false
     showMultiple: false, // whether or not to show all errors on an input at once
+    disableNative: true, // whether or not to show all errors on an input at once
     inputWrapperClass : 'form-field', // Class of the parent container we want to append the error message to
     errorTemplateClass : 'form-inline-message', // Class of the error message string
     errorClass : 'form-field-invalid', // Class added to parent of each failing validation field
@@ -246,12 +247,22 @@
     this.options = $.extend(true, {}, defaults, options);
     this.form = form;
     this.xhr = {};
+    this.initializeForm();
     this.events();
   };
 
   Validetta.prototype = {
 
     constructor : Validetta,
+
+    /**
+     * Remove native browser validation from target form if applicable
+     */
+    initializeForm: function() {
+      if (this.options.disableNative) {
+        this.form.setAttribute('novalidate', true);
+      }
+    },
 
     /**
      * This is the method of handling events

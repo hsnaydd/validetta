@@ -14,19 +14,25 @@ $(function(){
 
 ```
 var options = {
-  showErrorMessages : true,
+  showErrorMessages: true,
   // Whether or not to show error messages
 
-  inputWrapperClass : 'form-field',
+  showMultiple: false
+  // whether or not to show all validity errors per input at once
+
+  disableNative: true
+  // By default the plugin will apply a 'novalidate' attribute to the target form
+
+  inputWrapperClass: 'form-field',
   // Class of the parent container we want to append the error message to
 
-  errorTemplateClass : 'form-inline-message',
+  errorTemplateClass: 'form-inline-message',
   // Class of the error message string
 
-  errorClass : 'form-field-invalid',
+  errorClass: 'form-field-invalid',
   // Class added to parent of each failing validation field
 
-  validClass : 'form-field-valid',
+  validClass: 'form-field-valid',
   // Class added to parent of each successful validation field
 
   realTime: false,
@@ -48,9 +54,9 @@ var options = {
 
 | Name | Description |
 | --- | --- |
-| `required` | Validates on the existence of a value at all. |
-| `number` | Validates on whether the value is a number. Additionally, if either a `max` or `min` attribute (or both) exist on the input, it validates on whether the number falls within that range.|
-| `email` | Validates an email if it is valid or not, using the regex defined in [this spec](https://html.spec.whatwg.org/multipage/forms.html#states-of-the-type-attribute). |
+| `required` | Validates on the existence of a value at all. Will also run by default on any inputs with a `required` attribute|
+| `number` | Validates on whether the value is a number. Additionally, if either a `max` or `min` attribute (or both) exist on the input, it validates on whether the number falls within that range. Will also run by default on any inputs of `type="number"`|
+| `email` | Validates an email if it is valid or not, using the regex defined in [this spec](https://html.spec.whatwg.org/multipage/forms.html#states-of-the-type-attribute).  Will also run by default on any inputs of `type="email"`|
 | `creditCard` | Validates a credit cart number |
 | `equalTo[input_name]` | Returns valid if the the two fields are equal to each other. |
 | `different[input_name]` | Returns valid if the the two fields are _not_ equal to each other. |
