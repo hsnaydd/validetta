@@ -13,7 +13,7 @@ var del = require('del');
 var buildDir = 'dist';
 var banner = '/*!\n' +
         ' * Validetta (<%= pkg.homepage %>)\n' +
-        ' * Version <%= pkg.version %>\n'+
+        ' * Version <%= pkg.version %>\n' +
         ' * Licensed under <%= pkg.license.type %> (<%= pkg.license.url %>)\n' +
         ' * Copyright 2013-<%= new Date().getFullYear() %> <%= pkg.author.name %> - <%= pkg.author.url %> \n' +
         ' */\n';
@@ -32,12 +32,12 @@ gulp.task('js-watch', ['concat'], reload);
 gulp.task('serve', ['sass'], function() {
   browserSync({
     server: {
-      baseDir: ["demo", "dist"]
-    }
+      baseDir: ['demo', 'dist'],
+    },
   });
 
   gulp.watch('demo/scss/*.scss', ['sass']);
-  gulp.watch('src/validetta.js', ['js-watch'])
+  gulp.watch('src/validetta.js', ['js-watch']);
   gulp.watch(['demo/index.html', 'demo/js/main.js']).on('change', reload);
 });
 
@@ -60,7 +60,7 @@ gulp.task('uglify', function() {
       .pipe(uglify())
       .pipe(header(banner, { pkg : pkg}))
       .pipe(rename({
-        extname: '.min.js'
+        extname: '.min.js',
       }))
       .pipe(gulp.dest('dist'));
 });
