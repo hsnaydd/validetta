@@ -262,21 +262,21 @@
       // Handle submit event
       $(this.form).submit(function(event) {
         // fields to be controlled transferred to global variable
-        FIELDS = this.querySelectorAll('[data-validates]');
+        FIELDS = event.currentTarget.getElementsByTagName('input');
         return self.init(event);
       });
       // real-time option control
       if (this.options.realTime === true) {
         // handle change event for form elements (without checkbox)
-        $(this.form).find('[data-validates]').not('[type=checkbox]').on('change', function(event) {
+        $(this.form).find('input').not('[type=checkbox]').on('change', function(event) {
           // field to be controlled transferred to global variable
           FIELDS = $(this);
           return self.init(event);
         });
         // handle click event for checkboxes
-        $(this.form).find('[data-validates][type=checkbox]').on('click', function(event) {
+        $(this.form).find('input[type=checkbox]').on('click', function(event) {
           // fields to be controlled transferred to global variable
-          FIELDS = self.form.querySelectorAll('[data-validates][type=checkbox][name="' + this.name + '"]');
+          FIELDS = self.form.querySelectorAll('input[type=checkbox][name="' + this.name + '"]');
           return self.init(event);
         });
       }
@@ -328,7 +328,7 @@
         var el = FIELDS[i]; //current field
         var errors = ''; //current field's errors
         var val = trim($(el).val()); //current field's value
-        var methods = el.getAttribute('data-validates').split(','); //current field's control methods
+        var methods = self.getInputValidators(el); //current field's control methods
         var state; // Validation state
         // Create tmp
         this.tmp = {};
@@ -387,6 +387,23 @@
           state = undefined; // Reset state variable
         }
       }
+    },
+
+    /**
+     * Determines what validators to run per input
+     *
+     * @param  {object} el current field
+     * @return {array} a list of all validators to run against the input's value
+     */
+    getInputValidators: function(el) {
+      // validators defined outside of native html5 attrs
+      var validators = el.hasAttribute('data-validates') ? el.getAttribute('data-validates').split(',') : [];
+
+      if (el.required && validators.indexOf('required') === -1) validators.push('required');
+      if (el.type === 'number' && validators.indexOf('number') === -1) validators.push('number');
+      if (el.type === 'email' && validators.indexOf('email') === -1) validators.push('email');
+
+      return validators;
     },
 
     /**
@@ -594,7 +611,6 @@
      * @return {string} message - processed message
      */
     processNumberMessage: function(message, min, max) {
-      console.log('processing...');
       if (min) message = message.replace('{min}', min);
       if (max) message = message.replace('{max}', max);
       return message;
