@@ -1,8 +1,8 @@
 {
   "name": "validetta",
   "description": "A tiny jquery plugin for validate your forms",
-  "version": "1.0.1",
-  "homepage": "http://lab.hasanaydogdu.com/validetta/",
+  "version": "2.0.0",
+  "homepage": "https://github.com/PixelUnion/validetta",
   "author": {
     "name": "Hasan Aydoğdu",
     "email": "hasan_aydogdu@windowslive.com",
@@ -14,9 +14,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hsnayd/validetta.git"
+    "url": "https://github.com/PixelUnion/validetta.git"
   },
-  "bugs": "http://github.com/hsnayd/validetta/issues",
+  "bugs": "http://github.com/PixelUnion/validetta/issues",
   "main": "dist/validetta",
   "keywords": [
     "form",

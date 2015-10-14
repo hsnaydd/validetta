@@ -1,6 +1,6 @@
 /*!
- * Validetta (http://lab.hasanaydogdu.com/validetta/)
- * Version 1.0.1
+ * Validetta (https://github.com/PixelUnion/validetta)
+ * Version 2.0.0
  * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
  * Copyright 2013-2015 Hasan Aydoğdu - http://www.hasanaydogdu.com 
  */
