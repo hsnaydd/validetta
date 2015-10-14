@@ -5,14 +5,14 @@ Client-side validation of your forms.
 98% indebted to [the original plugin.](http://lab.hasanaydogdu.com/validetta)
 
 ## Usage
-```
+``` js
 $(function(){
 	$('#my-form').validetta(options, customMessages);
 });
 ```
 ### Options
 
-```
+``` js
 var options = {
   showErrorMessages: true,
   // Whether or not to show error messages
@@ -78,7 +78,7 @@ For `<input type="select">` to work with the required validator, you'll need to 
 
 add a `data-validates=""` attribute to your input, with a comma-separated list of validators.
 
-```
+``` html
 <input name="my_email" type="email" data-validates="required,email">
 
 <input name="my_password" type="password" data-validates="required" placeholder="enter your new password">
@@ -89,7 +89,7 @@ add a `data-validates=""` attribute to your input, with a comma-separated list o
 ### Custom error messages
 
 To override the default error messages, pass an object as the second argument to Validetta. Here are the available messages and their defaults:
-```
+``` js
 var customMessages = {
   required  : 'This field is required.',
   email     : 'Your E-mail address appears to be invalid.',
@@ -111,7 +111,7 @@ var customMessages = {
 
 You can also define a custom message inline, with `data-vd-message[validator_name]`:
 
-```
+``` html
 <input type="text" data-validates="minLength[30]" data-vd-message-minLength="Whoa whoa that's way too short!">
 ```
 
@@ -126,7 +126,7 @@ For the number validator, the strings `{min}` and `{max}` will be replaced appro
 ## Further development
 The plugin is built with gulp and includes a demo server for ease of development/testing:
 
-```
+``` shell
 $ npm install -g gulp
 $ cd path_to_repo
 $ npm install
@@ -137,7 +137,7 @@ $ npm install
 `gulp serve` will spin up a demo server with browsersync.
 
 ### Todos
- - Pull more validation rules from native html attributes rather than data-attributes (`required`, `type="email"` etc)
+ - More validators, more input types (`type="tel"`?)
  - More documentation here as to what is different from the root repo
 
 ## License
