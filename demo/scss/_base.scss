@@ -1,0 +1,38 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+.header {
+  text-align: center;
+  padding: 60px 0 80px;
+}
+
+.main {
+  max-width: 640px;
+  padding: 0 20px;
+  margin: 0 auto 60px;
+}
+
+.submit-button {
+  display: block;
+  width: 100%;
+  border: transparent;
+  padding: 20px;
+  border-radius: 4px;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 44px;
+  margin-top: 40px;
+  background: teal;
+  font-weight: 900;
+
+  &:hover {
+    background: darken(teal, 5%);
+  }
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Validating examples</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+  </head>
+
+  <body>
+    <main class="main">
+      <header class="header">
+        <h1>Form Validation Tests</h1>
+      </header>
+
+      <form action="/" id="validate-me">
+
+        <div class="form-field">
+          <label class="form-label" for="nothing">
+            <div class="form-label-text form-input-title">
+              Text Input w/ no validation
+            </div>
+            <input class="form-input" id="nothing" name="nothing" type="text" placeholder="text" value="">
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="required">
+            <div class="form-label-text form-input-title">
+              Text Input Required
+            </div>
+            <input class="form-input" id="required" name="required" type="text" placeholder="I need to be filled out!" value="" required>
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="required">
+            <div class="form-label-text form-input-title">
+              Text Input With custom message
+            </div>
+            <input class="form-input" id="required" name="required" type="text" placeholder="I need to be filled out!" value="" required data-vd-message-required="This field needs to be filled out!">
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="email">
+            <div class="form-label-text form-input-title">
+              Email Input
+            </div>
+            <input class="form-input" id="email" name="email" type="email" placeholder="test@example.com" value="" required>
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="password">
+            <div class="form-label-text form-input-title">
+              Password
+            </div>
+            <input class="form-input" id="password" name="password" type="password" placeholder="text" value="" required>
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="password-match">
+            <div class="form-label-text form-input-title">
+              Password Match w/ above
+            </div>
+            <input class="form-input" id="password-match" name="password-match" type="password" placeholder="text" value="" required data-validates="equalTo[password]">
+          </label>
+        </div>
+
+        <div class="form-field form-inline required">
+          <label class="form-label" for="checkbox-requd">
+            <input class="form-input input-checkbox" id="checkbox-requd" type="checkbox" name="checkbox-requd" value="" required>
+            <div class="form-label-text form-input-title">
+              Checkbox
+            </div>
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <div class="form-label-text form-input-title">
+            Radio Group
+          </div>
+          <div class="form-inline">
+            <label class="form-label radio">
+              <input type="radio" class="form-input" name="radio-group-single" value="1" required>
+              <span class="form-label-text">One</span>
+            </label>
+            <label class="form-label radio">
+              <input type="radio" class="form-input" name="radio-group-single" value="2" required>
+              <span class="form-label-text">Two</span>
+            </label>
+            <label class="form-label radio">
+              <input type="radio" class="form-input" name="radio-group-single" value="3" required>
+              <span class="form-label-text">Three</span>
+            </label>
+            <label class="form-label radio">
+              <input type="radio" class="form-input" name="radio-group-single" value="4" required>
+              <span class="form-label-text">Four</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="select">
+            <div class="form-label-text form-input-title">
+              Select
+            </div>
+            <select name="select" id="select" class="form-input form-select">
+                <option value="1">One</option>
+                <option value="1">Two</option>
+                <option value="1">Three</option>
+                <option value="1">Four</option>
+                <option value="1">Five</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="required">
+            <div class="form-label-text form-input-title">
+              Number
+            </div>
+            <input class="form-input" id="required" name="required" type="number" placeholder="any number" value="" required>
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="required">
+            <div class="form-label-text form-input-title">
+              Number (with range)
+            </div>
+            <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 1200 please" min="3" max="1200" value="" required>
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="required">
+            <div class="form-label-text form-input-title">
+              Number (only max)
+            </div>
+            <input class="form-input" id="required" name="required" type="number" placeholder="under 100 please" max="100" value="" required>
+          </label>
+        </div>
+
+        <div class="form-field required">
+          <label class="form-label" for="required">
+            <div class="form-label-text form-input-title">
+              Number Input (with range and custom message)
+            </div>
+            <input class="form-input" id="required" name="required" type="number" placeholder="between 3 and 100 please" min="3" max="100" value="" required data-vd-message-number="min: {min} and max: {max}">
+          </label>
+        </div>
+
+        <button class="submit-button">Submit</button>
+      </form>
+    </main>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="validetta.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+.form-field { margin-bottom: 30px; }
+
+.form-label { display: block; }
+
+.form-input-title { color: teal; }
+
+.form-label-text {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.form-inline {
+  .form-label-text {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+.form-field.required {
+  .form-input-title {
+    &:after {
+      font-size: 12px;
+      color: firebrick;
+      content: "*";
+    }
+  }
+}
+
+.form-inline {
+  .form-label { display: block; }
+  .form-label-text { margin-bottom: 0; }
+}
+
+.form-input {
+  display: block;
+  font-size: 14px;
+  max-width: 100%;
+  padding-right: 10px;
+  padding-left: 10px;
+  color: #666;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+
+  &::placeholder {
+    color: lighten(#666, 40%);
+  }
+
+  &:focus {
+    border-color: darken(#ddd, 30%);
+    outline: none;
+  }
+
+  .form-field-invalid & { border-color: firebrick; }
+  .form-field-valid   & { border-color: olivedrab; }
+}
+
+.form-input {
+  &[type="text"],
+  &[type="email"],
+  &[type="number"],
+  &[type="password"],
+  &[type="tel"],
+  &.form-select {
+    padding-top: 9px;
+    padding-bottom: 10px;
+    width: 100%;
+  }
+}
+
+textarea.form-input { resize: vertical; }
+
+.form-select { height: 38px; }
+
+.input-checkbox { display: inline-block; }
+
+// put radio buttons & labels into a list
+.radio {
+  &,
+  .form-label-text,
+  .form-input {
+    display: inline-block;
+  }
+
+  .form-input { margin-right: 2px; }
+}
+
+.form-inline-message {
+  display: block;
+  font-size: 12px;
+  margin-top: 6px;
+
+  .form-field-invalid & { color: firebrick; }
+}

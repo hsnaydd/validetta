@@ -1,0 +1,31 @@
+{
+  "rules": {
+    "indent": [2, 2, {"SwitchCase": 1}],
+    "quotes": [2, "single", "avoid-escape"],
+    "linebreak-style": [2, "unix"],
+    "semi": [2, "always"],
+    "comma-dangle": [2, "always-multiline"],
+    "brace-style": [2, "1tbs", {"allowSingleLine": true}],
+    "space-in-parens": [2, "never"],
+    "space-infix-ops": [2, {"int32Hint": false}],
+    "eol-last": 2,
+    "linebreak-style": 2,
+    "no-const-assign": 2,
+    "prefer-const": 2,
+    "comma-style": [2, "last"],
+    "one-var": [2, "never"],
+    "eqeqeq": [2, "smart"],
+    "camelcase": [2, {"properties": "always"}],
+    "no-this-before-super": 2,
+    "prefer-spread": 2,
+    "constructor-super": 2,
+    "no-loop-func": 2,
+  },
+  "env": {
+    "es6": false,
+    "browser": true,
+    "jquery": true,
+    "node": false
+  },
+  "extends": "eslint:recommended"
+}
