@@ -274,21 +274,21 @@
       // Handle submit event
       $(this.form).submit(function(event) {
         // fields to be controlled transferred to global variable
-        FIELDS = event.currentTarget.getElementsByTagName('input');
+        FIELDS = this.querySelectorAll('.form-input');
         return self.init(event);
       });
       // real-time option control
       if (this.options.realTime === true) {
         // handle change event for form elements (without checkbox)
-        $(this.form).find('input').not('[type=checkbox]').on('change', function(event) {
+        $(this.form).find('.form-input').not('[type=checkbox]').on('change', function(event) {
           // field to be controlled transferred to global variable
           FIELDS = $(this);
           return self.init(event);
         });
         // handle click event for checkboxes
-        $(this.form).find('input[type=checkbox]').on('click', function(event) {
+        $(this.form).find('.form-input[type=checkbox]').on('click', function(event) {
           // fields to be controlled transferred to global variable
-          FIELDS = self.form.querySelectorAll('input[type=checkbox][name="' + this.name + '"]');
+          FIELDS = self.form.querySelectorAll('.form-input[type=checkbox][name="' + this.name + '"]');
           return self.init(event);
         });
       }
