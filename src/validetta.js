@@ -3,25 +3,25 @@
   /**
    *  Declare variables
    */
-  var Validetta = {}, // Plugin Class
-    FIELDS = {}, // Current fields/fields
-    // RegExp for input validate rules
-    RRULE = new RegExp( /^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|different|regExp|remote|callback)\[([\w\[\]]{1,25})\]/i ),
-    // RegExp for mail control method
-    // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
-    RMAIL = new RegExp( /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ ),
-    //RegExp for input number control method
-    RNUMBER = new RegExp( /^[\-\+]?(\d+|\d+\.?\d+)$/ ),
+  var Validetta = {}; // Plugin Class
+  var FIELDS = {}; // Current fields/fields
+  // RegExp for input validate rules
+  var RRULE = new RegExp(/^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|different|regExp|remote|callback)\[([\w\[\]]{1,25})\]/i);
+  // RegExp for mail control method
+  // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
+  var RMAIL = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
+  //RegExp for input number control method
+  var RNUMBER = new RegExp( /^[\-\+]?(\d+|\d+\.?\d+)$/ );
 
   /**
    *  Form validate error messages
    */
-  messages = {
-    required  : 'This field is required. Please be sure to check.',
-    email     : 'Your E-mail address appears to be invalid. Please be sure to check.',
-    number    : 'You can enter only numbers in this field.',
-    maxLength : 'Maximum {count} characters allowed!',
-    minLength : 'Minimum {count} characters allowed!',
+  var messages = {
+    required    : 'This field is required. Please be sure to check.',
+    email       : 'Your E-mail address appears to be invalid. Please be sure to check.',
+    number      : 'You can enter only numbers in this field.',
+    maxLength   : 'Maximum {count} characters allowed!',
+    minLength   : 'Minimum {count} characters allowed!',
     maxChecked  : 'Maximum {count} options allowed. Please be sure to check.',
     minChecked  : 'Please select minimum {count} options.',
     maxSelected : 'Maximum {count} selection allowed. Please be sure to check.',
@@ -29,12 +29,12 @@
     notEqual    : 'Fields do not match. Please be sure to check.',
     different   : 'Fields cannot be the same as each other',
     creditCard  : 'Invalid credit card number. Please be sure to check.'
-  },
+  };
 
   /**
    *  Plugin defaults
    */
-  defaults = {
+  var defaults = {
     showErrorMessages : true, // If you dont want to display error messages set this options false
     // Error Template : <span class="errorTemplateClass">Error messages will be here !</span>
     display : 'bubble', // Error display options, // bubble / inline
@@ -48,7 +48,7 @@
     onValid : function(){}, // This function to be called when the user submits the form and there is no error.
     onError : function(){}, // This function to be called when the user submits the form and there are some errors
     validators: {} // Custom validators stored in this variable
-  },
+  };
 
   /**
    * Clears the left and right spaces of given parameter.
@@ -58,9 +58,21 @@
    * @param {string} value
    * @return {mixed}
    */
-  trim = function( value ) {
-     return typeof value === 'string' ? value.replace( /^\s+|\s+$/g, '' ) : value;
-  },
+  var trim = function(value) {
+    return typeof value === 'string' ? value.replace(/^\s+|\s+$/g, '') : value;
+  };
+
+  var checkedLength = function(nodes) {
+    var i = 0;
+    var _length = 0;
+    while (i < nodes.length) {
+      if (nodes[i].checked) {
+        _length++;
+      }
+      i++;
+    }
+    return _length;
+  }
 
   /**
    * Validator
@@ -72,9 +84,9 @@
    * @param {object} tmp = this.tmp Tmp object for store current field and its value
    * @param {String} val : field value
    */
-  Validator = {
-    required : function( tmp, self ) {
-      switch ( tmp.el.type ) {
+  var Validator = {
+    required : function(tmp, self) {
+      switch (tmp.el.type) {
         case 'checkbox' : return tmp.el.checked || messages.required;
         case 'radio' : return this.radio.call( self, tmp.el ) || messages.required;
         case 'select-multiple' : return tmp.val !== null || messages.required;
@@ -82,99 +94,99 @@
       }
     },
     //  Mail check - it checks the value if it's a valid email address or not
-    email : function( tmp ) {
-      return RMAIL.test( tmp.val ) || messages.email;
+    email : function(tmp) {
+      return RMAIL.test(tmp.val) || messages.email;
     },
     // Number check
-    number : function( tmp ) {
-      return RNUMBER.test( tmp.val ) || messages.number;
+    number : function(tmp) {
+      return RNUMBER.test(tmp.val) || messages.number;
     },
     // Minimum length check
-    minLength : function( tmp ) {
+    minLength : function(tmp) {
       var _length = tmp.val.length;
-      return _length === 0 || _length >= tmp.arg || messages.minLength.replace( '{count}', tmp.arg );
+      return _length === 0 || _length >= tmp.arg || messages.minLength.replace('{count}', tmp.arg);
     },
     // Maximum lenght check
-    maxLength : function( tmp ) {
-      return tmp.val.length <= tmp.arg || messages.maxLength.replace( '{count}', tmp.arg );
+    maxLength : function(tmp) {
+      return tmp.val.length <= tmp.arg || messages.maxLength.replace('{count}', tmp.arg);
     },
     // equalTo check
-    equalTo : function( tmp, self ) {
-      return self.form.querySelector('input[name="'+ tmp.arg +'"]').value === tmp.val || messages.notEqual;
+    equalTo : function(tmp, self) {
+      return self.form[tmp.arg].value === tmp.val || messages.notEqual;
     },
-    different: function( tmp, self ) {
-      return self.form.querySelector('input[name="'+ tmp.arg +'"]').value !== tmp.val || messages.different;
+    different: function(tmp, self) {
+      return self.form[tmp.arg].value !== tmp.val || messages.different;
     },
     /**
      * Credit Card Control
      * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers
      */
-    creditCard : function( tmp ) {
-      if ( tmp.val === '' ) return true; // allow empty because empty check does by required metheod
+    creditCard : function(tmp) {
+      if (tmp.val === '') return true; // allow empty because empty check does by required metheod
       var reg, cardNumber, pos, digit, i, sub_total, sum = 0, strlen;
-      reg = new RegExp( /[^0-9]+/g );
-      cardNumber = tmp.val.replace( reg, '' );
+      reg = new RegExp(/[^0-9]+/g);
+      cardNumber = tmp.val.replace(reg, '');
       strlen = cardNumber.length;
-      if( strlen < 16 ) return messages.creditCard;
-      for( i=0 ; i < strlen ; i++ ) {
+      if(strlen < 16) return messages.creditCard;
+      for(i=0 ; i < strlen ; i++) {
         pos = strlen - i;
         digit = parseInt( cardNumber.substring( pos - 1, pos ), 10 );
-        if( i % 2 === 1 ) {
-          sub_total = digit * 2 ;
-          if( sub_total > 9 ) {
-            sub_total = 1 + ( sub_total - 10 );
+        if(i % 2 === 1) {
+          sub_total = digit * 2;
+          if(sub_total > 9) {
+            sub_total = 1 + (sub_total - 10);
           }
         } else {
-          sub_total = digit ;
+          sub_total = digit;
         }
-        sum += sub_total ;
+        sum += sub_total;
       }
-      if( sum > 0 && sum % 10 === 0 ) return true;
+      if(sum > 0 && sum % 10 === 0) return true;
       return messages.creditCard;
     },
     //Checkbox check
-    maxChecked : function( tmp, self ) {
-      var cont = $( self.form.querySelectorAll('input[type=checkbox][name="'+ tmp.el.name +'"]') );
+    maxChecked : function(tmp, self) {
+      var checkboxes = self.form.querySelectorAll('[name="' + tmp.el.name + '"]');
       // we dont want to open an error window for all checkboxes which have same "name"
-      if ( cont.index( tmp.el ) !== 0 ) return;
-      var count =  cont.filter(':checked').length;
+      if (checkboxes[0] !== tmp.el) return;
+      var count =  checkedLength(checkboxes);
       if ( count === 0 ) return;
-      return count <= tmp.arg || messages.maxChecked.replace( '{count}', tmp.arg );
+      return count <= tmp.arg || messages.maxChecked.replace('{count}', tmp.arg);
     },
-    minChecked : function( tmp, self ) {
-      var cont = $( self.form.querySelectorAll('input[type=checkbox][name="'+ tmp.el.name +'"]') );
-      if ( cont.index( tmp.el ) !== 0 ) return; // same as above
-      var count =  cont.filter(':checked').length;
-      return count >= tmp.arg || messages.minChecked.replace( '{count}', tmp.arg );
+    minChecked : function(tmp, self) {
+      var checkboxes = self.form.querySelectorAll('[name="' + tmp.el.name + '"]');
+      if (checkboxes[0] !== tmp.el) return; // same as above
+      var count = checkedLength(checkboxes);
+      return count >= tmp.arg || messages.minChecked.replace('{count}', tmp.arg);
     },
     //Selectbox check
-    maxSelected : function( tmp ) {
-      if( tmp.val === null ) return;
-      return tmp.val.length <= tmp.arg || messages.maxSelected.replace( '{count}', tmp.arg );
+    maxSelected : function(tmp) {
+      if(tmp.val === null) return;
+      return tmp.val.length <= tmp.arg || messages.maxSelected.replace('{count}', tmp.arg);
     },
-    minSelected : function( tmp ) {
-      return ( tmp.val !== null && tmp.val.length >= tmp.arg ) || messages.minSelected.replace( '{count}', tmp.arg );
+    minSelected : function(tmp) {
+      return (tmp.val !== null && tmp.val.length >= tmp.arg) || messages.minSelected.replace('{count}', tmp.arg);
     },
     // Radio
-    radio : function( el ) {
-      var count = this.form.querySelectorAll('input[type=radio][name="'+ el.name +'"]:checked').length;
+    radio : function(el) {
+      var count = this.form.querySelectorAll('[name="'+ el.name +'"]:checked').length;
       return count === 1;
     },
     // Custom reg check
-    regExp : function( tmp, self ) {
-      var _arg = self.options.validators.regExp[ tmp.arg ],
-        _reg = new RegExp( _arg.pattern );
-      return _reg.test( tmp.val ) || _arg.errorMessage;
+    regExp : function(tmp, self) {
+      var _arg = self.options.validators.regExp[tmp.arg],
+        _reg = new RegExp(_arg.pattern);
+      return _reg.test(tmp.val) || _arg.errorMessage;
     },
     // Remote
-    remote : function( tmp ) {
+    remote : function(tmp) {
       tmp.remote = tmp.arg;
       return;
     },
     // Callback
-    callback : function( tmp, self ) {
-      var _cb = self.options.validators.callback[ tmp.arg ];
-      return _cb.callback( tmp.el, tmp.val ) || _cb.errorMessage;
+    callback : function(tmp, self) {
+      var _cb = self.options.validators.callback[tmp.arg];
+      return _cb.callback(tmp.el, tmp.val) || _cb.errorMessage;
     }
   };
 
@@ -186,7 +198,7 @@
    * @param {object} options : User-specified settings
    * @return {method} events
    */
-  Validetta = function( form, options ) {
+  Validetta = function(form, options) {
     /**
      *  Public  Properties
      *  @property {mixed} handler It is used to stop or resume submit event handler
