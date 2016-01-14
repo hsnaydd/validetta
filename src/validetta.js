@@ -72,6 +72,28 @@
       i++;
     }
     return _length;
+  };
+
+  /**
+   * Merge two object
+   *
+   * @param  {Object} obj1
+   * @param  {Object} obj2
+   * @return {Object} merged object
+   */
+  var mergeObject = function (obj1, obj2) {
+    var obj3 = {}, propertyName;
+    for (propertyName in obj1) {
+      if (obj1.hasOwnProperty(propertyName)) {
+        obj3[propertyName] = obj1[propertyName];
+      }
+    }
+    for (propertyName in obj2) {
+      if (obj2.hasOwnProperty(propertyName)) {
+        obj3[propertyName] = obj2[propertyName];
+      }
+    }
+    return obj3;
   }
 
   /**
@@ -81,7 +103,7 @@
    * Output error windows text will be : 'Please select minimum 2 options.'
    *
    * @namespace
-   * @param {object} tmp = this.tmp Tmp object for store current field and its value
+   * @param {Object} tmp = this.tmp Tmp object for store current field and its value
    * @param {String} val : field value
    */
   var Validator = {
@@ -207,7 +229,7 @@
      *  @property {object} form Property is stored in <form> element
      */
     this.handler = false;
-    this.options = $.extend( true, {}, defaults, options );
+    this.options = mergeObject(defaults, options);
     this.form = form;
     this.xhr = {};
     this.events();
@@ -361,7 +383,7 @@
 
       data[ fieldName ] = this.tmp.val; // Set data
       // exends ajax options
-      ajaxOptions = $.extend( true, {}, {
+      ajaxOptions = mergeObject({
         data: data
       }, this.options.validators.remote[ this.tmp.remote ] || {} );
 
@@ -572,10 +594,10 @@
    */
   $.fn.validetta = function( options, _messages ) {
     if( $.validettaLanguage ) {
-      messages = $.extend( true, {}, messages, $.validettaLanguage.messages );
+      messages = mergeObject(messages, $.validettaLanguage.messages);
     }
     if( typeof _messages !== 'undefined' ) {
-      messages = $.extend( true, {}, messages, _messages );
+      messages = mergeObject(messages, _messages);
     }
     return this.each(function() {
       new Validetta( this, options );
