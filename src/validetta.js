@@ -62,16 +62,30 @@
     return typeof value === 'string' ? value.replace(/^\s+|\s+$/g, '') : value;
   };
 
+  /**
+   * It finds the number of checked checkbox from the specified nodelist
+   * @param  {NodeList} nodes - Checkboxes
+   * @return {Number} Number of the checked checbox
+   */
   var checkedLength = function(nodes) {
-    var i = 0;
     var _length = 0;
-    while (i < nodes.length) {
-      if (nodes[i].checked) {
-        _length++;
-      }
-      i++;
+    for (var i = 0; i < nodes.length; i++){
+      if (nodes[i].checked) _length++;
     }
     return _length;
+  };
+
+  /**
+   * It registers the specified listener on nodelist elements
+   *
+   * @param {NodeList} targets - the target elements to be registered listener
+   * @param {String} ev - Event type
+   * @param {Function} cb - Listener function
+   */
+  var addListener = function(targets, ev, fn){
+    for (var i = 0; i < targets.length; i++) {
+      targets[i].addEventListener(ev, fn);
+    }
   };
 
   /**
@@ -247,30 +261,32 @@
     events : function(){
       var self = this; // stored this
       // Handle submit event
-      $( this.form ).submit( function( e ) {
+      this.form.addEventListener('submit', function(e) {
         // fields to be controlled transferred to global variable
         FIELDS = this.querySelectorAll('[data-validetta]');
-        return self.init( e );
+        return self.init(e);
       });
       // real-time option control
-      if( this.options.realTime === true ) {
+      if(this.options.realTime === true) {
         // handle change event for form elements (without checkbox)
-        $( this.form ).find('[data-validetta]').not('[type=checkbox]').on( 'change', function( e ) {
+        addListener(this.form.querySelectorAll('[data-validetta]:not([type=checkbox])'), 'change', function(e){
           // field to be controlled transferred to global variable
-          FIELDS = $( this );
-          return self.init( e );
+          FIELDS = [this]
+          return self.init(e);
         });
-        // handle click event for checkboxes
-        $( this.form ).find('[data-validetta][type=checkbox]').on( 'click', function( e ) {
+
+        addListener(this.form.querySelectorAll('[data-validetta][type=checkbox]'), 'click', function(e){
           // fields to be controlled transferred to global variable
           FIELDS = self.form.querySelectorAll('[data-validetta][type=checkbox][name="'+ this.name +'"]');
-          return self.init( e );
+          return self.init(e);
         });
       }
       // handle <form> reset button to clear error messages
-      $( this.form ).on( 'reset', function() {
-        $( self.form.querySelectorAll( '.'+ self.options.errorClass +', .'+ self.options.validClass ) )
-          .removeClass( self.options.errorClass +' '+ self.options.validClass );
+      this.form.addEventListener('reset', function() {
+        var dirtyFields = self.form.querySelectorAll('.'+ self.options.errorClass +', .'+ self.options.validClass);
+        for (var i = 0; i < dirtyFields.length; i++) {
+          dirtyFields[i].classList.remove(self.options.errorClass, self.options.validClass);
+        }
         return self.reset();
       });
     },
@@ -288,9 +304,9 @@
       this.checkFields( e );
       if( e.type !== 'submit' ) return; // if event type is not submit, break
       // This is for when running remote request, return false and wait request response
-      else if ( this.handler === 'pending' ) return false;
+      else if ( this.handler === 'pending' ) return e.preventDefault();
       // if event type is submit and handler is true, break submit and call onError() function
-      else if( this.handler === true ) { this.options.onError.call( this, e ); return false; }
+      else if( this.handler === true ) { this.options.onError.call( this, e ); return e.preventDefault(); }
       else return this.options.onValid.call( this, e ); // if form is valid call onValid() function
     },
 
