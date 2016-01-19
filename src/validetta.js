@@ -108,7 +108,28 @@
       }
     }
     return obj3;
-  }
+  };
+
+  /**
+   * Get the value of the element
+   *
+   * @param  {Node} el - Element
+   * @return {String|Array} Element value
+   */
+  var getElementValue = function(el) {
+    var val;
+    if(el.type === 'select-multiple') {
+      val = [];
+      for(var i = 0; i < el.length; i++){
+        if (el.options[i].selected) {
+          val.push(el.options[i].value);
+        }
+      }
+    } else {
+      val = el.value;
+    }
+    return val;
+  };
 
   /**
    * Validator
@@ -328,7 +349,7 @@
         if ( FIELDS[ i ].disabled ) continue;
         var el = FIELDS[ i ], //current field
           errors = '', //current field's errors
-          val = trim ( $( el ).val() ), //current field's value
+          val = trim ( getElementValue(el) ), //current field's value
           methods = el.getAttribute('data-validetta').split(','), //current field's control methods
           state; // Validation state
         // Create tmp
