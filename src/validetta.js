@@ -349,7 +349,7 @@
         if ( FIELDS[ i ].disabled ) continue;
         var el = FIELDS[ i ], //current field
           errors = '', //current field's errors
-          val = trim ( getElementValue(el) ), //current field's value
+          val = trim(getElementValue(el)), //current field's value
           methods = el.getAttribute('data-validetta').split(','), //current field's control methods
           state; // Validation state
         // Create tmp
@@ -383,21 +383,21 @@
           }
         }
         // Check the errors
-        if( errors !== '' ) {
+        if(errors !== '') {
           invalidFields.push({
             field: el,
             errors: errors
           });
           // if parent element has valid class, remove and add error class
-          this.addErrorClass( this.tmp.parent );
+          this.addErrorClass(this.tmp.parent);
           // open error window
-          this.window.open.call( this , el, errors );
+          this.window.open.call(this , el, errors);
         // Check remote validation
-        } else if ( typeof this.tmp.remote !== 'undefined' ) {
-          this.checkRemote( el, e );
+        } else if (typeof this.tmp.remote !== 'undefined') {
+          this.checkRemote(el, e);
         } else { // Nice, there are no error
-          if( typeof state !== 'undefined' ) this.addValidClass( this.tmp.parent );
-          else $( this.tmp.parent ).removeClass( this.options.errorClass +' '+ this.options.validClass );
+          if( typeof state !== 'undefined' ) this.addValidClass(this.tmp.parent);
+          else this.tmp.parent.classList.remove(this.options.errorClass, this.options.validClass );
           state = undefined; // Reset state variable
         }
       }
@@ -472,7 +472,7 @@
 
       var self = this;
 
-      $( this.tmp.parent ).addClass('validetta-pending');
+      this.tmp.parent.classList.add('validetta-pending');
 
       // cache xhr
       this.xhr[ fieldName ] = $.ajax( ajaxOptions )
@@ -499,7 +499,7 @@
             throw new Error( _msg );
           }
         } )
-        .always( function( result ) { $( self.tmp.parent ).removeClass('validetta-pending'); } );
+        .always( function( result ) { self.tmp.parent.classList.remove('validetta-pending'); } );
 
       this.handler = 'pending';
     },
@@ -595,7 +595,8 @@
      * @param {object} el element
      */
     addErrorClass : function( el ) {
-      $( el ).removeClass( this.options.validClass ).addClass( this.options.errorClass );
+      el.classList.remove(this.options.validClass);
+      el.classList.add(this.options.errorClass);
     },
 
     /**
@@ -605,7 +606,8 @@
      * @param {object} el element
      */
     addValidClass : function( el ) {
-      $( el ).removeClass( this.options.errorClass ).addClass( this.options.validClass );
+      el.classList.remove(this.options.errorClass);
+      el.classList.add(this.options.validClass);
     },
 
     /**
