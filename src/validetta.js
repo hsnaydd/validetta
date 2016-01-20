@@ -424,8 +424,8 @@
         data: data
       }, this.options.validators.remote[ this.tmp.remote ] || {} );
 
-      // use $.param() function for generate specific cache key
-      var cacheKey = $.param( ajaxOptions );
+      // generate specific cache key
+      var cacheKey = fieldName+':'+this.tmp.val;
 
       // Check cache
       var cache = this.remoteCache[ cacheKey ];
