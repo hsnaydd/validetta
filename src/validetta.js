@@ -451,7 +451,7 @@
       } else {
         // Abort if previous ajax request still running
         var _xhr = this.xhr[ fieldName ];
-        if ( typeof _xhr !== 'undefined' && _xhr.state() === 'pending' ) _xhr.abort();
+        if ( typeof _xhr !== 'undefined' && _xhr.readyState !== 4 ) _xhr.abort();
         // Start caching
         cache = this.remoteCache[ cacheKey ] = { state : 'pending', event : e.type };
         // make a remote request
@@ -468,38 +468,61 @@
      * @param  {string} fieldName Field name for make specific caching
      * @param  {object} e Event object
      */
-    remoteRequest : function( ajaxOptions, cache, el, fieldName, e ) {
+    remoteRequest : function(ajaxOptions, cache, el, fieldName, e) {
 
       var self = this;
 
       this.tmp.parent.classList.add('validetta-pending');
 
-      // cache xhr
-      this.xhr[ fieldName ] = $.ajax( ajaxOptions )
-        .done( function( result ) {
+      var xhr = new XMLHttpRequest();
+      xhr.open(ajaxOptions.type, ajaxOptions.url, true);
+
+      if (ajaxOptions.type.toUpperCase() === 'POST') {
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+      }
+
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          // Success!
+          var result = xhr.responseText;
           if( typeof result !== 'object' ) result = JSON.parse( result );
-          cache.state = 'resolved';
-          cache.result = result;
-          if ( cache.event === 'submit' ) {
-            self.handler = false;
-            $( self.form ).trigger('submit');
-          }
-          else if( result.valid === false ) {
-            self.addErrorClass( self.tmp.parent );
-            self.window.open.call( self, el, result.message );
-          } else {
-            self.addValidClass( self.tmp.parent );
-          }
-        } )
-        .fail( function( jqXHR, textStatus ) {
-          if ( textStatus !== 'abort' ) { // Dont throw error if request is aborted
-            var _msg = 'Ajax request failed for field ('+ fieldName +') : '+ jqXHR.status +' '+ jqXHR.statusText;
+            cache.state = 'resolved';
+            cache.result = result;
+            if ( cache.event === 'submit' ) {
+              self.handler = false;
+              $( self.form ).trigger('submit');
+            }
+            else if( result.valid === false ) {
+              self.addErrorClass( self.tmp.parent );
+              self.window.open.call( self, el, result.message );
+            } else {
+              self.addValidClass( self.tmp.parent );
+            }
+
+        } else {
+          // We reached our target server, but it returned an error
+          if ( xhr.status !== 0 ) { // Dont throw error if request is aborted
+            var _msg = 'Ajax request failed for field ('+ fieldName +') : '+ xhr.status +' '+ xhr.statusText;
             cache.state = 'rejected';
             cache.result = { valid : false, message : _msg };
             throw new Error( _msg );
           }
-        } )
-        .always( function( result ) { self.tmp.parent.classList.remove('validetta-pending'); } );
+
+        }
+        self.tmp.parent.classList.remove('validetta-pending');
+      };
+
+      xhr.onerror = function(e) {
+        // There was a connection error of some sort
+        var _msg = 'There was a connection error of some sort';
+        cache.state = 'rejected';
+        cache.result = { valid : false, message : _msg };
+        throw new Error(_msg);
+      };
+
+      // cache xhr
+      this.xhr[ fieldName ] = xhr;
+      this.xhr[ fieldName ].send(fieldName+'='+ajaxOptions.data[fieldName]);
 
       this.handler = 'pending';
     },
