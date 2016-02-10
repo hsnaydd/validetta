@@ -132,6 +132,22 @@
   };
 
   /**
+   * Trigger Custom Event
+   * @param  {Node} elm - DOM Element
+   * @param  {String} type - Event type (i.e. 'click')
+   * @param  {Boolen} bubbles - Whether the event will bubble up through the DOM or not
+   */
+  var triggerEvent = function(elm, type, bubbles) {
+    // Creating the event
+    // All events created as cancelable.
+    var event = new Event(type, {
+      'bubbles': !!bubbles,
+      'cancelable': true
+    });
+    elm.dispatchEvent(event);
+  };
+
+  /**
    * Validator
    * {count} which used below is the specified maximum or minimum value
    * e.g if method is minLength and  rule is 2 ( minLength[2] )
@@ -490,7 +506,7 @@
             cache.result = result;
             if ( cache.event === 'submit' ) {
               self.handler = false;
-              $( self.form ).trigger('submit');
+              triggerEvent(self.form, 'submit');
             }
             else if( result.valid === false ) {
               self.addErrorClass( self.tmp.parent );
