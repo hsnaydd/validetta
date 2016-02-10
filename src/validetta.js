@@ -1,4 +1,4 @@
-;(function( $ ) {
+;(function() {
   "use strict";
   /**
    *  Declare variables
@@ -271,7 +271,10 @@
    * @param {object} options : User-specified settings
    * @return {method} events
    */
-  Validetta = function(form, options) {
+  Validetta = function(form, options, _messages) {
+    if( typeof _messages !== 'undefined' ) {
+      messages = mergeObject(messages, _messages);
+    }
     /**
      *  Public  Properties
      *  @property {mixed} handler It is used to stop or resume submit event handler
@@ -665,22 +668,10 @@
       return el;
     }
   };
+  if(typeof window.VALIDETTA_LANGUAGE !== 'undefined') {
+    messages = mergeObject(messages, VALIDETTA_LANGUAGE);
+  }
 
-  /**
-   * Plugin Validetta
-   *
-   * @param {object} options : User-specified settings
-   * @return {object} this
-   */
-  $.fn.validetta = function( options, _messages ) {
-    if( $.validettaLanguage ) {
-      messages = mergeObject(messages, $.validettaLanguage.messages);
-    }
-    if( typeof _messages !== 'undefined' ) {
-      messages = mergeObject(messages, _messages);
-    }
-    return this.each(function() {
-      new Validetta( this, options );
-    });
-  };
-})( jQuery );
+  window.Validetta = Validetta;
+
+})();
