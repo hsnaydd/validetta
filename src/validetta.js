@@ -572,10 +572,12 @@
         errorObject.className = this.options.errorTemplateClass + ' '+this.options.errorTemplateClass + '--' + this.options.bubblePosition;
         // if error display is bubble, calculate to positions
         if( this.options.display === 'bubble' ) {
-          var pos, W = 0, H = 0;
-          // !! Here, JQuery functions are using to support the IE8
-          pos = $( el ).position();
-
+          var W = 0;
+          var H = 0;
+          var pos = {
+            left: el.offsetLeft,
+            top: el.offsetTop
+          };
           if ( this.options.bubblePosition === 'bottom' ){
             H = el.offsetHeight;
           }
