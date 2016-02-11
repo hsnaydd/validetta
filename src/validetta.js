@@ -139,12 +139,20 @@
    */
   var triggerEvent = function(elm, type, bubbles) {
     // Creating the event
-    // All events created as cancelable.
-    var event = new Event(type, {
-      'bubbles': !!bubbles,
-      'cancelable': true
-    });
-    elm.dispatchEvent(event);
+    var event;
+    if (doc.createEvent) {
+      // dispatch for firefox + others
+      // All events created as cancelable.
+      event = new Event(type, {
+        'bubbles': !!bubbles,
+        'cancelable': true
+      });
+      elm.dispatchEvent(event);
+    } else {
+      // dispatch for IE
+      event = document.createEventObject();
+      elm.fireEvent('on' + type, event);
+    }
   };
 
   /**
@@ -311,7 +319,7 @@
         // handle change event for form elements (without checkbox)
         addListener(this.form.querySelectorAll('[data-validetta]:not([type=checkbox])'), 'change', function(e){
           // field to be controlled transferred to global variable
-          FIELDS = [this]
+          FIELDS = [this];
           return self.init(e);
         });
 
