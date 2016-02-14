@@ -139,20 +139,10 @@
    */
   var triggerEvent = function(elm, type, bubbles) {
     // Creating the event
-    var event;
-    if (doc.createEvent) {
-      // dispatch for firefox + others
-      // All events created as cancelable.
-      event = new Event(type, {
-        'bubbles': !!bubbles,
-        'cancelable': true
-      });
-      elm.dispatchEvent(event);
-    } else {
-      // dispatch for IE
-      event = document.createEventObject();
-      elm.fireEvent('on' + type, event);
-    }
+    // All events created as cancelable.
+    var event = document.createEvent("HTMLEvents");
+    event.initEvent(type, !!bubbles, true ); // event type,bubbling,cancelable
+    elm.dispatchEvent(event);
   };
 
   /**
