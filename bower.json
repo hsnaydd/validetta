@@ -41,8 +41,5 @@
     "package.json",
     "validetta.jquery.json",
     "bower.json"
-  ],
-  "devDependencies": {
-    "jquery": ">= 1.7.0"
-  }
+  ]
 }

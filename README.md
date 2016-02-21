@@ -1,6 +1,6 @@
 # Validetta
 
-Validetta is a tiny jQuery plugin which you can do client-side validation of your forms. It aims to decrease your burden with easy usage and flexible structure.
+Validetta is a tiny JavaScript library which you can do client-side validation of your forms. It aims to decrease your burden with easy usage and flexible structure.
 
 [View Demos](http://lab.hasanaydogdu.com/validetta/#examples)
 
@@ -18,11 +18,11 @@ Validetta is a tiny jQuery plugin which you can do client-side validation of you
 
 ## Browser support
 
-The project is tested in Chrome and Firefox. It should work in the current stable releases of Chrome, Firefox, Safari as well as IE8 and up.
+The project is tested in Chrome and Firefox. It should work in the current stable releases of Chrome, Firefox, Safari as well as IE10 and up.
 
 ## Dependencies
 
-jQuery  v1.7 or above.
+[classList](https://github.com/components/classList.js) (for ie9 support)
 
 ## Documentation
 [Official Doc](http://lab.hasanaydogdu.com/validetta/#documentation)

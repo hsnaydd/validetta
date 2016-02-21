@@ -1,6 +1,6 @@
 {
   "name": "validetta",
-  "description": "A tiny jquery plugin for validate your forms",
+  "description": "A tiny JavaScript library for validate your forms",
   "version": "1.0.1",
   "homepage": "http://lab.hasanaydogdu.com/validetta/",
   "author": {
