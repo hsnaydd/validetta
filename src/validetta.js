@@ -190,7 +190,7 @@
           case 'checkbox' : return tmp.el.checked || messages.required;
           case 'radio' : return this.radio.call( self, tmp.el ) || messages.required;
           case 'select-multiple' : return tmp.val !== null || messages.required;
-          default : return tmp.val !== '' || messages.required;
+          default : return !!tmp.val || messages.required;
         }
       },
       //  Mail check - it checks the value if it's a valid email address or not
