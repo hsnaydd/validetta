@@ -146,122 +146,6 @@
   };
 
   /**
-   * Validator
-   * {count} which used below is the specified maximum or minimum value
-   * e.g if method is minLength and  rule is 2 ( minLength[2] )
-   * Output error windows text will be : 'Please select minimum 2 options.'
-   *
-   * @namespace
-   * @param {Object} tmp = this.tmp Tmp object for store current field and its value
-   * @param {String} val : field value
-   */
-  var Validator = {
-    required : function(tmp, self) {
-      switch (tmp.el.type) {
-        case 'checkbox' : return tmp.el.checked || messages.required;
-        case 'radio' : return this.radio.call( self, tmp.el ) || messages.required;
-        case 'select-multiple' : return tmp.val !== null || messages.required;
-        default : return tmp.val !== '' || messages.required;
-      }
-    },
-    //  Mail check - it checks the value if it's a valid email address or not
-    email : function(tmp) {
-      return RMAIL.test(tmp.val) || messages.email;
-    },
-    // Number check
-    number : function(tmp) {
-      return RNUMBER.test(tmp.val) || messages.number;
-    },
-    // Minimum length check
-    minLength : function(tmp) {
-      var _length = tmp.val.length;
-      return _length === 0 || _length >= tmp.arg || messages.minLength.replace('{count}', tmp.arg);
-    },
-    // Maximum lenght check
-    maxLength : function(tmp) {
-      return tmp.val.length <= tmp.arg || messages.maxLength.replace('{count}', tmp.arg);
-    },
-    // equalTo check
-    equalTo : function(tmp, self) {
-      return self.form[tmp.arg].value === tmp.val || messages.notEqual;
-    },
-    different: function(tmp, self) {
-      return self.form[tmp.arg].value !== tmp.val || messages.different;
-    },
-    /**
-     * Credit Card Control
-     * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers
-     */
-    creditCard : function(tmp) {
-      if (tmp.val === '') return true; // allow empty because empty check does by required metheod
-      var reg, cardNumber, pos, digit, i, sub_total, sum = 0, strlen;
-      reg = new RegExp(/[^0-9]+/g);
-      cardNumber = tmp.val.replace(reg, '');
-      strlen = cardNumber.length;
-      if(strlen < 16) return messages.creditCard;
-      for(i=0 ; i < strlen ; i++) {
-        pos = strlen - i;
-        digit = parseInt( cardNumber.substring( pos - 1, pos ), 10 );
-        if(i % 2 === 1) {
-          sub_total = digit * 2;
-          if(sub_total > 9) {
-            sub_total = 1 + (sub_total - 10);
-          }
-        } else {
-          sub_total = digit;
-        }
-        sum += sub_total;
-      }
-      if(sum > 0 && sum % 10 === 0) return true;
-      return messages.creditCard;
-    },
-    //Checkbox check
-    maxChecked : function(tmp, self) {
-      var checkboxes = self.form.querySelectorAll('[name="' + tmp.el.name + '"]');
-      // we dont want to open an error window for all checkboxes which have same "name"
-      if (checkboxes[0] !== tmp.el) return;
-      var count =  checkedLength(checkboxes);
-      if ( count === 0 ) return;
-      return count <= tmp.arg || messages.maxChecked.replace('{count}', tmp.arg);
-    },
-    minChecked : function(tmp, self) {
-      var checkboxes = self.form.querySelectorAll('[name="' + tmp.el.name + '"]');
-      if (checkboxes[0] !== tmp.el) return; // same as above
-      var count = checkedLength(checkboxes);
-      return count >= tmp.arg || messages.minChecked.replace('{count}', tmp.arg);
-    },
-    //Selectbox check
-    maxSelected : function(tmp) {
-      if(tmp.val === null) return;
-      return tmp.val.length <= tmp.arg || messages.maxSelected.replace('{count}', tmp.arg);
-    },
-    minSelected : function(tmp) {
-      return (tmp.val !== null && tmp.val.length >= tmp.arg) || messages.minSelected.replace('{count}', tmp.arg);
-    },
-    // Radio
-    radio : function(el) {
-      var count = this.form.querySelectorAll('[name="'+ el.name +'"]:checked').length;
-      return count === 1;
-    },
-    // Custom reg check
-    regExp : function(tmp, self) {
-      var _arg = self.options.validators.regExp[tmp.arg],
-        _reg = new RegExp(_arg.pattern);
-      return _reg.test(tmp.val) || _arg.errorMessage;
-    },
-    // Remote
-    remote : function(tmp) {
-      tmp.remote = tmp.arg;
-      return;
-    },
-    // Callback
-    callback : function(tmp, self) {
-      var _cb = self.options.validators.callback[tmp.arg];
-      return _cb.callback(tmp.el, tmp.val) || _cb.errorMessage;
-    }
-  };
-
-  /**
    * Plugin Class
    *
    * @constructor
@@ -290,6 +174,121 @@
   Validetta.prototype = {
 
     constructor : Validetta,
+
+    /**
+     * Validator
+     * {count} which used below is the specified maximum or minimum value
+     * e.g if method is minLength and  rule is 2 ( minLength[2] )
+     * Output error windows text will be : 'Please select minimum 2 options.'
+     *
+     * @param {Object} tmp = this.tmp Tmp object for store current field and its value
+     * @param {String} val : field value
+     */
+    validator: {
+      required : function(tmp, self) {
+        switch (tmp.el.type) {
+          case 'checkbox' : return tmp.el.checked || messages.required;
+          case 'radio' : return this.radio.call( self, tmp.el ) || messages.required;
+          case 'select-multiple' : return tmp.val !== null || messages.required;
+          default : return tmp.val !== '' || messages.required;
+        }
+      },
+      //  Mail check - it checks the value if it's a valid email address or not
+      email : function(tmp) {
+        return RMAIL.test(tmp.val) || messages.email;
+      },
+      // Number check
+      number : function(tmp) {
+        return RNUMBER.test(tmp.val) || messages.number;
+      },
+      // Minimum length check
+      minLength : function(tmp) {
+        var _length = tmp.val.length;
+        return _length === 0 || _length >= tmp.arg || messages.minLength.replace('{count}', tmp.arg);
+      },
+      // Maximum lenght check
+      maxLength : function(tmp) {
+        return tmp.val.length <= tmp.arg || messages.maxLength.replace('{count}', tmp.arg);
+      },
+      // equalTo check
+      equalTo : function(tmp, self) {
+        return self.form[tmp.arg].value === tmp.val || messages.notEqual;
+      },
+      different: function(tmp, self) {
+        return self.form[tmp.arg].value !== tmp.val || messages.different;
+      },
+      /**
+       * Credit Card Control
+       * @from : http://af-design.com/blog/2010/08/18/validating-credit-card-numbers
+       */
+      creditCard : function(tmp) {
+        if (tmp.val === '') return true; // allow empty because empty check does by required metheod
+        var reg, cardNumber, pos, digit, i, sub_total, sum = 0, strlen;
+        reg = new RegExp(/[^0-9]+/g);
+        cardNumber = tmp.val.replace(reg, '');
+        strlen = cardNumber.length;
+        if(strlen < 16) return messages.creditCard;
+        for(i=0 ; i < strlen ; i++) {
+          pos = strlen - i;
+          digit = parseInt( cardNumber.substring( pos - 1, pos ), 10 );
+          if(i % 2 === 1) {
+            sub_total = digit * 2;
+            if(sub_total > 9) {
+              sub_total = 1 + (sub_total - 10);
+            }
+          } else {
+            sub_total = digit;
+          }
+          sum += sub_total;
+        }
+        if(sum > 0 && sum % 10 === 0) return true;
+        return messages.creditCard;
+      },
+      //Checkbox check
+      maxChecked : function(tmp, self) {
+        var checkboxes = self.form.querySelectorAll('[name="' + tmp.el.name + '"]');
+        // we dont want to open an error window for all checkboxes which have same "name"
+        if (checkboxes[0] !== tmp.el) return;
+        var count =  checkedLength(checkboxes);
+        if ( count === 0 ) return;
+        return count <= tmp.arg || messages.maxChecked.replace('{count}', tmp.arg);
+      },
+      minChecked : function(tmp, self) {
+        var checkboxes = self.form.querySelectorAll('[name="' + tmp.el.name + '"]');
+        if (checkboxes[0] !== tmp.el) return; // same as above
+        var count = checkedLength(checkboxes);
+        return count >= tmp.arg || messages.minChecked.replace('{count}', tmp.arg);
+      },
+      //Selectbox check
+      maxSelected : function(tmp) {
+        if(tmp.val === null) return;
+        return tmp.val.length <= tmp.arg || messages.maxSelected.replace('{count}', tmp.arg);
+      },
+      minSelected : function(tmp) {
+        return (tmp.val !== null && tmp.val.length >= tmp.arg) || messages.minSelected.replace('{count}', tmp.arg);
+      },
+      // Radio
+      radio : function(el) {
+        var count = this.form.querySelectorAll('[name="'+ el.name +'"]:checked').length;
+        return count === 1;
+      },
+      // Custom reg check
+      regExp : function(tmp, self) {
+        var _arg = self.options.validators.regExp[tmp.arg],
+          _reg = new RegExp(_arg.pattern);
+        return _reg.test(tmp.val) || _arg.errorMessage;
+      },
+      // Remote
+      remote : function(tmp) {
+        tmp.remote = tmp.arg;
+        return;
+      },
+      // Callback
+      callback : function(tmp, self) {
+        var _cb = self.options.validators.callback[tmp.arg];
+        return _cb.callback(tmp.el, tmp.val) || _cb.errorMessage;
+      }
+    },
 
     /**
      * This is the method of handling events
@@ -374,8 +373,7 @@
         // store el and val variables in tmp
         this.tmp = { el : el, val : val, parent : this.parents( el ) };
         // Start to check fields
-        // Validator : Fields Control Object
-        for ( var j = 0, _lengthMethods = methods.length; j < _lengthMethods; j++ ) {
+        for (var j = 0, _lengthMethods = methods.length; j < _lengthMethods; j++) {
           // Check Rule
           var rule = methods[ j ].match( RRULE ),
             method;
@@ -388,10 +386,10 @@
           } else { method = methods[ j ]; }
           // prevent empty validation if method is not required
           if ( val === '' && method !== 'required' && method !== 'equalTo' ) continue;
-          // Is there a methot in Validator ?
-          if( Validator.hasOwnProperty( method ) ) {
+          // Is there a methot in validators ?
+          if(self.validator.hasOwnProperty(method)) {
             // Validator returns error message if method invalid
-            state = Validator[ method ]( self.tmp, self );
+            state = self.validator[method](self.tmp, self);
             if ( typeof state !== 'undefined' && state !== true ) {
               var _dataMsg = el.getAttribute( 'data-vd-message-' + method );
               if ( _dataMsg !== null ) state = _dataMsg;
