@@ -42,8 +42,8 @@
     errorClass : 'validetta-error', // Class that would be added on every failing validation field
     validClass : 'validetta-valid', // Same for valid validation
     bubblePosition: 'right', // Bubble position // right / bottom
-    bubbleGapLeft: 15, // Right gap of bubble
-    bubbleGapTop: 0, // Top gap of bubble
+    bubbleGapX: 15, // Gap the x-axis
+    bubbleGapY: 0, //  Gap the y-axis
     realTime : false, // To enable real-time form control, set this option true.
     onValid : function(){}, // This function to be called when the user submits the form and there is no error.
     onError : function(){}, // This function to be called when the user submits the form and there are some errors
@@ -570,25 +570,27 @@
         var errorObject = document.createElement('span');
         errorObject.className = this.options.errorTemplateClass + ' '+this.options.errorTemplateClass + '--' + this.options.bubblePosition;
         // if error display is bubble, calculate to positions
-        if( this.options.display === 'bubble' ) {
-          var W = 0;
-          var H = 0;
-          var pos = {
-            left: el.offsetLeft,
-            top: el.offsetTop
-          };
-          if ( this.options.bubblePosition === 'bottom' ){
-            H = el.offsetHeight;
+        errorObject.innerHTML = error;
+        elParent.appendChild(errorObject);
+        if(this.options.display === 'bubble') {
+          var X = 0;
+          var Y = 0;
+          var factorX = this.options.bubblePosition === 'left' ? -1 : 1;
+          var factorY = this.options.bubblePosition === 'top' ? -1 : 1;
+          switch(this.options.bubblePosition) {
+            case 'top':
+            case 'bottom':
+              Y = el.offsetHeight;
+              break;
+            case 'left':
+              X = errorObject.offsetWidth;
+              break;
+            default:
+              X = el.offsetWidth;
           }
-          else {
-            W = el.offsetWidth;
-          }
-          errorObject.innerHTML = '';
-          errorObject.style.top = pos.top + H + this.options.bubbleGapTop +'px';
-          errorObject.style.left = pos.left + W + this.options.bubbleGapLeft +'px'
+          errorObject.style.top = el.offsetTop + ((Y + this.options.bubbleGapY) * factorY) +'px';
+          errorObject.style.left = el.offsetLeft + ((X + this.options.bubbleGapX) * factorX)  +'px';
         }
-        elParent.appendChild( errorObject );
-        errorObject.innerHTML = error ;
 
         // we have an error so we need to break submit
         // set to handler true

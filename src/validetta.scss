@@ -23,7 +23,7 @@ $validetta-inline-color           : $validetta-bubble-bg-color !default;
   padding: $validetta-bubble-pad-vertical $validetta-bubble-pad-horizontal;
   z-index: 9;
 
-  &:before {
+  &::before {
     content: '';
     position: absolute;
     display: block;
@@ -31,21 +31,38 @@ $validetta-inline-color           : $validetta-bubble-bg-color !default;
     width: 0;
     border-width: $validetta-bubble-caret-size;
     border-style: solid;
+    border-color: transparent;
+  }
+
+  &--left {
+    &::before {
+      top: ceil(($validetta-line-height + ($validetta-bubble-pad-vertical * 2) - ($validetta-bubble-caret-size * 2)) / 2);
+      right: - $validetta-bubble-caret-size * 2;
+      border-left-color: $validetta-bubble-bg-color;
+    }
   }
 
   &--right {
-    &:before {
-      top: ceil( ( $validetta-line-height +  ( $validetta-bubble-pad-vertical * 2 ) -  ( $validetta-bubble-caret-size * 2 ) ) / 2 );
+    &::before {
+      top: ceil(($validetta-line-height + ($validetta-bubble-pad-vertical * 2) - ($validetta-bubble-caret-size * 2)) / 2);
       left: - $validetta-bubble-caret-size * 2;
-      border-color: transparent $validetta-bubble-bg-color transparent transparent;
+      border-right-color: $validetta-bubble-bg-color;
+    }
+  }
+
+  &--top {
+    &::before {
+      bottom: - $validetta-bubble-caret-size * 2;
+      left: 10px;
+      border-top-color: $validetta-bubble-bg-color;
     }
   }
 
   &--bottom {
-    &:before {
+    &::before {
       top: - $validetta-bubble-caret-size * 2;
       left: 10px;
-      border-color: transparent transparent $validetta-bubble-bg-color transparent;
+      border-bottom-color: $validetta-bubble-bg-color;
     }
   }
 }
@@ -53,7 +70,7 @@ $validetta-inline-color           : $validetta-bubble-bg-color !default;
 .validetta-inline,
 .validetta-bubble {
   display: block;
-  font: #{$validetta-font-size}/#{$validetta-line-height} $validetta-font-family ;
+  font: #{$validetta-font-size}/#{$validetta-line-height} $validetta-font-family;
 }
 
 .validetta-inline {
