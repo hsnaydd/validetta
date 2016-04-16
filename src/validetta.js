@@ -354,15 +354,12 @@
      * @return {void}
      */
     checkFields : function( e ) {
-      var self = this, // stored this
-          invalidFields = [];
-      // Make invalidFields accessible
-      this.getInvalidFields = function(){
-        return invalidFields;
-      }
+      var self = this; // stored this
+      this.invalidFields = [];
+
       for ( var i = 0, _lengthFields = FIELDS.length; i < _lengthFields; i++ ) {
         // if field is disabled, do not check
-        if ( FIELDS[ i ].disabled ) continue;
+        if (FIELDS[ i ].disabled) continue;
         var el = FIELDS[ i ], //current field
           errors = '', //current field's errors
           val = trim(getElementValue(el)), //current field's value
@@ -399,10 +396,7 @@
         }
         // Check the errors
         if(errors !== '') {
-          invalidFields.push({
-            field: el,
-            errors: errors
-          });
+          this.setInvalidField(el, errors);
           // if parent element has valid class, remove and add error class
           this.addErrorClass(this.tmp.parent);
           // open error window
@@ -458,6 +452,7 @@
             // Check to cache, if result is invalid, open an error window
             if ( cache.result.valid === false ) {
               this.addErrorClass( this.tmp.parent );
+              this.setInvalidField(el, cache.result.message);
               this.window.open.call( this, el, cache.result.message );
             } else {
               this.addValidClass( this.tmp.parent );
@@ -650,6 +645,23 @@
     addValidClass : function( el ) {
       el.classList.remove(this.options.errorClass);
       el.classList.add(this.options.validClass);
+    },
+
+    /**
+     * Get invalid Fields
+     * @return {Array} Returns invalid fields.
+     */
+    getInvalidFields: function() {
+      return this.invalidFields;
+    },
+
+    /**
+     * Set invalid field
+     * @param {Node} el - the field to be validated
+     * @param {String} errors - field's error messages
+     */
+    setInvalidField: function(el, errors) {
+      this.invalidFields.push({field: el, errors: errors});
     },
 
     /**
