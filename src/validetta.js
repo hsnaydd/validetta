@@ -556,7 +556,7 @@
        */
       open : function( el, error ) {
         // We want display errors ?
-        if ( !this.options.showErrorMessages ) {
+        if (!this.options.showErrorMessages || el.getAttribute('data-vd-show-error-messages') === 'false') {
           // because of form not valid, set handler true for break submit
           this.handler = true;
           return;
