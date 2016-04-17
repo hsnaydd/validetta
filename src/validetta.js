@@ -246,7 +246,7 @@
       },
       //Checkbox check
       maxChecked : function(tmp, self) {
-        var checkboxes = self.form.querySelectorAll('[name="' + tmp.el.name + '"]');
+        var checkboxes = self.form.querySelectorAll('[name="' + tmp.el.name + '"]:not([disabled])');
         // we dont want to open an error window for all checkboxes which have same "name"
         if (checkboxes[0] !== tmp.el) return;
         var count =  checkedLength(checkboxes);
@@ -254,7 +254,7 @@
         return count <= tmp.arg || messages.maxChecked.replace('{count}', tmp.arg);
       },
       minChecked : function(tmp, self) {
-        var checkboxes = self.form.querySelectorAll('[name="' + tmp.el.name + '"]');
+        var checkboxes = self.form.querySelectorAll('[name="' + tmp.el.name + '"]:not([disabled])');
         if (checkboxes[0] !== tmp.el) return; // same as above
         var count = checkedLength(checkboxes);
         return count >= tmp.arg || messages.minChecked.replace('{count}', tmp.arg);
@@ -314,7 +314,7 @@
 
         addListener(this.form.querySelectorAll('[data-validetta][type=checkbox]'), 'click', function(e){
           // fields to be controlled transferred to global variable
-          FIELDS = self.form.querySelectorAll('[data-validetta][type=checkbox][name="'+ this.name +'"]');
+          FIELDS = self.form.querySelectorAll('[data-validetta][type=checkbox][name="'+ this.name +'"]:not([disabled])');
           return self.init(e);
         });
       }
