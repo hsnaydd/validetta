@@ -320,11 +320,7 @@
       }
       // handle <form> reset button to clear error messages
       this.form.addEventListener('reset', function() {
-        var dirtyFields = self.form.querySelectorAll('.'+ self.options.errorClass +', .'+ self.options.validClass);
-        for (var i = 0; i < dirtyFields.length; i++) {
-          dirtyFields[i].classList.remove(self.options.errorClass, self.options.validClass);
-        }
-        return self.reset();
+        return self.reset(this.querySelectorAll('[data-validetta]'));
       });
     },
 
@@ -397,8 +393,6 @@
         // Check the errors
         if(errors !== '') {
           this.setInvalidField(el, errors);
-          // if parent element has valid class, remove and add error class
-          this.addErrorClass(this.tmp.parent);
           // open error window
           this.window.open.call(this , el, errors);
         // Check remote validation
@@ -406,7 +400,6 @@
           this.checkRemote(el, e);
         } else { // Nice, there are no error
           if( typeof state !== 'undefined' ) this.addValidClass(this.tmp.parent);
-          else this.tmp.parent.classList.remove(this.options.errorClass, this.options.validClass );
           state = undefined; // Reset state variable
         }
       }
@@ -557,6 +550,8 @@
           return;
         }
         var elParent = this.parents( el );
+        // add error class to parent element
+        this.addErrorClass(elParent);
         // If the parent element undefined, that means el is an object. So we need to transform to the element
         if( typeof elParent === 'undefined' ) elParent = el[0].parentNode;
         // if there is an error window which previously opened for el, return
@@ -594,10 +589,15 @@
       /**
        * Error window closes
        *
-       * @params el : the error message window which will be disappear
+       * @params el : the form field to be cleaned from the error message
        */
       close : function( el ) {
-        el.parentNode.removeChild( el );
+        var parent = this.parents(el);
+        parent.classList.remove(this.options.errorClass, this.options.validClass);
+        var error = parent.getElementsByClassName(this.options.errorTemplateClass)[0];
+        if(typeof error !== 'undefined') {
+          parent.removeChild(error);
+        }
       }
     },
 
@@ -605,25 +605,25 @@
     /**
      * Removes all error messages windows
      *
-     * @param {object} or {void} el : form elements which have an error message window
+     * @param {Node|Array|NodeList} el : form elements which have an error message window
      */
     reset : function( el ) {
-      var _errorMessages = {};
-      // if el is undefined ( This is the process of resetting all <form> )
-      // or el is an object that has element more than one
-      // and these elements are not checkbox
-      if( typeof el === 'undefined' || ( el.length > 1 && el[0].type !== 'checkbox' ) ) {
-        _errorMessages = this.form.querySelectorAll( '.'+ this.options.errorTemplateClass );
-      }
-      else {
-        _errorMessages = this.parents( el[0] ).querySelectorAll( '.'+ this.options.errorTemplateClass );
-      }
-      for ( var i = 0, _lengthErrorMessages = _errorMessages.length; i < _lengthErrorMessages; i++ ) {
-        this.window.close.call( this, _errorMessages[ i ] );
-      }
-      // set to handler false
-      // otherwise at the next validation attempt, submit will not continue even the validation is successful
+      // set handler false
+      // otherwise the next validation attempt, submit will not continue even the validation is successful
       this.handler = false;
+
+      // Return if there are no field to be reset
+      if(typeof el === 'undefined') {
+        return;
+      }
+
+      if(typeof el.length === 'undefined') {
+        this.window.close.call(this, el);
+      } else {
+        for (var i = 0; i < el.length; i++) {
+          this.window.close.call(this, el[i]);
+        }
+      }
     },
 
     /**
@@ -632,7 +632,6 @@
      * @param {object} el element
      */
     addErrorClass : function( el ) {
-      el.classList.remove(this.options.validClass);
       el.classList.add(this.options.errorClass);
     },
 
@@ -643,7 +642,6 @@
      * @param {object} el element
      */
     addValidClass : function( el ) {
-      el.classList.remove(this.options.errorClass);
       el.classList.add(this.options.validClass);
     },
 
