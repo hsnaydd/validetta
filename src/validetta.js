@@ -314,7 +314,7 @@
 
         addListener(this.form.querySelectorAll('[data-validetta][type=checkbox]'), 'click', function(e){
           // fields to be controlled transferred to global variable
-          FIELDS = self.form.querySelectorAll('[data-validetta][type=checkbox][name="'+ this.name +'"]:not([disabled])');
+          FIELDS = self.form.querySelectorAll('[data-validetta][type=checkbox][name="'+ this.name +'"]');
           return self.init(e);
         });
       }
