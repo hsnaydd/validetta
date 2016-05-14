@@ -146,6 +146,35 @@
   };
 
   /**
+   * Converts dash-separated string to camelCase
+   * @param  {String} input - dash-separated string
+   * @return {String} camelCase string
+   */
+  var camelCase = function(input) {
+    return input.toLowerCase().replace(/-(.)/g, function(match, group1) {
+        return group1.toUpperCase();
+    });
+  };
+
+  /**
+   * Deserialize given value
+   * @param  {String} value - value to be deserialize
+   * @return {Mixid} - Deserialized value
+   */
+  var deserializeValue = function(value) {
+    var num;
+    try {
+      return value ?
+        value == "true" ||
+        (value == "false" ? false :
+        value == "null" ? null :
+        !isNaN(num = Number(value)) ? num :
+        value)
+        : value;
+    } catch (e) { return value; }
+  };
+
+  /**
    * Plugin Class
    *
    * @constructor
@@ -166,6 +195,7 @@
      */
     this.handler = false;
     this.options = mergeObject(defaults, options);
+    this.scopeOptions = {};
     this.form = form;
     this.xhr = {};
     this.events();
@@ -361,6 +391,8 @@
           val = trim(getElementValue(el)), //current field's value
           methods = el.getAttribute('data-validetta').split(','), //current field's control methods
           state; // Validation state
+        // Generate scope options
+        this.generateScopeOptions(el);
         // Create tmp
         this.tmp = {};
         // store el and val variables in tmp
@@ -402,6 +434,8 @@
           if( typeof state !== 'undefined' ) this.addValidClass(this.tmp.parent);
           state = undefined; // Reset state variable
         }
+        // Reset scope options;
+        this.scopeOptions = {};
       }
     },
 
@@ -544,7 +578,7 @@
        */
       open : function( el, error ) {
         // We want display errors ?
-        if (!this.options.showErrorMessages || el.getAttribute('data-vd-show-error-messages') === 'false') {
+        if (!this.scopeOptions.showErrorMessages) {
           // because of form not valid, set handler true for break submit
           this.handler = true;
           return;
@@ -558,16 +592,17 @@
         if ( elParent.querySelectorAll( '.'+ this.options.errorTemplateClass ).length ) return;
         // Create the error window object which will be appear
         var errorObject = document.createElement('span');
-        errorObject.className = this.options.errorTemplateClass + ' '+this.options.errorTemplateClass + '--' + this.options.bubblePosition;
+        errorObject.className = this.options.errorTemplateClass;
         // if error display is bubble, calculate to positions
         errorObject.innerHTML = error;
         elParent.appendChild(errorObject);
         if(this.options.display === 'bubble') {
           var X = 0;
           var Y = 0;
-          var factorX = this.options.bubblePosition === 'left' ? -1 : 1;
-          var factorY = this.options.bubblePosition === 'top' ? -1 : 1;
-          switch(this.options.bubblePosition) {
+          var factorX = this.scopeOptions.bubblePosition === 'left' ? -1 : 1;
+          var factorY = this.scopeOptions.bubblePosition === 'top' ? -1 : 1;
+          errorObject.classList.add(this.options.errorTemplateClass + '--' + this.scopeOptions.bubblePosition);
+          switch(this.scopeOptions.bubblePosition) {
             case 'top':
             case 'bottom':
               Y = el.offsetHeight;
@@ -578,8 +613,8 @@
             default:
               X = el.offsetWidth;
           }
-          errorObject.style.top = el.offsetTop + ((Y + this.options.bubbleGapY) * factorY) +'px';
-          errorObject.style.left = el.offsetLeft + ((X + this.options.bubbleGapX) * factorX)  +'px';
+          errorObject.style.top = el.offsetTop + ((Y + this.scopeOptions.bubbleGapY) * factorY) +'px';
+          errorObject.style.left = el.offsetLeft + ((X + this.scopeOptions.bubbleGapX) * factorX)  +'px';
         }
 
         // we have an error so we need to break submit
@@ -601,6 +636,22 @@
       }
     },
 
+    /**
+     * Generates scope options.
+     * Merges data options with general options.
+     *
+     * @param  {Node} el - current field's node
+     */
+    generateScopeOptions: function(el) {
+      var attrs = el.attributes;
+      var dataOptions = {};
+      for (var i = 0; i < attrs.length; i++) {
+        if(attrs[i].name.substring(0, 7) === 'data-vd'){
+          dataOptions[camelCase(attrs[i].name.substring(8))] = deserializeValue(attrs[i].value);
+        }
+      }
+      this.scopeOptions = mergeObject(this.options, dataOptions);
+    },
 
     /**
      * Removes all error messages windows
