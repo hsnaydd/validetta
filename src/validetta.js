@@ -115,7 +115,7 @@
       reg = new RegExp( /[^0-9]+/g );
       cardNumber = tmp.val.replace( reg, '' );
       strlen = cardNumber.length;
-      if( strlen < 16 ) return messages.creditCard;
+      if( strlen < 13 ) return messages.creditCard;
       for( i=0 ; i < strlen ; i++ ) {
         pos = strlen - i;
         digit = parseInt( cardNumber.substring( pos - 1, pos ), 10 );
