@@ -1,8 +1,8 @@
 /*!
  * Validetta (http://lab.hasanaydogdu.com/validetta/)
- * Version 1.0.1 ( 16-08-2015 )
+ * Version 1.0.1 ( 19-05-2016 )
  * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
- * Copyright 2013-2015 Hasan Aydoğdu - http://www.hasanaydogdu.com 
+ * Copyright 2013-2016 Hasan Aydoğdu - http://www.hasanaydogdu.com 
  */
 
 ;(function( $ ) {
@@ -122,7 +122,7 @@
       reg = new RegExp( /[^0-9]+/g );
       cardNumber = tmp.val.replace( reg, '' );
       strlen = cardNumber.length;
-      if( strlen < 16 ) return messages.creditCard;
+      if( strlen < 13 ) return messages.creditCard;
       for( i=0 ; i < strlen ; i++ ) {
         pos = strlen - i;
         digit = parseInt( cardNumber.substring( pos - 1, pos ), 10 );
