@@ -45,6 +45,7 @@
     bubbleGapX: 15, // Gap the x-axis
     bubbleGapY: 0, //  Gap the y-axis
     realTime : false, // To enable real-time form control, set this option true.
+    realTimeEvents: 'change blur',
     onValid : function(){}, // This function to be called when the user submits the form and there is no error.
     onError : function(){}, // This function to be called when the user submits the form and there are some errors
     validators: {} // Custom validators stored in this variable
@@ -339,7 +340,7 @@
       // real-time option control
       if(this.options.realTime === true) {
         // handle change event for form elements (without checkbox)
-        addListener(this.form.querySelectorAll('[data-validetta]:not([type=checkbox])'), 'change blur', function(e){
+        addListener(this.form.querySelectorAll('[data-validetta]:not([type=checkbox])'), this.options.realTimeEvents, function(e){
           // field to be controlled transferred to global variable
           FIELDS = [this];
           return self.init(e);
