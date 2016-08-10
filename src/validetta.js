@@ -531,7 +531,7 @@
             }
             else if( result.valid === false ) {
               self.addErrorClass( self.tmp.parent );
-              self.window.open.call( self, el, result.message );
+              self.triggerError( el, result.message );
             } else {
               self.addValidClass( self.tmp.parent );
             }
@@ -725,6 +725,18 @@
         el = el.parentNode;
       }
       return el;
+    },
+
+    /**
+     * Triggers error manually
+     * @param  {node} el - Field to be trigger error
+     * @param  {string} msg - Error message
+     */
+    triggerError: function( el, msg ) {
+      this.generateScopeOptions(el);
+      this.reset(el);
+      this.window.open.call(this, el, msg);
+      this.scopeOptions = {};
     }
   };
   if(typeof window.VALIDETTA_LANGUAGE !== 'undefined') {
