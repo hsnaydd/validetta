@@ -83,8 +83,11 @@
    * @param {Function} cb - Listener function
    */
   var addListener = function(targets, ev, fn){
-    for (var i = 0; i < targets.length; i++) {
-      targets[i].addEventListener(ev, fn);
+    var events = ev.split(' ');
+    for (var i = 0; i < events.length; i++) {
+      for (var j = 0; j < targets.length; j++) {
+        targets[j].addEventListener(events[i], fn);
+      }
     }
   };
 
@@ -336,7 +339,7 @@
       // real-time option control
       if(this.options.realTime === true) {
         // handle change event for form elements (without checkbox)
-        addListener(this.form.querySelectorAll('[data-validetta]:not([type=checkbox])'), 'change', function(e){
+        addListener(this.form.querySelectorAll('[data-validetta]:not([type=checkbox])'), 'change blur', function(e){
           // field to be controlled transferred to global variable
           FIELDS = [this];
           return self.init(e);
