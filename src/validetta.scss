@@ -3,16 +3,16 @@
 // Validetta Defaults
 //
 
-$validetta-font-size              : 12px !default;
-$validetta-line-height            : 14px !default;
-$validetta-font-family            : Arial, Helvetica, sans-serif !default;
-$validetta-bubble-color           : white;
-$validetta-bubble-bg-color        : #cd2e26 !default;
-$validetta-bubble-radius          : 5px !default;
-$validetta-bubble-caret-size      : 5px !default;
-$validetta-bubble-pad-vertical    : 5px !default;
-$validetta-bubble-pad-horizontal  : 12px !default;
-$validetta-inline-color           : $validetta-bubble-bg-color !default;
+$validetta-font-size: 12px !default;
+$validetta-line-height: 14px !default;
+$validetta-font-family: Arial, Helvetica, sans-serif !default;
+$validetta-bubble-color: #fff;
+$validetta-bubble-bg-color: #cd2e26 !default;
+$validetta-bubble-radius: 5px !default;
+$validetta-bubble-caret-size: 5px !default;
+$validetta-bubble-pad-vertical: 5px !default;
+$validetta-bubble-pad-horizontal: 12px !default;
+$validetta-inline-color: $validetta-bubble-bg-color !default;
 
 .validetta-bubble {
   position: absolute;
@@ -24,7 +24,7 @@ $validetta-inline-color           : $validetta-bubble-bg-color !default;
   z-index: 9;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     display: block;
     height: 0;
