@@ -8,7 +8,7 @@
   // Current fields/fields
   var FIELDS = {};
   // RegExp for input validate rules
-  var RRULE = new RegExp(/^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|different|pattern|remote|callback)\[([\w\[\]]+)\]/i);
+  var RRULE = new RegExp(/^([a-zA-Z]+)\[([\w\[\]]+)\]/i);
   // RegExp for mail control method
   // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
   var RMAIL = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
