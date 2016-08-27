@@ -25,9 +25,6 @@
     "lazypipe": "^1.0.1",
     "run-sequence": "^1.1.5"
   },
-  "eslintConfig": {
-    "extends": "google"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
