@@ -8,7 +8,7 @@
   // Current fields/fields
   var FIELDS = {};
   // RegExp for input validate rules
-  var RRULE = new RegExp(/^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|different|regExp|remote|callback)\[([\w\[\]]+)\]/i);
+  var RRULE = new RegExp(/^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|different|pattern|remote|callback)\[([\w\[\]]+)\]/i);
   // RegExp for mail control method
   // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
   var RMAIL = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
@@ -318,8 +318,8 @@
         return count === 1;
       },
       // Custom reg check
-      regExp: function(tmp, self) {
-        var _arg = self.options.validators.regExp[tmp.arg],
+      pattern: function(tmp, self) {
+        var _arg = self.options.validators.pattern[tmp.arg],
           _reg = new RegExp(_arg.pattern);
         return _reg.test(tmp.val) || _arg.errorMessage;
       },
