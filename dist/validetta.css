@@ -1,8 +1,8 @@
 /*!
- * Validetta (http://lab.hasanaydogdu.com/validetta/)
- * Version 1.0.1 ( 16-08-2015 )
- * Licensed under MIT (https://github.com/hsnayd/validetta/blob/master/LICENCE)
- * Copyright 2013-2015 Hasan Aydoğdu - http://www.hasanaydogdu.com 
+ * Validetta (https://github.com/hsnaydd/validetta)
+ * Version 1.0.1 (27-08-2016 16:21)
+ * Licensed under MIT (https://github.com/hsnaydd/validetta/blob/master/LICENCE)
+ * Copyright 2013-2016 Hasan Aydoğdu <hsnaydd@gmail.com>
  */
 
 .validetta-bubble {
@@ -10,25 +10,34 @@
   background-color: #cd2e26;
   max-width: 325px;
   border-radius: 5px;
-  color: white;
+  color: #fff;
   padding: 5px 12px;
   z-index: 9; }
-  .validetta-bubble:before {
-    content: '';
+  .validetta-bubble::before {
+    content: "";
     position: absolute;
     display: block;
     height: 0;
     width: 0;
     border-width: 5px;
-    border-style: solid; }
-  .validetta-bubble--right:before {
+    border-style: solid;
+    border-color: transparent; }
+  .validetta-bubble--left::before {
+    top: 7px;
+    right: -10px;
+    border-left-color: #cd2e26; }
+  .validetta-bubble--right::before {
     top: 7px;
     left: -10px;
-    border-color: transparent #cd2e26 transparent transparent; }
-  .validetta-bubble--bottom:before {
+    border-right-color: #cd2e26; }
+  .validetta-bubble--top::before {
+    bottom: -10px;
+    left: 10px;
+    border-top-color: #cd2e26; }
+  .validetta-bubble--bottom::before {
     top: -10px;
     left: 10px;
-    border-color: transparent transparent #cd2e26 transparent; }
+    border-bottom-color: #cd2e26; }
 
 .validetta-inline,
 .validetta-bubble {
@@ -37,5 +46,3 @@
 
 .validetta-inline {
   color: #cd2e26; }
-
-/*# sourceMappingURL=validetta.css.map */
