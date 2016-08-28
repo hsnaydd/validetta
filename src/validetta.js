@@ -114,7 +114,8 @@
    * @return {Object} merged object
    */
   var mergeObject = function(obj1, obj2) {
-    var obj3 = {}, propertyName;
+    var obj3 = {},
+      propertyName;
     for (propertyName in obj1) {
       if (obj1.hasOwnProperty(propertyName)) {
         obj3[propertyName] = obj1[propertyName];
@@ -268,12 +269,15 @@
       creditCard: function(tmp) {
         // allow empty because empty check does by required metheod
         if (tmp.val === '') return true;
-        var reg, cardNumber, pos, digit, i, subTotal, sum = 0, strlen;
-        reg = new RegExp(/[^0-9]+/g);
-        cardNumber = tmp.val.replace(reg, '');
-        strlen = cardNumber.length;
+        var pos,
+          digit,
+          subTotal,
+          sum = 0;
+        var reg = new RegExp(/[^0-9]+/g);
+        var cardNumber = tmp.val.replace(reg, '');
+        var strlen = cardNumber.length;
         if (strlen < 16) return messages.creditCard;
-        for (i = 0; i < strlen; i++) {
+        for (var i = 0; i < strlen; i++) {
           pos = strlen - i;
           digit = parseInt(cardNumber.substring(pos - 1, pos), 10);
           if (i % 2 === 1) {
