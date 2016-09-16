@@ -47,7 +47,8 @@
     realTime : false, // To enable real-time form control, set this option true.
     onValid : function(){}, // This function to be called when the user submits the form and there is no error.
     onError : function(){}, // This function to be called when the user submits the form and there are some errors
-    validators: {} // Custom validators stored in this variable
+    validators: {}, // Custom validators stored in this variable
+    disableRemoteCache: true
   },
 
   /**
@@ -357,8 +358,10 @@
       var cacheKey = $.param( ajaxOptions );
 
       // Check cache
-      var cache = this.remoteCache[ cacheKey ];
-
+      var cache;
+      if(!this.options.disableRemoteCache) {
+        cache = this.remoteCache[ cacheKey ];
+      }
       if ( typeof cache !== 'undefined' ) {
         switch( cache.state ) {
           case 'pending' : // pending means remote request not finished yet
