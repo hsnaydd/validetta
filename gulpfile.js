@@ -7,6 +7,11 @@ var browserSync = require('browser-sync');
 var gulpLoadPlugins =  require('gulp-load-plugins');
 var lazypipe = require('lazypipe');
 
+var browserify = require('browserify');
+var babelify = require('babelify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+
 var $ = gulpLoadPlugins();
 var reload = browserSync.reload;
 var pkg = require('./package.json');
@@ -76,16 +81,27 @@ gulp.task('scripts:lint', cb => {
     .pipe(browserSync.active ? $.util.noop() : $.eslint.failOnError());
 });
 
-gulp.task('scripts', () => {
+gulp.task('scripts', function () {
+  // set up the browserify instance on a task basis
+  var b = browserify({
+    entries: './src/index.js',
+    debug: true,
+    // defining transforms here will avoid crashing your stream
+    transform: [babelify]
+  });
 
   const scriptsMinChannel = lazypipe()
-    .pipe($.uglify)
     .pipe($.rename, {suffix: '.min'})
+    .pipe($.sourcemaps.init, {loadMaps: true})
+    .pipe($.uglify)
     .pipe($.header, banner)
+    .pipe($.sourcemaps.write, '.')
     .pipe(gulp.dest, 'dist');
 
-  return gulp.src('src/validetta.js')
+  return b.bundle()
     .pipe($.plumber({errorHandler: $.notify.onError('Hata: <%= error.message %>')}))
+    .pipe(source('validetta.js'))
+    .pipe(buffer())
     .pipe($.header(banner))
     .pipe(gulp.dest('dist'))
     .pipe(scriptsMinChannel());
