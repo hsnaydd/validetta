@@ -11,6 +11,7 @@ var browserify = require('browserify');
 var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
+var tsify = require('tsify');
 
 var $ = gulpLoadPlugins();
 var reload = browserSync.reload;
@@ -84,10 +85,8 @@ gulp.task('scripts:lint', cb => {
 gulp.task('scripts', function () {
   // set up the browserify instance on a task basis
   var b = browserify({
-    entries: './src/index.js',
-    debug: true,
-    // defining transforms here will avoid crashing your stream
-    transform: [babelify]
+    entries: './src/index.ts',
+    debug: true
   });
 
   const scriptsMinChannel = lazypipe()
@@ -98,7 +97,10 @@ gulp.task('scripts', function () {
     .pipe($.sourcemaps.write, '.')
     .pipe(gulp.dest, 'dist');
 
-  return b.bundle()
+  return b
+    .plugin(tsify)
+    .transform(babelify, { extensions: [ '.tsx', '.ts' ] })
+    .bundle()
     .pipe($.plumber({errorHandler: $.notify.onError('Hata: <%= error.message %>')}))
     .pipe(source('validetta.js'))
     .pipe(buffer())
