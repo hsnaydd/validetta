@@ -8,7 +8,6 @@ var gulpLoadPlugins =  require('gulp-load-plugins');
 var lazypipe = require('lazypipe');
 
 var browserify = require('browserify');
-var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var tsify = require('tsify');
@@ -75,11 +74,12 @@ gulp.task('styles', ['styles:lint'], () => {
 });
 
 gulp.task('scripts:lint', cb => {
-  return gulp.src('src/**/*.js')
+  return gulp.src('src/**/*.ts')
     .pipe($.plumber({errorHandler: $.notify.onError('Hata: <%= error.message %>')}))
-    .pipe($.eslint())
-    .pipe($.eslint.format())
-    .pipe(browserSync.active ? $.util.noop() : $.eslint.failOnError());
+    .pipe($.tslint({
+      formatter: 'verbose'
+    }))
+    .pipe($.tslint.report());
 });
 
 gulp.task('scripts', function () {
@@ -98,7 +98,7 @@ gulp.task('scripts', function () {
     .pipe(gulp.dest, 'dist');
 
   return b
-    .plugin(tsify)
+    .plugin('tsify', { noImplicitAny: true })
     .transform(babelify, { extensions: [ '.tsx', '.ts' ] })
     .bundle()
     .pipe($.plumber({errorHandler: $.notify.onError('Hata: <%= error.message %>')}))
