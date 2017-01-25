@@ -99,7 +99,6 @@ gulp.task('scripts', function () {
 
   return b
     .plugin('tsify', { noImplicitAny: true })
-    .transform(babelify, { extensions: [ '.tsx', '.ts' ] })
     .bundle()
     .pipe($.plumber({errorHandler: $.notify.onError('Hata: <%= error.message %>')}))
     .pipe(source('validetta.js'))
