@@ -33,7 +33,7 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "scripts": {
-    "test": "tsc -p tsconfig.test.json && ava \"dist-test/test/**/*.js\""
+    "test": "rm -rf dist-test/** && tsc -p tsconfig.test.json && ava \"dist-test/test/**/*.js\""
   },
   "repository": {
     "type": "git",
