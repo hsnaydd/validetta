@@ -82,7 +82,7 @@ gulp.task('scripts:lint', cb => {
     .pipe($.tslint.report());
 });
 
-gulp.task('scripts', function () {
+gulp.task('scripts', ['scripts:lint'], function () {
   // set up the browserify instance on a task basis
   var b = browserify({
     entries: './src/index.ts',
