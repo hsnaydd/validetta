@@ -98,7 +98,7 @@ gulp.task('scripts', function () {
     .pipe(gulp.dest, 'dist');
 
   return b
-    .plugin('tsify', { noImplicitAny: true })
+    .plugin(tsify, {noImplicitAny: true, target: 'es5'})
     .bundle()
     .pipe($.plumber({errorHandler: $.notify.onError('Hata: <%= error.message %>')}))
     .pipe(source('validetta.js'))
