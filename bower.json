@@ -1,20 +1,13 @@
 {
   "name": "validetta",
-  "description": "A tiny jquery plugin for validate your forms",
-  "version": "1.0.1",
+  "description": "A tiny javascript library for validate your forms",
+  "version": "2.0.0-beta",
   "homepage": "http://lab.hasanaydogdu.com/validetta/",
-  "author": {
-    "name": "Hasan Aydoğdu",
-    "email": "hasan_aydogdu@windowslive.com",
-    "url": "http://www.hasanaydogdu.com"
-  },
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/hsnayd/validetta/blob/master/LICENCE"
-  },
+  "author": "Hasan Aydoğdu <hsnaydd@gmail.com>",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hsnayd/validetta.git"
+    "url": "https://github.com/hsnaydd/validetta.git"
   },
   "main": [
     "dist/validetta.css",
@@ -39,7 +32,6 @@
     "LICENCE",
     "Gruntfile.js",
     "package.json",
-    "validetta.jquery.json",
     "bower.json"
   ]
 }

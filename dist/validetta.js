@@ -1,8 +1,8 @@
 /*!
  * Validetta (https://github.com/hsnaydd/validetta)
- * Version 1.0.1 (27-08-2016 16:21)
+ * Version 2.0.0-beta (18-02-2017 23:22)
  * Licensed under MIT (https://github.com/hsnaydd/validetta/blob/master/LICENCE)
- * Copyright 2013-2016 Hasan Aydoğdu <hsnaydd@gmail.com>
+ * Copyright 2013-2017 Hasan Aydoğdu <hsnaydd@gmail.com>
  */
 
 (function() {
@@ -15,7 +15,7 @@
   // Current fields/fields
   var FIELDS = {};
   // RegExp for input validate rules
-  var RRULE = new RegExp(/^(minChecked|maxChecked|minSelected|maxSelected|minLength|maxLength|equalTo|different|regExp|remote|callback)\[([\w\[\]]+)\]/i);
+  var RRULE = new RegExp(/^([a-zA-Z]+)\[([\w\[\]]+)\]/i);
   // RegExp for mail control method
   // @from ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29 )
   var RMAIL = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
@@ -121,7 +121,8 @@
    * @return {Object} merged object
    */
   var mergeObject = function(obj1, obj2) {
-    var obj3 = {}, propertyName;
+    var obj3 = {},
+      propertyName;
     for (propertyName in obj1) {
       if (obj1.hasOwnProperty(propertyName)) {
         obj3[propertyName] = obj1[propertyName];
@@ -275,12 +276,15 @@
       creditCard: function(tmp) {
         // allow empty because empty check does by required metheod
         if (tmp.val === '') return true;
-        var reg, cardNumber, pos, digit, i, subTotal, sum = 0, strlen;
-        reg = new RegExp(/[^0-9]+/g);
-        cardNumber = tmp.val.replace(reg, '');
-        strlen = cardNumber.length;
+        var pos,
+          digit,
+          subTotal,
+          sum = 0;
+        var reg = new RegExp(/[^0-9]+/g);
+        var cardNumber = tmp.val.replace(reg, '');
+        var strlen = cardNumber.length;
         if (strlen < 16) return messages.creditCard;
-        for (i = 0; i < strlen; i++) {
+        for (var i = 0; i < strlen; i++) {
           pos = strlen - i;
           digit = parseInt(cardNumber.substring(pos - 1, pos), 10);
           if (i % 2 === 1) {
@@ -325,8 +329,8 @@
         return count === 1;
       },
       // Custom reg check
-      regExp: function(tmp, self) {
-        var _arg = self.options.validators.regExp[tmp.arg],
+      pattern: function(tmp, self) {
+        var _arg = self.options.validators.pattern[tmp.arg],
           _reg = new RegExp(_arg.pattern);
         return _reg.test(tmp.val) || _arg.errorMessage;
       },

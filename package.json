@@ -1,7 +1,7 @@
 {
   "name": "validetta",
-  "version": "1.0.1",
-  "description": "A tiny JavaScript library for validate your forms",
+  "version": "2.0.0-beta",
+  "description": "A tiny javascript library for validate your forms",
   "main": "src/validetta.js",
   "dependencies": {},
   "devDependencies": {
