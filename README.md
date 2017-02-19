@@ -215,7 +215,7 @@ new validetta(document.getElementById('form'),
 );
 ```
 
-Scss Variables
+### Scss Variables
 
 | Name                             | Description                                                |
 |----------------------------------|------------------------------------------------------------|
