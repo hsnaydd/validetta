@@ -33,6 +33,7 @@ MIT licensed
 It is sufficient to copy downloaded validetta folder to root folder and attach essential folders to your web page. You don’t need to copy validetta folder to root folder but those are applied in the following expression as if validetta is copied to root folder.
 
 include the dependent libraries and css files
+
 ```html
 <link href="validetta/validetta.css" rel="stylesheet" type="text/css" media="screen" >
 
@@ -51,7 +52,7 @@ If you wonder full list of language packages, Check [localization](https://githu
 
 After include validetta to project, you will only need to call the plugin in your javascript file;
 
-```javasctipt
+```javascript
 document.addEventListener("DOMContentLoaded", function() {}
     var validettaOptions = {
         realTime: true
@@ -59,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {}
     new Validetta(document.getElementById('form'), validettaOptions);
 }
 ```
-and add `data-validetta` attribute to element which you want to control. 
+and add `data-validetta` attribute to element which you want to control.
 
 ```html
     <input type="text" name="exm" data-validetta="required,minLength[2],maxLength[3]" />
@@ -89,6 +90,7 @@ and add `data-validetta` attribute to element which you want to control.
 > Validator arguments ( e.g. `input_name`, and `validator_name` ) should be any word character ( letter, number, undercore ).
 
 ### Options & Defaults
+
 ```javascript
 new validetta(document.getElementById('form'), {
     // If you dont want to display error messages set this options false
@@ -132,6 +134,7 @@ There are two different callbacks you can declare when setting up the validation
 
  - **onValid:** This function to be called when the user submits the form and there is no error.
  - **onError:** This function to be called when the user submits the form and there are some errors.
+
 ```javascript
 new validetta(document.getElementById('form'), {
   onValid: function(event) {
@@ -146,6 +149,7 @@ new validetta(document.getElementById('form'), {
 
 ### Getting invalid fields
 Returns the list of invalid fields as an object, containing the properties "field" and "errors".
+
 ```javascript
 new validetta(document.getElementById('form'), {
   onError : function( event ){
@@ -156,7 +160,7 @@ new validetta(document.getElementById('form'), {
 ```
 
 ### Remote Validation
-This option allows you to perform server-side validation. By using this option you can validate the value given by the user on server side before the form gets submitted. The validation function will send an ajax request to URL declered in remote options. 
+This option allows you to perform server-side validation. By using this option you can validate the value given by the user on server side before the form gets submitted. The validation function will send an ajax request to URL declered in remote options.
 
 The form will get the class validetta-pending while the server is being requested.
 
@@ -164,6 +168,7 @@ The form will get the class validetta-pending while the server is being requeste
 > The response from the ajax request must be a JSON formatted object, containing the properties "valid" and "message".
 
 #### Remote validator settings
+
 ```javascript
 new validetta(document.getElementById('form'), {
   validators: {
@@ -176,7 +181,9 @@ new validetta(document.getElementById('form'), {
   }
 });
 ```
+
 #### An example for remote.php
+
 ```php
 <?php
 $response = array('valid' => false, 'message' => 'Sorry, Something went wrong!');
@@ -191,11 +198,12 @@ if(isset($_POST['username'])) {
 echo json_encode($response);
 ```
 
-> **Note:** 
+> **Note:**
 > Remote validation request fires if does not have any client-side error in the field!
 
 ### Override global error messages
-Sometimes, you may want to edit error messages, instead of including the language file. 
+Sometimes, you may want to edit error messages, instead of including the language file.
+
 ```javascript
 new validetta(document.getElementById('form'),
   {
@@ -208,6 +216,7 @@ new validetta(document.getElementById('form'),
 ```
 
 Scss Variables
+
 | Name                             | Description                                                |
 |----------------------------------|------------------------------------------------------------|
 | $validetta-font-size             | Font size of the error message                             |
@@ -220,4 +229,3 @@ Scss Variables
 | $validetta-bubble-pad-vertical   | Vertical padding of the error message in the bubble type   |
 | $validetta-bubble-pad-horizontal | Horizontal padding of the error message in the bubble type |
 | $validetta-inline-color          | Font color of the error message in the inline type         |
-> Written with [StackEdit](https://stackedit.io/).
