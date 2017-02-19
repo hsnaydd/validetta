@@ -48,7 +48,7 @@ You can include language file if you want.
 > **Note:**
 > The language file must be added before the plugin script!
 
-If you wonder full list of language packages, Check [localization](https://github.com/hsnayd/validetta/tree/master/localization) folder.
+If you wonder full list of language packages, Check [localization](https://github.com/hsnayd/validetta/tree/v2-dev/localization) folder.
 
 After include validetta to project, you will only need to call the plugin in your javascript file;
 
