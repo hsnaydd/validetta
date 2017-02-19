@@ -82,7 +82,7 @@ and add `data-validetta` attribute to element which you want to control.
 | maxChecked[x]           | Checks maximal X option if it is marked or not.                               |
 | minSelected[x]          | Checks minimal X option if it is chosen or not.                               |
 | maxSelected[x]          | Checks maximal X option if it is chosen or not.                               |
-| patter[validator_name]  | Checks if field is suits to identified ordered expression or not.             |
+| pattern[validator_name] | Checks if field is suits to identified ordered expression or not.             |
 | remote[validator_name]  | Checks fields using remote validator.                                         |
 | callback[callback_name] | Return the validity from a callback method                                    |
 
