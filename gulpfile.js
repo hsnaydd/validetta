@@ -114,6 +114,7 @@ gulp.task('notify:build', () => {
 });
 
 gulp.task('clean:dist', () => del(['dist/*'], {dot: true}));
+gulp.task('clean:dist-test', () => del(['dist-test/*'], {dot: true}));
 
 gulp.task('build', cb =>
   runSequence(
