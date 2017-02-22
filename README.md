@@ -17,6 +17,21 @@ Validetta is a tiny JavaScript library which you can do client-side validation o
 * You can use remote validator.
 * By creating your own regular expression, you can check fields according to this regular expression.
 
+## How to use ?
+
+```javascript
+document.addEventListener("DOMContentLoaded", function() {}
+  var validettaOptions = {
+    realTime: true
+  };
+  new Validetta(document.getElementById('form'), validettaOptions);
+}
+```
+
+```html
+  <input type="text" name="exm" data-validetta="required,minLength[2],maxLength[3]" />
+```
+
 ## Browser support
 
 The project is tested in Chrome and Firefox. It should work in the current stable releases of Chrome, Firefox, Safari as well as IE10 and up.
@@ -31,4 +46,4 @@ MIT licensed
 
 ## Documentation
 
-For a Getting started guide, Options and Defaults, Validators, etc. check out our [docs](docs/)!
+For a Getting started guide, Options and Defaults, Validators, etc. [check out our docs](docs/)!
