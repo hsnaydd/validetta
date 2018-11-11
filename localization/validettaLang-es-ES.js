@@ -13,7 +13,7 @@
 				maxSelected	: 'Sólo se puede marcar {count} opciones como máximo.',
 				minSelected	: 'Es necesario marcar como mínimo {count} opciones.',
 				notEqual	: 'Los campos no coinciden.',
-				different   : 'Fields cannot be the same as each other',
+				different	: 'Los campos no pueden ser iguales entre sí.',
 				creditCard	: 'Tarjeta de crédito no válida.'
 			};
 		}
