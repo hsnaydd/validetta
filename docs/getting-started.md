@@ -22,12 +22,12 @@ If you wonder full list of language packages, Check [localization](../localizati
 After include validetta to project, you will only need to call the plugin in your javascript file;
 
 ```javascript
-document.addEventListener("DOMContentLoaded", function() {}
-  var validettaOptions = {
+document.addEventListener("DOMContentLoaded", function() {
+    var validettaOptions = {
     realTime: true
   };
   new Validetta(document.getElementById('form'), validettaOptions);
-}
+})
 ```
 and add `data-validetta` attribute to element which you want to control.
 
