@@ -29,7 +29,7 @@
     maxSelected: 'Maximum {count} selection allowed. Please be sure to check.',
     minSelected: 'Minimum {count} selection allowed. Please be sure to check.',
     notEqual: 'Fields do not match. Please be sure to check.',
-    different: 'Fields cannot be the same as each other',
+    different: 'Fields cannot be the same as each other.',
     creditCard: 'Invalid credit card number. Please be sure to check.'
   };
 
